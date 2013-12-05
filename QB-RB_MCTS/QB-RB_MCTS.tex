@@ -1,7 +1,7 @@
 \documentclass{ecai2010}
 \usepackage{times}
 \usepackage{graphicx}
-\usepackage{latexsym, epstopdf}
+\usepackage{latexsym, epstopdf, pgfplots, setspace}
 \usepackage[algo2e, noend, noline, linesnumbered]{algorithm2e}
 \DontPrintSemicolon
 \newcommand{\pushline}{\Indp}% Indent
@@ -14,8 +14,8 @@
 
 \title{Quality-based rewards for Monte-Carlo Tree Search simulations}
 
-\author{Tom Pepels \and Marc Lantot \and M.~H.~M Winands \institute{Maastricht University,
-The Netherlands, email: tom.pepels@maastrichtuniversity.nl} }
+\author{Tom Pepels \and Marc Lanctot \and Mark~H.~M. Winands \institute{Maastricht University,
+The Netherlands, email: \{tom.pepels,marc.lanctot,m.winands\}@maastrichtuniversity.nl} }
 
 \maketitle
 \bibliographystyle{ecai2010}
@@ -24,8 +24,14 @@ The Netherlands, email: tom.pepels@maastrichtuniversity.nl} }
 In this paper methods for assessing the a posteriori quality of Monte-Carlo simulations are introduced. We show that altering the rewards of simulated play-outs in Monte-Carlo Tree Search based on their assessed quality improves results in five different 2-player boardgames. To achieve these results we propose two novel enhancements, the \emph{Qualitative Bonus} and the \emph{Relative Bonus}. The former relies on an uncomplicated heuristic evaluation of the game's terminal state, whereas and the latter relies on the total number of moves made during any simulated play-out. The proposed enhancements lead to a considerable performance increase in all five domains discussed.
 \end{abstract}
 
+%-------------------------------------------------------------------
 \section{Introduction}
 \label{sec:intro}
+Monte-Carlo Tree Search (MCTS) depends on the results of numerous simulations, each simulation consists of two parts, 1) the selection step, where moves are selected and played according to the UCT selection policy, and 2) the play-out step, where moves are played according to a (random) simulation strategy. At the end of each play-out a terminal state is reached and the result $r_t$, for simulation $t$ is usually expressed numerically in some discrete range, e.g. $r_t \in [-1, 0, 1]$ a loss, draw or win, respectively, and backpropagated along the tree from the expanded leaf to the root node. MCTS then collects these rewards at the nodes on the first ply, and a final move to play is selected based on either the number of visits, the average reward, or a combination of the two \cite{chaslot2008progressive}.
+
+Other techniques for rewarding simulations have been proposed \cite{Winands2010a}, where play-outs are cut-off early and their state heuristically evaluated. Furthermore, evaluating the final score of a game has shown to improve results in games that base the winning player on the one with the highest score \cite{shibahara2008combining}. However, for some domains a strong heuristic evaluation may not be available or too time-consuming, and certainly not all games determine the winning player on the highest scoring player. Nonetheless, using the straightforward discrete reward $r_t$, any information other than the win/loss/draw state of the play-out's final position is unused. For these reasons, we propose assessing the rewards of play-outs based on any information available at the terminal state.
+
+%-------------------------------------------------------------------
 \section{Monte-Carlo Tree Search}
 \label{sec:mcts}
 %from pac-man paper
@@ -41,6 +47,7 @@ In MCTS, a tree is built incrementally over time and maintains statistics at eac
 The combination of moves selected during the selection and play-out steps form a single simulation. In its basic form, MCTS requires no heuristic state evaluation, nonetheless, in most cases it is beneficial to add some domain knowledge for selecting moves to play during play-out.
 % /from pac-man paper
 
+%-------------------------------------------------------------------
 \subsection{UCT}
 \label{subsec:uct}
 %from pac-man paper
@@ -60,7 +67,6 @@ $v_i$ is the score of the current child based on the average result of simulatio
 
 \section{Assessing play-out quality}
 \label{sec:poqual}
-In the MCTS framework, play-outs are run by finishing a single game according to a simulation strategy until a natural terminal state is reached. The result $r$ is expressed numerically in some discrete range, e.g. $r \in [-1, 0, 1]$ a loss, draw or win, respectively, and backpropagated along the tree from the expanded leaf to the root node. Other techniques have been proposed \cite{Winands2010a}, where play-outs are cut-off early and their state heuristically evaluated. Furthermore, evaluating the final score of a game has shown to improve results in score based games. However, for some domains a strong heuristic evaluation may not be available or too time-consuming, and certainly not all games determine the winning player on the highest scoring player. Nonetheless, using the straightforward discrete reward $r$, all information regarding the quality of the play-out's final position is lost. For these reasons, we propose assessing the rewards of play-outs based on information other than the loss, draw, or win state of the final position.
 
 \begin{figure}[ht]
 	\centering
@@ -69,92 +75,102 @@ In the MCTS framework, play-outs are run by finishing a single game according to
 	\label{fig:mcts-simulation}
 \end{figure}
 
-The first, straightforward assessment of a play-out's quality is the length of the game played. Consider a single MCTS simulation as depicted in Figure \ref{fig:mcts-simulation}, we can define two seperate distances: 
+The first, straightforward assessment of a play-out's quality is the length of the game played. Consider a single MCTS simulation as depicted in Figure \ref{fig:mcts-simulation}, here we can define two seperate distances: 
 \begin{enumerate}
-\item the number of moves from the root $S$ to the expanded leaf $N$, $d_{SN}$,
-\item the number of moves required to reach $T$, the terminal state, from $N$ during play-out $p_T$.
+\item The number of moves from the root $S$ to the expanded leaf $N$, $d_{SN}$,
+\item The number of moves required to reach $T$, the terminal state, from $N$ during play-out $p_{NT}$.
 \end{enumerate}
 The length of the simulation is defined as the sum of these distances $m_{ST} = d_{SN} + p_{NT}$, i.e. the total number of moves made by both players to reach the terminal state of the game from the current gamestate.
 
 Considering that, in Monte-Carlo methods a random element is present in simulations, each move played increases the uncertainty of the final result. The most important benefit of using this information is that it can be obtained independent of the domain. Unless the game has a fixed-length, the variance of the length of a play-out can be informative in determining its quality.
 
+%-------------------------------------------------------------------
 \section{Quality-based play-out rewards}
+Alter rewards, centered around $r_t$ using sigmoid. Sigmoids are great, i love them, here's why!
+\begin{figure}[ht]
+\begin{tikzpicture}
+\pgfplotsset{compat=1.9}
+  \begin{axis}[
+	ylabel = Reward bonus $b$,
+    xlabel = Normalized distance to mean $\lambda$,
+  	axis equal image=false 
+  	]
+    \addplot[red, mark=none] {.5/(1+e^(-x)) - .25} node [pos=0.75,pin={-10:$k=1$},inner sep=0pt]{};
+    \addplot[darkgray, mark=none] {.5/(1+e^(-1.5*x)) - .25} node [pos=0.607,pin={-10:$k=1.5$},inner sep=0pt]{};
+    \addplot[blue, mark=none] {.5/(1+e^(-2*x)) - .25} node [pos=0.55,pin={-10:$k=2$},inner sep=0pt]{};
+    \draw[ultra thin] (axis cs:\pgfkeysvalueof{/pgfplots/xmin},0) -- (axis cs:\pgfkeysvalueof{/pgfplots/xmax},0);
+	\draw[ultra thin] (axis cs:0,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:0,\pgfkeysvalueof{/pgfplots/ymax}); 
+  \end{axis}
+\end{tikzpicture}
+    \caption{Rewards resulting from sigmoid functions centered around 0.}
+	\label{fig:sigmoids}
+\end{figure}
 \subsection{Relative Bonus}
+Alter the rewards based on $m_{ST}$
 \subsection{Qualitative Bonus}
+Alter the reward based on the quality of the terminal state. Different heuristics per game.
 
+%-------------------------------------------------------------------
 \section{Algorithm}
-
-\begin{algorithm2e}[t]
-  {\bf MCTS}(node $p$, cumulative node depth $d_{S, p}$):\;
+Explain all the alterations to standard MCTS
+\begin{algorithm2e}[ht]
+\setstretch{1.15}
+  {\bf MCTS}(node $n_p$, cumulative node depth $d_{S, n_p}$):\;
   \pushline
-    \If{isLeaf($p$)}{Expand($p$)}
-    Select a child $c_i$ that maximizes $X_i$ from Eq.~\ref{eq:uct} \;
-    \If{$n_i = 0$}{
-    	$\{q_t, w_t, m_t, r_t\} \gets$ Playout$(c_i)$ 			\;			\label{alg:results}
-    	
+    \If{isLeaf($n_p$)}{Expand($n_p$)}
+    Select a child $n_i$ that maximizes $X_i$ from Eq.~\ref{eq:uct} 	\;
+    $d_{S, n_i} \gets d_{S, n_p} + 1$								\;
+    \eIf{$visits(n_i) = 0$}{
+    	$\{q_t, p_{n_it}, r_t\} \gets$ Playout$(n_i)$ 					\;			\label{alg:results}
+    	$m_{St} \gets d_{S, n_i} + p_{n_it}$									\;
     	\If{enabled$(rb)$}{
-    		$r_t \gets r_t + \sgn{r} * BONUS(\bar{M} - m_t, s_m)$ 		\;
-    		Update $\bar{M}$ and $s_m$ with $m_t$							\;
+    		$\tilde{r_t} \gets r_t + \sgn(r_t) \times$ BONUS$(\bar{M} - m_{St}, s_m)$ 		\;
+    		Update $\bar{M}$ and $s_m$ with $m_{St}$						\;
 		}
-
 		\If{enabled$(qb)$} {
-    		$r_t \gets r_t + \sgn{r} * BONUS(\bar{Q} - q_t, s_q)$ 		\;
+    		$\tilde{r_t} \gets r_t + \sgn(r_t) \times$ BONUS$(q_t -\bar{Q}, s_q)$ 		\;
     		Update $\bar{Q}$ and $s_q$ with $q_t$ 						\;
     	}
-    } \Else {
-    	$r_t$ = -MCTS($c_i$, $d_{S, c_i})$)						\; 
+    	Update $n_i$ with $\tilde{r_t}$
+    }{
+    	$\tilde{r_t}$ = -MCTS($c_i$, $d_{S, n_i})$)								\; 
     }
-
-    {\bf return} $r_t$												\;
-  	
-  	\popline
+    Update $n_p$ with $\tilde{r_t}$													\;
+   \popline
+    {\bf return} $\tilde{r_t}$													\;
   	\;
-    {\bf BONUS}(distance to mean $\delta$, sample std.dev $s$):		\;
-    
+    {\bf BONUS}(distance to mean $\delta$, std. dev. $s$):			\;
     \pushline
-    	$\lambda \gets \frac{\delta}{s_m}$					\;
-    	$b \gets \frac{0.5}{1+\exp{-K\lambda}} - 0.25$			\;
-    \bf{return} $b$											\;
+    	$\lambda \gets \frac{\delta}{s}$								\;
+    	$b \gets \frac{0.5}{1+\exp(-K\lambda)} - 0.25$					\;
     \popline
-
-    % \ElseIf{ExpandableNode$(p,l)$}{                           \label{alg:expandstart}
-    %   \For{$c \in C(p)$}{                                       \label{alg:oldnewstart}
-    %     $c \gets $NewLeafNode() \;                              
-    %     Add new leaf $c$ to the tree\;                          \label{alg:oldnewend}
-    %   }
-    %   $(R,c') \gets \mbox{Play-out}(p)$\;
-    %   Update$(c,R)$; Update$(p,R)$ \;
-    %   {\bf return} $(p,R)$                            \label{alg:expandend}
-    % }
-    % \Else{  
-    %   Let $t$ be the tactic set at the root \;                          \label{alg:internalstart}
-    %   $n_p \gets p.n_{old} + p.n_{new}$\;
-    %   \For{$c \in C(p)$}{
-    %     Let $i$ be the action associated with child $c$ \;
-    %     $n_i \gets c.n_{old} + c.n_{new}$ \;
-    %     $v_i \gets M^i_t$ as defined in Eq.~\ref{eq:vi}\;
-    %   }
-    %   Select a move $i$ that maximizes $X_i$ from Eq.~\ref{eq:uct} \;
-    %   $(c, R', \Delta l) \gets p.\mbox{ApplyMove}(i)$\;                  \label{alg:transition}
-    %   \If{$R'_{survival} = 0$}{                                            \label{alg:deathstart}
-    %     $(R,c) \gets \mbox{Play-out}(p)$\;
-    %     Update$(p,R)$\;
-    %     {\bf return} $(p,R)$\;                                  		\label{alg:deathend}
-    %   }
-    %   $R \gets \mbox{MCTS}(c, l + \Delta l)$\;                               \label{alg:reccall}
-    %   Update$(p,R)$\;
-    %   {\bf return} $(p,R)$\;
-    % }
+    \bf{return} $b$														\;
   \vspace{0.3cm}
   \caption{Pseudo-code of the MCTS and BONUS functions \label{alg}}
 \end{algorithm2e}
 
+%-------------------------------------------------------------------
 \section{Experiments}
+Experiments run on 5 different two player boardgames.
 \subsection{Experimental setup}
+Describe setup of experiments, k's used, c's used.
 
 \subsection{Results}
+- Results UCT vs RB
+- Results UCT vs QB
+- Results UCT vs RB + RB
+- Results RB vs QB
+- Graph of K's / UCT C's
 
+%-------------------------------------------------------------------
 \section{Conclusion}
+Relative bonus - interesting because requires no domain knowledge, works best in games with long play-outs.
+QB works in all domains, but requires domain knowledge, nonetheless, even using simple evaluation of the terminal state improved results considerably.
 
+RB especially interesting for General Game Playing (GGP), where knowledge of games is sparse. RB improves results without domain-dependent knowledge.
+
+Would be interesting to determine if RB/QB could improve results in non-game domains.
+
+%-------------------------------------------------------------------
 \bibliography{references}
 \end{document}
