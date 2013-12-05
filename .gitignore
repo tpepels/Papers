@@ -1,6 +1,4 @@
-
-<!-- saved from url=(0095)https://gist.github.com/kogakure/149016/raw/e056704ebab0fbcd7bf937169b4057d378d09cf8/.gitignore -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css"></style></head><body style=""><pre style="word-wrap: break-word; white-space: pre-wrap;">*.aux
+*.aux
 *.glo
 *.idx
 *.log
@@ -22,4 +20,4 @@
 *.mtc
 *.mtc1
 *.out
-*.synctex.gz</pre></body></html>
+*.synctex.gz
