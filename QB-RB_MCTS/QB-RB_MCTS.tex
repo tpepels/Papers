@@ -44,7 +44,7 @@ The paper is structured as follows; first, the general MCTS framework is discuss
 	\label{fig:mcts-algorithm}
 \end{figure}
 %from pac-man paper
-Monte-Carlo Tree Search (MCTS) is a best-first search method based on random sampling of the state space for a specified domain \cite{kocsis2006bandit},\cite{coulom2007efficient}. In gameplay, this means that decisions are made based on the results of random play-outs. MCTS has been successfully applied to various two-player games games such as Go \cite{lee2010current} and Hex \cite{arneson2010monte}. Moreover, MCTS has recently seen successes in other domains such as Real-Time Strategy games \cite{browne2012survey}, and Real-Time games such as Ms Pac-Man \cite{enhancementspacmancig12} and the Physical Travelling Salesman problem \cite{powleytsp}.
+Monte-Carlo Tree Search (MCTS) is a best-first search method based on random sampling of the state space for a specified domain \cite{kocsis2006bandit},\cite{coulom2007efficient}. In gameplay, this means that decisions are made based on the results of random play-outs. MCTS has been successfully applied to various two-player games games such as Go \cite{lee2010current} and Hex \cite{arneson2010monte}. Moreover, MCTS has recently seen successes in other domains such as Real-Time Strategy games \cite{browne2012survey}, Real-Time games such as Ms Pac-Man \cite{enhancementspacmancig12} and the Physical Travelling Salesman problem \cite{powleytsp}, and non-game domains such as optimization, scheduling and security \cite{browne2012survey}.
 
 In MCTS, a tree is built incrementally over time and maintains statistics at each node corresponding the rewards collected at those nodes and number of times the nodes have been visited. The root of this tree corresponds to the agent's current position. The basic version of MCTS consists of four steps, which are performed iteratively until a computational threshold is reached, i.e. a set number of iterations, an upper limit on memory usage, or a time constraint. The four steps (depicted in Figure \ref{fig:mcts-algorithm}) at each iteration are \cite{chaslot2008progressive}:
 \begin{itemize}
@@ -110,11 +110,14 @@ In our proposed framework, rewards of MCTS simulations return a tuple of three r
 \subsection{Relative Bonus}
 First, note that $m_{ST}$ depends considerably on both the domain in question and the progress of the game. By itself, the variable is neither normalized, nor relative to a central tendency. As such, adding the value to $r$ as is, leads to a biased distribution of the value over time, where, at the beginning of a game, $m_{ST}$ takes on higher values than when the game approaches its terminal state. Moreover, considering that the length of a game cannot be determined beforehand, we have no accurate way of normalizing the observed values absolutely, based on the expected total length of the game. Therefore, two normalizers need to be approximated: 1) a central measure, to relate the desired variable to the current progress, and 2) a normalizing distance to the central measure, since the variance of observed $m_{ST}$ values may also differ over time.
 
-A central measure can be approximated online, by maintaining an average $\bar{M}^w$, for each player (indexed by $w$), of the observed $m_{ST}$ values so far. After each simulation ends, $m_{ST}$ is compared to $\bar{M}^w$. 
+A central measure can be approximated online, by maintaining an average $\bar{M}$, for each player (indexed by $w$), of the observed $m_{ST}$ values so far. After each simulation ends, $m_{ST}$ is compared to $\bar{M}^w$, and $\bar{M}^w$ is updated with the observed $m_{ST}$.
 \begin{equation}
-\delta_m = m_{ST} - \bar{M}^w
+\delta_m = \bar{M}^w - m_{ST}
 \end{equation}
-after which $\bar{M}^w$ is updated. This ensures $\delta_m$ is relative to the current progress of the game, and independent of the domain's tendency regarding the length of games. Moreover we achieve the desired effect of valuating shorter simulations with a positive value and, consequently longer ones with a negative value. However, $\delta_m$ still depends on the progress of the game. In most domains, the start of any game will have a high variance with respect to the length of simulations. Insufficient prior moves have been made, and MCTS can not yet accurately predict the progression of the game. As a consequence, play-outs will last longer at the start of the game than when it reaches the terminal state. As such the variance of the observed $m_{ST}$ values over time may differ substantially. Which leads to the requirement of a normalizer.
+%\begin{equation}
+%\bar{M}^w_n = \bar{M}^w_{n-1} + \frac{m_{ST, n} - \bar{M}^w_{n-1}}{n}
+%\end{equation}
+ This ensures $\delta_m$ is relative to the current progress of the game, and independent of the domain's tendency regarding the length of games. Moreover we achieve the desired effect of valuating simulations shorter than average with a positive value and those longer with a negative value. However, $\delta_m$ still depends on the progress of the game. In most domains, the start of any game will have a high variance with respect to the length of simulations. Insufficient prior moves have been made, and MCTS can not yet accurately predict the progression of the game. As a consequence, play-outs will last longer at the start of the game than when it reaches the terminal state. As such the variance of the observed $m_{ST}$ values over time may differ substantially. Which leads to the requirement of a normalizer.
 
 Assuming that the distribution of $m_{ST}$ values over time is $M \sim \mathcal{N}(\bar{M}, \hat{\sigma}_m)$, then $\hat{\sigma}^w_m$ is the sample standard deviation which can be used to normalize $\delta_m$ with respect to the current variance of the length of simulated games. Now we can define a normalized variable $\lambda$ as follows:
 
@@ -133,7 +136,7 @@ b(\lambda) = -0.25 + \frac{0.5}{1+e^{-k\lambda}}
 
 Figure \ref{fig:sigmoids} shows the graphs for three different values of $k$ in Equation \ref{eq:sigmoid}. $k$ is a constant to be determined empirically, which shapes the bonus to be added to $r$. Higher values of $k$ determine both the slope, and the start of the horizontal asymptotes of the sigmoid function.
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \centering
 \begin{tikzpicture}[scale=0.8]
   \begin{axis}[
@@ -162,14 +165,15 @@ r_b = r + \sgn(r) \times b(\lambda)
 This value is backpropagated from the expanded leaf to the root node. The range of $r_b$ is now $[-1.25, 1.25]$, i.e. the bonus $b(\lambda)$ is centered around the possible values of $r$.
 
 \subsection{Qualitative Bonus}
-Determining the qualitative bonus follows the same procedure as the relative bonus. Similar to RB a distribution over observed $q$ values is maintained $Q \sim \mathcal{N}(\bar{Q}, \hat{\sigma}_q)$ for each player $w$. Furthermore, the value of $q$ is determined by a domain dependent assessment of quality of the terminal state. Assuming that higher values of $q$ represent a higher score for the winning player $w$, then $\delta_q$ is defined as:
+Calculation of the Qualitative Bonus follows the same procedure as the Relative Bonus. Similar to RB, a distribution over observed $q$ values is maintained $Q \sim \mathcal{N}(\bar{Q}, \hat{\sigma}_q)$ for each player $w$. The value of $q$ is determined by a domain dependent assessment of quality of the terminal state. Assuming that higher values of $q$ represent a higher quality terminal state for the winning player $w$, then $\delta_q$ becomes:
 \begin{equation}
 \delta_q = q - \bar{Q}^w
 \end{equation}
-Consequently, $\lambda$ becomes:
+Where $\bar{Q}^w$ is updated with $q$ after every simulation. Consequently, $\lambda$ is redefined as:
 \begin{equation}
 \lambda = \frac{\delta_q}{\hat{\sigma}^w_q}
 \end{equation}
+Finally the bonus $b(\lambda)$ is computed using the sigmoid function in equation \ref{eq:sigmoid} with an optimized $k$ constant, and summed with the result of the simulation $r$.
 
 %-------------------------------------------------------------------
 \section{Pseudo-Code}
