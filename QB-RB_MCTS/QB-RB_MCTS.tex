@@ -28,7 +28,7 @@ In this paper measures for assessing the a posteriori quality of Monte-Carlo sim
 %-------------------------------------------------------------------
 \section{Introduction}
 \label{sec:intro}
-Monte-Carlo Tree Search (MCTS) is a best-first search method based taking random samples of the state space for a given domanin \cite{kocsis2006bandit, coulom2007efficient}. MCTS depends on the results of numerous simulations, each of these consist of two parts, 1) the selection step, where moves are selected and played according to the a selection policy, and 2) the play-out step, where moves are played according to a simulation strategy. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is backpropagated along the tree from the expanded leaf to the root node. All rewards are colleced at the nodes on the first ply, on which the final move to play is based. which is selected based on either the node with the highest number of visits, the highest average reward, or a combination of these two \cite{chaslot2008progressive}. In this paper two methods are proposed for determining the quality of a simulation based on the terminal state reached. The first method proposed assesses the quality of a simulation based on its length $m_{ST}$. In the second method, we propose a heuristic evaluation of the terminal state $q$ to determine the simulation's quality. Moreover, we show that adjusting $r$ in a specific way using  $m_{ST}$ and/or $q$ leads to increased performance in five different two-player games.
+Monte-Carlo Tree Search (MCTS) is a best-first search method, based on random sampling of a given domain \cite{kocsis2006bandit, coulom2007efficient}. MCTS depends on the results of numerous simulations and grows a search tree online. Each of these consist of two parts, 1) the selection step, where moves are selected and played according to the a selection policy, and 2) the play-out step, where moves are played according to a simulation strategy. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is backpropagated along the tree from the expanded leaf to the root node. All rewards are colleced at the nodes on the first ply, on which the final move to play is based. which is selected based on either the node with the highest number of visits, the highest average reward, or a combination of these two \cite{chaslot2008progressive}. In this paper two methods are proposed for determining the quality of a simulation based on the terminal state reached. The first method proposed assesses the quality of a simulation based on its length $m_{ST}$. In the second method, we propose a heuristic evaluation of the terminal state $q$ to determine the simulation's quality. Moreover, we show that adjusting $r$ in a specific way using  $m_{ST}$ and/or $q$ leads to increased performance in five different two-player games.
 
 Other techniques for rewarding simulations have been proposed \cite{Winands2010a}, where play-outs are cut-off early and their state heuristically evaluated. Furthermore, evaluating the final \emph{score} of a game has shown to improve results in games that base the winning player on the one with the highest score \cite{shibahara2008combining}. However, for some domains a strong heuristic evaluation may not be available or too time-consuming, and certainly not all games determine the winning player on the highest scoring player. Nonetheless, using the straightforward discrete reward $r$, any information other than the win/loss/draw state of the play-out's final position is disregarded. For these reasons, we propose assessing the rewards of play-outs based on any information available at the terminal state.
 
@@ -71,14 +71,7 @@ where $v_i$ is the score of the child $i$ based on the average result of simulat
 \section{Assessing simulation quality}
 \label{sec:poqual}
 
-In this section we will discuss two measures by which the quality of the terminal state of a simulation can be assessed. First, the length of a simulation is detailed as a quality measure, second some heuristic assessment of terminal states is considered. In the next section we establish how these techniques can be used to enhance the rewards of MCTS simulations.
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=.3\textwidth]{img/figure2.png}
-	\caption{A single MCTS simulation \cite{finnsson2010learning}.}
-	\label{fig:mcts-simulation}
-\end{figure}
+In this section two measures by which the quality of the terminal state of a simulation can be assessed are discussed. First, the length of a simulation is detailed as a quality measure, second some heuristic assessment of terminal states is considered. In the next section we establish how these techniques can be used to enhance the rewards of MCTS simulations.
 
 The first, straightforward assessment of a simulation's quality is the length of the game played. Consider a single MCTS simulation as depicted in Figure \ref{fig:mcts-simulation}, here we can define two seperate distances: 
 \begin{enumerate}
@@ -91,6 +84,13 @@ m_{ST} = d_{SN} + d_{NT}
 \label{eq:m_ST}
 \end{equation}
 i.e. the total number of moves made by both players before reaching the terminal state of the game $T$ from $S$, the root's game state.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=.3\textwidth]{img/figure2.png}
+	\caption{A single MCTS simulation \cite{finnsson2010learning}.}
+	\label{fig:mcts-simulation}
+\end{figure}
 
 Moves selected during play-out are generated by some simulation strategy. Generally this aither a  random strategy, or a rule-based, reactive strategy, combined with a source of randomness such as an $\epsilon$-greedy selection \cite{sutton1998reinforcement, sturtevant2008analysis}. Various alternative methods have been proposed, such as using low-level $\alpha\beta$ searches \cite{winands2011a}, and methods that learn a strategy online, such as N-Grams and the Last-Good-Reply policy \cite{Tak2012}, or the Move-average Sampling Technique (MAST) \cite{finnsson2010learning}. However, each of these methods and strategies have some random element in common. Moreover, they select moves based on some imperfect technique, because they have to make quick decisions to allow for numerous simulations to be made during the allowed time. As such, each move played ultimately increases uncertainty with respect to the accuracy of the final result, by some degree. Hence, the length of the simulation may be regarded as an indicator of the accuracy of its result.
 
@@ -108,44 +108,68 @@ Based on the classification of quality measures in the previous section, we prop
 In our proposed framework, rewards of MCTS simulations return a tuple of three reward values, $\tuple{r, w, q, d_{NT},}$ representing the reward $r \in \{-1, 0, 1\}$, the winning player $w$, the heuristic assessment of the terminal state $q$, and the distance from the expanded node $N$ to the terminal state $T$: $d_{NT}$, respectively. $m_{ST}$ is then computed as defined in \ref{eq:m_ST}. First we will define the Relative Bonus (RB) based on $m_{ST}$ information, after which, the Qualitative Bonus (QB) is described which is similar, except for being based on $q$.
 
 \subsection{Relative Bonus}
-First, note that $m_{ST}$ depends considerably on both the domain in question and the progress of the game. By itself, $m_{ST}$ is neither normalized, nor relative to a central tendency. As such, adding the value to $r$ as is, leads to a biased distribution of the value over time, where, at the beginning of the game, $m_{ST}$ takes on higher values than when the game approaches its terminal state. Moreover, considering that the length of a game cannot be determined beforehand, we have no accurate way of normalizing $m_{ST}$ absolutely, based on the expected total length of the game. Therefore two central measures need to be approximated: 1) a central measure, to relate the desired variable to the current progress, and 2) a normalizing distance to the central measure, since the variance of observed $m_{ST}$ values may also differ over time.
+First, note that $m_{ST}$ depends considerably on both the domain in question and the progress of the game. By itself, the variable is neither normalized, nor relative to a central tendency. As such, adding the value to $r$ as is, leads to a biased distribution of the value over time, where, at the beginning of a game, $m_{ST}$ takes on higher values than when the game approaches its terminal state. Moreover, considering that the length of a game cannot be determined beforehand, we have no accurate way of normalizing the observed values absolutely, based on the expected total length of the game. Therefore, two normalizers need to be approximated: 1) a central measure, to relate the desired variable to the current progress, and 2) a normalizing distance to the central measure, since the variance of observed $m_{ST}$ values may also differ over time.
 
-First, a central measure can be approximated online, by maintaining an average $\bar{M}^w$, for each player (indexed by $w$), of the observed $m_{ST}$ values so far. After each simulation ends, $m_{ST}$ is compared to $\bar{M}^w$, i.e. $\delta = m_{ST} - \bar{M}^w$, after which $\bar{M}^w$ is updated. This ensures $\delta$ is relative to the current progress of the game, and independent of the domain's tendency regarding the length of games. Moreover we achieve the desired effect of valuating shorter simulations with a positive value and, consequently longer ones with a negative value. However, $\delta$ still depends on the progress of the game. In most domains, the start of any game will have a high variance with respect to the length of simulations. Insufficient prior moves have been made, and MCTS can not yet accurately predict the progression of the game. As a consequence, play-outs will last longer at the start of the game than when it reaches the terminal state. As such the variance of the observed $m_{ST}$ values over time may differ substantially. Which leads to the requirement of a normalizer.
+A central measure can be approximated online, by maintaining an average $\bar{M}^w$, for each player (indexed by $w$), of the observed $m_{ST}$ values so far. After each simulation ends, $m_{ST}$ is compared to $\bar{M}^w$. 
+\begin{equation}
+\delta_m = m_{ST} - \bar{M}^w
+\end{equation}
+after which $\bar{M}^w$ is updated. This ensures $\delta_m$ is relative to the current progress of the game, and independent of the domain's tendency regarding the length of games. Moreover we achieve the desired effect of valuating shorter simulations with a positive value and, consequently longer ones with a negative value. However, $\delta_m$ still depends on the progress of the game. In most domains, the start of any game will have a high variance with respect to the length of simulations. Insufficient prior moves have been made, and MCTS can not yet accurately predict the progression of the game. As a consequence, play-outs will last longer at the start of the game than when it reaches the terminal state. As such the variance of the observed $m_{ST}$ values over time may differ substantially. Which leads to the requirement of a normalizer.
 
-If we assume that the distribution of $m_{ST}$ values over time is $M \sim \mathcal{N}(\bar{M}, \hat{\sigma}_m)$, then $\hat{\sigma}^w_m$ is the sample standard deviation which can be used to normalize $\delta$ with respect to the current variance in game-lengths. And $\lambda = \nicefrac{\delta}{\hat{\sigma}^w_m}$ is a variable that is both normalized with respect to the sample standard deviation of $M$, and relative to $\bar{M}^w$. This means $\lambda$ wil be both independent of the progress of the game, and normalized with respect to the current variance in the length of simulations.
-
-Since the distribution of $M$ is not known, $\lambda$ can still take on unrestricted values if $M$ is close to uniform. Moreover the relation with the desired reward is not neccesarily linear. As such, in order to bound the relative bonus $b_r$ we propose to use a sigmoid function centered around $0$ on both axes, and with a range of $[-0.25, 0.25]$. 
+Assuming that the distribution of $m_{ST}$ values over time is $M \sim \mathcal{N}(\bar{M}, \hat{\sigma}_m)$, then $\hat{\sigma}^w_m$ is the sample standard deviation which can be used to normalize $\delta_m$ with respect to the current variance of the length of simulated games. Now we can define a normalized variable $\lambda$ as follows:
 
 \begin{equation}
-r_b = -.25 + \frac{0.5}{1+e^{-k\lambda}}
+\lambda = \frac{\delta_m}{\hat{\sigma}^w_m}
+\end{equation}
+
+$\lambda$ is both normalized with respect to the sample standard deviation of $M$, and relative to $\bar{M}^w$. This means $\lambda$ wil be both independent of the progress of the game, and normalized with respect to the current variance in the length of simulations.
+
+Since the distribution of $M$ is not known, $\lambda$ can still take on unrestricted values, particularly if $M \sim \mathcal{N}(\bar{M}, \hat{\sigma}_m)$ is close to uniform. Moreover, the relation with the desired reward is not neccesarily linear. As such, in order to both bound, and shape the values of the relative bonus $b_r$ we propose to use a sigmoid function centered around $0$ on both axes, and with a range of $[-0.25, 0.25]$.
+
+\begin{equation}
+b(\lambda) = -0.25 + \frac{0.5}{1+e^{-k\lambda}}
 \label{eq:sigmoid}
 \end{equation}
 
-Figure \ref{fig:sigmoids} shows the graphs for three different values of $k$ in Equation \ref{eq:sigmoid}. $k$ is a constant to be empirically determined which shapes the bonus to be added to $r$. Higher values of $k$ determine both the steepness of the function, and the start of the horizontal asymptotes of the sigmoid function.
+Figure \ref{fig:sigmoids} shows the graphs for three different values of $k$ in Equation \ref{eq:sigmoid}. $k$ is a constant to be determined empirically, which shapes the bonus to be added to $r$. Higher values of $k$ determine both the slope, and the start of the horizontal asymptotes of the sigmoid function.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[scale=0.8]
   \begin{axis}[
-	ylabel = Reward bonus $b$,
+	ylabel = Bonus $b(\lambda)$,
     xlabel = Normalized distance to mean $\lambda$,
   	axis equal image=false 
   	]
 
-    \addplot[red, mark=none] {.5/(1+e^(-x)) - .25} node [pos=0.75,pin={-10:$k=1$},inner sep=0pt]{};
-    \addplot[darkgray, mark=none] {.5/(1+e^(-1.5*x)) - .25} node [pos=0.607,pin={-10:$k=1.5$},inner sep=0pt]{};
-    \addplot[blue, mark=none] {.5/(1+e^(-2*x)) - .25} node [pos=0.55,pin={-10:$k=2$},inner sep=0pt]{};
+    \addplot[red, mark=none, domain =-3:3] {.5/(1+e^(-x)) - .25} node [pos=0.8,pin={-10:$k=1$},inner sep=0pt]{};
+    \addplot[orange, mark=none, domain =-3:3] {.5/(1+e^(-1.5*x)) - .25} node [pos=0.6,pin={-10:$k=1.5$},inner sep=0pt]{};
+    \addplot[blue, mark=none, domain =-3:3] {.5/(1+e^(-2*x)) - .25} node [pos=0.7,pin={-200:$k=2$},inner sep=0pt]{};
+       \addplot[purple, mark=none, domain =-3:3] {.5/(1+e^(-2.5*x)) - .25} node [pos=0.6,pin={-200:$k=2.5$},inner sep=0pt]{};
     \draw[ultra thin] (axis cs:\pgfkeysvalueof{/pgfplots/xmin},0) -- (axis cs:\pgfkeysvalueof{/pgfplots/xmax},0);
 	\draw[ultra thin] (axis cs:0,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:0,\pgfkeysvalueof{/pgfplots/ymax}); 
   \end{axis}
 \end{tikzpicture}
-    \caption{Rewards resulting from sigmoid functions centered around 0.}
+    \caption{Bonusses resulting from different $k$ constants in Equation \ref{eq:sigmoid}.}
 	\label{fig:sigmoids}
 \end{figure}
 
+Finally, the reward $r$ returned by the original simulation is altered by $b(\lambda)$ as follows:
+\begin{equation}
+r_b = r + \sgn(r) \times b(\lambda)
+\end{equation}
+
+This value is backpropagated from the expanded leaf to the root node. The range of $r_b$ is now $[-1.25, 1.25]$, i.e. the bonus $b(\lambda)$ is centered around the possible values of $r$.
 
 \subsection{Qualitative Bonus}
-Alter the reward based on the quality of the terminal state. Different heuristics per game.
+Determining the qualitative bonus follows the same procedure as the relative bonus. Similar to RB a distribution over observed $q$ values is maintained $Q \sim \mathcal{N}(\bar{Q}, \hat{\sigma}_q)$ for each player $w$. Furthermore, the value of $q$ is determined by a domain dependent assessment of quality of the terminal state. Assuming that higher values of $q$ represent a higher score for the winning player $w$, then $\delta_q$ is defined as:
+\begin{equation}
+\delta_q = q - \bar{Q}^w
+\end{equation}
+Consequently, $\lambda$ becomes:
+\begin{equation}
+\lambda = \frac{\delta_q}{\hat{\sigma}^w_q}
+\end{equation}
 
 %-------------------------------------------------------------------
 \section{Pseudo-Code}
@@ -162,11 +186,11 @@ Explain all the alterations to standard MCTS
     \eIf{$n_i = 0$}{
     	$\tuple{r, w, q, d_{iT}} \gets$ Playout$(n_i)$ 					\;			\label{alg:results}
     	$m_{ST} \gets d_{Si} + d_{iT}$									\;
-    	\If{enabled$(rb)$}{
+    	\If{enabled$(b_r)$}{
     		$r \gets r + \sgn(r) \times$ BONUS$(\bar{M}^w - m_{ST}, \hat{\sigma}^w_m)$ 		\;
     		Update $\bar{M}^w$ and $\hat{\sigma}^w_m$ with $m_{ST}$						\;
 		}
-		\If{enabled$(qb)$} {
+		\If{enabled$(b_q)$} {
     		$r \gets r + \sgn(r) \times$ BONUS$(q -\bar{Q^w}, \hat{\sigma}^w_q)$ 		\;
     		Update $\bar{Q^w}$ and $\hat{\sigma}^w_q$ with $q$ 						\;
     	}
