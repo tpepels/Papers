@@ -182,13 +182,13 @@ Explain all the alterations to standard MCTS
 
 \begin{algorithm2e}[ht]
 \setstretch{1.15}
-  {\bf MCTS}(node $p$, cumulative node depth $d_{Sp}$):\;
+  {\bf MCTS}(node $p$, node depth $d_{Sp}$):\;
   \pushline
     \If{isLeaf($p$)}{Expand($p$)}
     Select a child $i$ according to Eq.~\ref{eq:uct} 	\;
     $d_{Si} \gets d_{Sp} + 1$								\;
     \eIf{$n_i = 0$}{
-    	$\tuple{r, w, q, d_{iT}} \gets$ Playout$(n_i)$ 					\;			\label{alg:results}
+    	$\tuple{r, w, q, d_{iT}} \gets$ Playout$(i)$ 					\;			\label{alg:results}
     	$m_{ST} \gets d_{Si} + d_{iT}$									\;
     	\If{enabled$(b_r)$}{
     		$r \gets r + \sgn(r) \times$ BONUS$(\bar{M}^w - m_{ST}, \hat{\sigma}^w_m)$ 		\;
