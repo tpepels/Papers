@@ -22,15 +22,15 @@
 \bibliographystyle{ecai2010}
 
 \begin{abstract}
-In this paper measures for assessing the a posteriori quality of Monte-Carlo simulations are introduced. We show that altering the rewards of simulated play-outs in Monte-Carlo Tree Search based on their assessed quality improves results in five different two-player games. To achieve these results we propose two novel enhancements, the \emph{Qualitative Bonus} and the \emph{Relative Bonus}. The former relies on an domain-dependent assessment of the game's terminal state, whereas and the latter relies on the total number of moves made during a simulation. The proposed enhancements lead to a considerable performance increase in all five domains discussed.
+Monte-Carlo Tree Search is a best first search method based on sampling the state space of a given domain. In gameplay, positions are scored based on the rewards of numerous randomized play-outs. Generally, play-out rewards are defined discretely, e.g. $r \in \{-1, 0, 1\}$ and backpropagated from the expanded leaf to the root node. However, a play-out may provide additional information beside the loss/draw/win state of the terminal position. Therefore, we introduce measures for assessing the a posteriori quality of Monte-Carlo simulations. We show that altering the rewards of simulated play-outs in Monte-Carlo Tree Search based on their assessed quality improves results in five different two-player games. To achieve these results we propose two enhancements, the \emph{Qualitative Bonus} and the \emph{Relative Bonus}. The former relies on a domain-dependent assessment of the game's terminal state, whereas and the latter relies on the total number of moves made during a simulation. The proposed enhancements lead to a considerable performance increase in all five domains discussed.
 \end{abstract}
 
 %-------------------------------------------------------------------
 \section{Introduction}
 \label{sec:intro}
-Monte-Carlo Tree Search (MCTS) is a best-first search method, based on random sampling of a given domain \cite{kocsis2006bandit, coulom2007efficient}. MCTS depends on the results of numerous simulations and grows a search tree online. Each of these consist of two parts, 1) the selection step, where moves are selected and played according to the a selection policy, and 2) the play-out step, where moves are played according to a simulation strategy. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is backpropagated along the tree from the expanded leaf to the root node. All rewards are colleced at the nodes on the first ply, on which the final move to play is based. which is selected based on either the node with the highest number of visits, the highest average reward, or a combination of these two \cite{chaslot2008progressive}. In this paper two methods are proposed for determining the quality of a simulation based on the terminal state reached. The first method proposed assesses the quality of a simulation based on its length $m_{ST}$. In the second method, we propose a heuristic evaluation of the terminal state $q$ to determine the simulation's quality. Moreover, we show that adjusting $r$ in a specific way using  $m_{ST}$ and/or $q$ leads to increased performance in five different two-player games.
+Monte-Carlo Tree Search (MCTS) is a best-first search method, based on random sampling of a given domain \cite{kocsis2006bandit, coulom2007efficient}. MCTS depends on the results of numerous simulations and grows a search tree online. Each of these consist of two parts, 1) the selection step, where moves are selected and played according to the a selection policy, and 2) the play-out step, where moves are played according to a simulation strategy. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is backpropagated along the tree from the expanded leaf to the root node. All rewards are colleced at the nodes on the first ply, on which the final move to play is based. The move is selected based on either the node with the highest number of visits, the highest average reward, or a combination \cite{chaslot2008progressive}. In this paper, two methods are proposed for determining the quality of a simulation based on the play-out sampled. The first method proposed assesses the quality of a simulation based on its length $m_{ST}$. In the second method, we propose a heuristic assessment of the terminal state $q$ to determine the simulation's quality. Moreover, we show that adjusting $r$ in a specific way using  $m_{ST}$ and/or $q$ leads to increased performance in five different two-player games.
 
-Other techniques for rewarding simulations have been proposed \cite{Winands2010a}, where play-outs are cut-off early and their state heuristically evaluated. Furthermore, evaluating the final \emph{score} of a game has shown to improve results in games that base the winning player on the one with the highest score \cite{shibahara2008combining}. However, for some domains a strong heuristic evaluation may not be available or too time-consuming, and certainly not all games determine the winning player on the highest scoring player. Nonetheless, using the straightforward discrete reward $r$, any information other than the win/loss/draw state of the play-out's final position is disregarded. For these reasons, we propose assessing the rewards of play-outs based on any information available at the terminal state.
+Other techniques for rewarding simulations have been proposed \cite{Winands2010a}, where play-outs are cut-off early and their state heuristically evaluated. Furthermore, evaluating the final \emph{score} of a game has shown to improve results in games that base the winning player on the one with the highest score \cite{shibahara2008combining}. However, for some domains a heuristic evaluation may not be available or too time-consuming, and certainly not all games determine the winning player on the highest scoring player. Nonetheless, using the straightforward discrete reward $r$, any information other than the win/loss/draw state of the play-out's final position is disregarded. For these reasons, we propose assessing the rewards of play-outs based on any information available at the terminal state.
 
 The paper is structured as follows; first, the general MCTS framework is discussed. Next, two different methods for assessing the quality of play-outs are detailed. In Section \ref{sec:qoreward} explains how rewards can be altered given using the quality measures from the previous section. Followed by pseudo-code outlining the proposed algorithm. Finally the performance of the proposed methods is determined in the experiments section, accompanied by a discussion and conclusion.
 
@@ -44,26 +44,26 @@ The paper is structured as follows; first, the general MCTS framework is discuss
 	\label{fig:mcts-algorithm}
 \end{figure}
 %from pac-man paper
-Monte-Carlo Tree Search (MCTS) is a best-first search method based on random sampling of the state space for a specified domain \cite{kocsis2006bandit},\cite{coulom2007efficient}. In gameplay, this means that decisions are made based on the results of random play-outs. MCTS has been successfully applied to various two-player games games such as Go \cite{lee2010current} and Hex \cite{arneson2010monte}. Moreover, MCTS has recently seen successes in other domains such as Real-Time Strategy games \cite{browne2012survey}, Real-Time games such as Ms Pac-Man \cite{enhancementspacmancig12} and the Physical Travelling Salesman problem \cite{powleytsp}, and non-game domains such as optimization, scheduling and security \cite{browne2012survey}.
+Monte-Carlo Tree Search (MCTS) is a best-first search method based on random sampling of the state space for a specified domain \cite{kocsis2006bandit},\cite{coulom2007efficient}. In gameplay, this means that decisions are made based on the results of random play-outs. MCTS has been successfully applied to various two-player games games such as Go \cite{lee2010current}, Lines of Action \cite{Winands2010b}, and Hex \cite{arneson2010monte}. Moreover, MCTS has recently seen successes in other domains such as real-rime strategy games \cite{browne2012survey}, real-time games such as Ms Pac-Man \cite{enhancementspacmancig12} and the Physical Travelling Salesman problem \cite{powleytsp}, but aslo in non-game domains such as optimization, scheduling and security \cite{browne2012survey}.
 
 In MCTS, a tree is built incrementally over time and maintains statistics at each node corresponding the rewards collected at those nodes and number of times the nodes have been visited. The root of this tree corresponds to the agent's current position. The basic version of MCTS consists of four steps, which are performed iteratively until a computational threshold is reached, i.e. a set number of iterations, an upper limit on memory usage, or a time constraint. The four steps (depicted in Figure \ref{fig:mcts-algorithm}) at each iteration are \cite{chaslot2008progressive}:
 \begin{itemize}
-\item {\bf Selection}. Starting at the root node, children are chosen according to a selection policy (described in Subsection \ref{subsec:uct}). When a leaf node is reached that does not represent a terminal state it is selected for expansion.
-\item {\bf Expansion}. All children are added to the selected leaf node given available moves.
-\item {\bf Play-out}. A simulated play-out is run, starting from the state of the added node. Moves are performed randomly or according to a heuristic strategy until a terminal state is reached.
-\item {\bf Backpropagation}. The result of the simulated play-out is propagated immediately from the selected node back up to the root node. Statistics are updated along the tree for each node selected during the selection step and visit counts are increased.
+\item Selection. Starting at the root node, children are chosen according to a selection policy (described in Subsection \ref{subsec:uct}). When a leaf node is reached that does not represent a terminal state it is selected for expansion.
+\item Expansion. All children are added to the selected leaf node given available moves.
+\item Play-out. A simulated play-out is run, starting from the state of the added node. Moves are performed randomly or according to a simulation strategy until a terminal state is reached.
+\item Backpropagation. The result of the simulated play-out is propagated immediately from the selected node back up to the root node. Statistics are updated along the tree for each node selected during the selection step and visit counts are increased.
 \end{itemize}
-The combination of moves selected during the selection and play-out steps form a single simulation. In its basic form, MCTS requires no heuristic state evaluation. Nonetheless, in most cases it is beneficial to add some domain knowledge for selecting moves to play during play-out. MCTS can be terminated anytime and select a move to play based on the rewards and visits collected on the first ply.
+The combination of moves selected during the selection and play-out steps form a single simulation. In its basic form, MCTS requires no evaluation function. Nonetheless, in most cases it is beneficial to add some domain knowledge for selecting moves to play during play-out. MCTS can be terminated anytime and select a move to play based on the rewards and visits collected on the first ply.
 % /from pac-man paper
 
 %-------------------------------------------------------------------
 \subsection{UCT}
 \label{subsec:uct}
 %from pac-man paper
-During the selection step, a policy is required to explore the tree for rewarding decisions and finally converge to the most rewarding one. The Upper Confidence Bound applied to Trees (UCT) \cite{kocsis2006bandit} is derived from the UCB1 policy \cite{auer2002using} for maximizing the rewards of a multi-armed bandit. UCT balances the exploitation of rewarding nodes whilst allowing exploration of lesser visited nodes. Consider a node $p$ with children $A(p)$, then the policy determining which child $i$ to select:
+During the selection step, a policy is required to explore the tree for rewarding decisions and finally converge to the most rewarding one. The Upper Confidence Bound applied to Trees (UCT) \cite{kocsis2006bandit} is derived from the UCB1 policy \cite{auer2002using} for maximizing the rewards of a multi-armed bandit. UCT balances the exploitation of rewarding nodes whilst allowing exploration of lesser visited nodes. Consider a node $p$ with children $C(p)$, then the policy determining which child $i$ to select:
 \begin{equation}
 \label{eq:uct}
-i^* = argmax_{i \in A(p)}\left\{ v_i + C \sqrt{ \frac{\ln{n_p}}{n_i}}\right\}
+i^* = argmax_{i \in C(p)}\left\{ v_i + C \sqrt{ \frac{\ln{n_p}}{n_i}}\right\}
 \end{equation}
 where $v_i$ is the score of the child $i$ based on the average result of simulations that visited it. $n_p$ is the visit count of the node and $n_i$ the visit count of the current child. $C$ is the exploration constant to be determined by experimentation.
 % /from pac-man paper
@@ -92,9 +92,9 @@ i.e. the total number of moves made by both players before reaching the terminal
 	\label{fig:mcts-simulation}
 \end{figure}
 
-Moves selected during play-out are generated by some simulation strategy. Generally this aither a  random strategy, or a rule-based, reactive strategy, combined with a source of randomness such as an $\epsilon$-greedy selection \cite{sutton1998reinforcement, sturtevant2008analysis}. Various alternative methods have been proposed, such as using low-level $\alpha\beta$ searches \cite{winands2011a}, and methods that learn a strategy online, such as N-Grams and the Last-Good-Reply policy \cite{Tak2012}, or the Move-average Sampling Technique (MAST) \cite{finnsson2010learning}. However, each of these methods and strategies have some random element in common. Moreover, they select moves based on some imperfect technique, because they have to make quick decisions to allow for numerous simulations to be made during the allowed time. As such, each move played ultimately increases uncertainty with respect to the accuracy of the final result, by some degree. Hence, the length of the simulation may be regarded as an indicator of the accuracy of its result.
+Moves selected during play-out are generated by some simulation strategy. Generally this either a random strategy, or a rule-based, reactive strategy, combined with a source of randomness such as an $\epsilon$-greedy selection \cite{sutton1998reinforcement, sturtevant2008analysis}. Various alternative methods have been proposed, such as using low-level $\alpha\beta$ searches \cite{winands2011a}, and methods that learn a strategy online, such as N-Grams and the Last-Good-Reply policy \cite{Tak2012}, or the Move-average Sampling Technique (MAST) \cite{finnsson2010learning}. However, each of these methods and strategies have some random element in common. Moreover, they select moves based on some imperfect technique, because they have to make quick decisions to allow for numerous simulations to be made during the allowed time. As such, each move played ultimately increases uncertainty with respect to the accuracy of the final result, by some degree. Hence, the length of the simulation may be regarded as an indicator of the accuracy of its result.
 
-A predominant benefit of using simulation length as a quality measure is that it can be applied independent of the domain. Unless the game's length is fixed, the variance of the length of a play-out in particular can be informative in determining its quality.
+The main benefit of using simulation length as a quality measure is that it is domain independent. Unless the game's length is fixed, the variance of the length of a play-out in particular can be informative in determining its quality.
 
 The second measure of a simulation's quality is based on a heuristic assessment of the game's terminal state. Although evaluation functions can be designed for most games, they're used to evaluate non-terminal positions and assign them a specific value. However, MCTS generally performs a play-out until a terminal state is reached. Therefore, we are interested in assessing the terminal state of a game rather than intermediary positions. This limits the number of features that can be evaluated, yet provides a direct application to MCTS.
 
@@ -103,14 +103,15 @@ As before, consider a single MCTS simulation as depicted in Figure \ref{fig:mcts
 %-------------------------------------------------------------------
 \section{Quality-based simulation rewards}
 \label{sec:qoreward}
-Based on the classification of quality measures in the previous section, we propose two reward alterations for MCTS: the \emph{Relative Bonus} and the \emph{Qualitative Bonus}, relating to the length of the simulation and the heuristic evaluation of the terminal state, respectively. 
+Based on the classification of quality measures in the previous section, we propose two reward alterations for MCTS: \emph{Relative Bonus} and the \emph{Qualitative Bonus}, relating to the length of the simulation and the heuristic assessment of the terminal state, respectively. 
 
-In our proposed framework, rewards of MCTS simulations return a tuple of three reward values, $\tuple{r, w, q, d_{NT},}$ representing the reward $r \in \{-1, 0, 1\}$, the winning player $w$, the heuristic assessment of the terminal state $q$, and the distance from the expanded node $N$ to the terminal state $T$: $d_{NT}$, respectively. $m_{ST}$ is then computed as defined in \ref{eq:m_ST}. First we will define the Relative Bonus (RB) based on $m_{ST}$ information, after which, the Qualitative Bonus (QB) is described which is similar, except for being based on $q$.
+In our proposed framework, rewards of MCTS simulations return a tuple of three reward values, $\tuple{r, w, q, d_{NT}}$ representing the reward $r \in \{-1, 0, 1\}$, the winning player $w$, the heuristic assessment of the terminal state $q$, and the distance from the expanded node $N$ to the terminal state $T$: $d_{NT}$, respectively. $m_{ST}$ is then computed as shown in Equation \ref{eq:m_ST}. First we will define the Relative Bonus (RB) based on $m_{ST}$ information, after which, the Qualitative Bonus (QB) is described which is similar, except for being based on $q$.
 
 \subsection{Relative Bonus}
+\label{subsec:rb}
 First, note that $m_{ST}$ depends considerably on both the domain in question and the progress of the game. By itself, the variable is neither normalized, nor relative to a central tendency. As such, adding the value to $r$ as is, leads to a biased distribution of the value over time, where, at the beginning of a game, $m_{ST}$ takes on higher values than when the game approaches its terminal state. Moreover, considering that the length of a game cannot be determined beforehand, we have no accurate way of normalizing the observed values absolutely, based on the expected total length of the game. Therefore, two normalizers need to be approximated: 1) a central measure, to relate the desired variable to the current progress, and 2) a normalizing distance to the central measure, since the variance of observed $m_{ST}$ values may also differ over time.
 
-A central measure can be approximated online, by maintaining an average $\bar{M}$, for each player (indexed by $w$), of the observed $m_{ST}$ values so far. After each simulation ends, $m_{ST}$ is compared to $\bar{M}^w$, and $\bar{M}^w$ is updated with the observed $m_{ST}$.
+A central measure can be approximated online, by maintaining an average $\bar{M}^w$, for each player (indexed by $w$), of the observed $m_{ST}$ values so far. After each simulation ends, $m_{ST}$ is compared to $\bar{M}^w$, and $\bar{M}^w$ is updated with the observed $m_{ST}$.
 \begin{equation}
 \delta_m = \bar{M}^w - m_{ST}
 \end{equation}
@@ -165,6 +166,7 @@ r_b = r + \sgn(r) \times b(\lambda)
 This value is backpropagated from the expanded leaf to the root node. The range of $r_b$ is now $[-1.25, 1.25]$, i.e. the bonus $b(\lambda)$ is centered around the possible values of $r$.
 
 \subsection{Qualitative Bonus}
+\label{subsec:qb}
 Calculation of the Qualitative Bonus follows the same procedure as the Relative Bonus. Similar to RB, a distribution over observed $q$ values is maintained $Q \sim \mathcal{N}(\bar{Q}, \hat{\sigma}_q)$ for each player $w$. The value of $q$ is determined by a domain dependent assessment of quality of the terminal state. Assuming that higher values of $q$ represent a higher quality terminal state for the winning player $w$, then $\delta_q$ becomes:
 \begin{equation}
 \delta_q = q - \bar{Q}^w
@@ -178,52 +180,64 @@ Finally the bonus $b(\lambda)$ is computed using the sigmoid function in equatio
 %-------------------------------------------------------------------
 \section{Pseudo-Code}
 
-Explain all the alterations to standard MCTS
-
 \begin{algorithm2e}[ht]
 \setstretch{1.15}
-  {\bf MCTS}(node $p$, node depth $d_{Sp}$):\;
+  {\sc mcts}(node $p$, node depth $d_{Sp}$):							\;
   \pushline
     \If{isLeaf($p$)}{Expand($p$)}
-    Select a child $i$ according to Eq.~\ref{eq:uct} 	\;
-    $d_{Si} \gets d_{Sp} + 1$								\;
+    Select a child $i$ according to Eq.~\ref{eq:uct} 					\;
+    $d_{Si} \gets d_{Sp} + 1$											\;			\label{alg:depth}
     \eIf{$n_i = 0$}{
     	$\tuple{r, w, q, d_{iT}} \gets$ Playout$(i)$ 					\;			\label{alg:results}
-    	$m_{ST} \gets d_{Si} + d_{iT}$									\;
-    	\If{enabled$(b_r)$}{
-    		$r \gets r + \sgn(r) \times$ BONUS$(\bar{M}^w - m_{ST}, \hat{\sigma}^w_m)$ 		\;
-    		Update $\bar{M}^w$ and $\hat{\sigma}^w_m$ with $m_{ST}$						\;
-		}
-		\If{enabled$(b_q)$} {
-    		$r \gets r + \sgn(r) \times$ BONUS$(q -\bar{Q^w}, \hat{\sigma}^w_q)$ 		\;
-    		Update $\bar{Q^w}$ and $\hat{\sigma}^w_q$ with $q$ 						\;
+    	$m_{ST} \gets d_{Si} + d_{iT}$									\;			
+    	\If{enabled$(b_r)$ and $\hat{\sigma}^w_m > 0$}{
+    		$r \gets r + \sgn(r) \times$ BONUS$(\bar{M}^w - m_{ST}, \hat{\sigma}^w_m)$ 		\; \label{alg:rb}
+    		update $\bar{M}^w$ and $\hat{\sigma}^w_m$ with $m_{ST}$							\; \label{alg:meanstddev}
+		}	
+		\If{enabled$(b_q)$ and $\hat{\sigma}^w_q > 0$} {
+    		$r \gets r + \sgn(r) \times$ BONUS$(q -\bar{Q}^w, \hat{\sigma}^w_q)$ 			\; \label{alg:qb}
+    		update $\bar{Q^w}$ and $\hat{\sigma}^w_q$ with $q$ 								\;
     	}
-    	Update node $i$ with $r$
+    	update node $i$ with $r$										\;
     }{
-    	$r$ = -MCTS($i$, $d_{Si})$)								\; 
+    	$r$ = -{\sc mcts}($i$, $d_{Si})$)										\; 
     }
-    Update node $p$ with $r$													\;
+    update node $p$ with $r$											\;
    \popline
     {\bf return} $r$													\;
   	\;
-    {\bf BONUS}(distance to mean $\delta$, sample std. dev. $\hat{\sigma}$):			\;
+    {\sc bonus}(offset from mean $\delta$, sample std. dev. $\hat{\sigma}$):			\;	\label{alg:bonus}
     \pushline
-    	$\lambda \gets \nicefrac{\delta}{\hat{\sigma}}$								\;
-    	$b \gets \nicefrac{0.5}{\left(1+\exp(-K\lambda)\right)} - 0.25$					\;
+    	$\lambda \gets \nicefrac{\delta}{\hat{\sigma}}$									\;	\label{alg:lambda}
+    	$b \gets \nicefrac{0.5}{\left(1+\exp(-K\lambda)\right)} - 0.25$					\;	\label{alg:b}
     \popline
-    \bf{return} $b$														\;
+    \bf{return} $b$																		\;
   \vspace{0.3cm}
   \caption{Pseudo-code of the MCTS and BONUS functions \label{alg}}
 \end{algorithm2e}
 
+Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and QB. Note that negamax backups are used in this setup, and therefore $r$ is relative to the player to move at the start of the play-out. Whenever and \emph{update} is used in the algoritm, it refers to updating the average reward for a node, or the sample mean and standard deviation for $\bar{M}^w$ and $\bar{Q}^w$. During selection, starting from the root, the depth of the current node is updated on line \ref{alg:depth}. Whenever an expandable node is reached, its children are added to the tree and a play-out is initiated from one of them. A play-out returns a tuple of results, on line \ref{alg:results} 4 different values are returned: 1) the result of the play-out $r \in \{-1, 0, 1\}$, 2) the winning player $w$, 3) the assessed quality of the play-out's terminal state $q \in (0,1)$ defined in Subsection~\ref{sec:qoreward}, and 4) the number of moves made during play-out $d_{iT}$ defined in Subsection~\ref{sec:qoreward}. Using these values $r$ is altered. On line \ref{alg:rb} the relative bonus is applied to $r$, using the difference with the winning player's current mean $\bar{M}^w - m_{ST}$, i.e. lower values of $m_{ST}$ give a higher reward. After which the current mean and standard deviation are updated on line \ref{alg:meanstddev}. QB is applied on line \ref{alg:qb} using the assessed quality of the play-out $q$. Note that the distance to the mean is defined as $q - \bar{Q}^w$, because in contrast to RB, higher values of $q$ imply better results. The {\sc bonus} function on line \ref{alg:bonus}, computes the normalized $\lambda$ (line \ref{lambda}) and, successively the bonus $b$ (line \ref{alg:b}) using the sigmoid function, as defined in Subsections \ref{subsec:rb} and \ref{subsec:qb}.
+
 %-------------------------------------------------------------------
 \section{Experiments}
-Experiments run on 5 different two-player games.
+To determine the impact on performance of RB and QB, experiments were run on 5 different two player games.
+
 \subsection{Experimental setup}
-Describe setup of experiments, k's used, c's used.
+\label{subsec:expsetup}
+The proposed enhancements were tested in several two player games. 
+\begin{itemize}
+\item {\bf Amazons}
+\item {\bf Breakthrough}
+\item {\bf Cannon}
+\item {\bf Chinese Checkers}
+\item {\bf Pentalath}
+\end{itemize}
+
+Each game uses a play-out strategy including a re
 
 \subsection{Results}
-- Results UCT vs RB
+\label{subsec:results}
+- Results UCT vs R
 - Results UCT vs QB
 - Results UCT vs RB + RB
 - Results RB vs QB
