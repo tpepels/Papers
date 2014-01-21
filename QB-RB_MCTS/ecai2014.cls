@@ -1,7 +1,7 @@
-% documentclass ecai2008
+% documentclass ecai2014
 %
-% This is file `ecai2008.cls', the recommended style file for ECAI-2008
-% and PAIS-2008 submission and camera-ready copy, for use with latex2e 
+% This is file `ecai2014.cls', the recommended style file for ECAI-2014
+% submission and camera-ready copy, for use with latex2e 
 % in native mode. It is the same as `ecai2004.cls' used for ECAI-2004.
 
 % This file is an adaption of ecai98.cls. It provides the same style 
@@ -38,7 +38,7 @@
 
 % ----------------------------------------------------------------------
 
-\ProvidesClass{ecai2008}
+\ProvidesClass{ecai2014}
               [2002/03/06 v01 ECAI-2004 document class]
 \newcommand\@ptsize{}
 \newif\if@restonecol
