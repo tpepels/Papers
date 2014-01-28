@@ -180,7 +180,7 @@ r_q=r+\sgn(r)\times a \times b(\lambda_q)
 \subsection{Estimating $a$}
 \label{subsec:astar}
 
-In gameplay, $X$ is a nominal variable, i.e. win, draw or loss, and $Y$ is a discrete scalar. Therefore the method of approximating $a^*$ by determining $-\Cov{X,Y}\mathbin{/}\Var{Y}$ is not straightforward, which may cause numerical issues. Also note that computing $a^*$ online based on the result of simulations depends heavily on the accuracy of the results of these simulations, and may cause the value of $a^*$ to be incorrect. Furthermore, determining $a^*$ offline, fixes the value over the duration of the game, which is once again suboptimal because its value can be different over the course of the game, e.g. lower values at the start due to lower quality results.
+In gameplay, $X$ is a nominal variable, i.e. loss, draw, or win, and $Y$ is a discrete scalar. Therefore the method of approximating $a^*$ by determining $-\Cov{X,Y}\mathbin{/}\Var{Y}$ is not straightforward, which may cause numerical issues. Also note that computing $a^*$ online based on the result of simulations depends heavily on the accuracy of the results of these simulations, and may cause the value of $a^*$ to be incorrect. Furthermore, determining $a^*$ offline, fixes the value over the duration of the game, which is once again suboptimal because its value can be different over the course of the game, e.g. lower values at the start due to lower quality results.
 
 The range of $a$ for the defined control variates in Subsections \ref{subsec:rb}, and \ref{subsec:qb} is dependent on the range of $r$, the simulation's result. Computing $a^*$, optimal for variance reduction, can thus be achieved by defining $X$ as $X_i=r$, if $r$ is in respect of one player, and $Y_i=d$ or $Y_i=q$. We can compute $a^*=-{\SCov{X,Y}}\mathbin{/}{\SVar{Y}}$, i.e. using the sample covariance and variance, online during search, or offline. Effort to determine a value for $a^*$ based on the intuitive definition of $X$ did not result in practical values. Due to the small covariance measured, the resuling range of $a^*$ is too small to make any impact on performance.
 
@@ -197,7 +197,7 @@ Using this definition we can define $\SCov{Y^w,Y}$, which is in terms of $Y$ onl
 
 %-------------------------------------------------------------------
 \section{PSEUDO-CODE}
-Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and QB. Note that negamax backups are used in this setup, and therefore $r$ is relative to the player to move at the start of the play-out. The basic MCTS algorithm used in this paper is the MCTS Solver \cite{Winands2008}, although the details of its implementation are omitted in the psuedo-code. Whenever \emph{update} is used in the algoritm, it refers to updating the average reward for a node, or the sample mean and standard deviation for $\bar{D}^\tau$ and $\bar{Q}^\tau$.
+Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and QB. Note that negamax backups are used in this setup, and therefore $r$ is relative to the player to move at the node that initiates the play-out. The basic MCTS algorithm used in this paper is the MCTS Solver \cite{Winands2008}, although the details of its implementation are omitted in the psuedo-code. Whenever \emph{update} is used in the algoritm, it refers to updating the average reward for a node, or the sample mean and standard deviation for $\bar{D}^\tau$ and $\bar{Q}^\tau$.
 
 \begin{algorithm2e}[ht]
 \setstretch{1.15}
@@ -240,11 +240,11 @@ During selection, starting from the root, the depth of the current node is updat
 %-------------------------------------------------------------------
 \section{EXPERIMENTS}
 \label{sec:experiments}
-To determine the impact on performance of RB and QB, experiments were run on six different two player games. Moreover, the performance of RB is evaluated in the General Gameplaying agent {\sc CadiaPlayer} \cite{bjornsson2009cadiaplayer}, which won the International GGP competition in 2007, 2008, and 2012.
+To determine the impact on performance of RB and QB, experiments were run on six different two-player games. Moreover, the performance of RB is evaluated in the General Gameplaying agent {\sc CadiaPlayer} \cite{bjornsson2009cadiaplayer}, which won the International GGP competition in 2007, 2008, and 2012.
 
-\subsection{Experimental setup}
+\subsection{Experimental Setup}
 \label{subsec:expsetup}
-The proposed enhancements were tested in six distinct two player games.
+The proposed enhancements were tested in six distinct two-player games.
 \begin{itemize}
 \item \emph{Amazons} is played on a 10$\times$10 chessboard. Each player has four amazons that move (and shoot) as queens in chess. However, each move consist of two parts, first the amazon moves, after which she must fire an arrow on an empty position in range, and this square on the board is blocked. The last player to move wins the game.
 \item \emph{Breakthrough} is played on an 8$\times$8 board. Each player starts with 16 pawns on one side of the board and the aim is to move one of them to the opposite side.
@@ -283,7 +283,8 @@ Pentalath &\multicolumn{1}{l|}{1.0} 		& {\bf{51.4}}($\pm$1.39) & 50.3($\pm$1.39)
 \end{tabular}
 \end{center}
 \end{table}
-
+For the relative bonus, results for the implemetned games are shown in Table \ref{tab:rb}. A significant increase in performance is shown for five of the six games, and no adverse results in the other. The value of $k$ was optimized empirically once for each game, and all experiments use the reported value in the second column. Furthermore, we show that using the online definition of $a'$ leads to increased performance over a fixed value for five games. In Breakthrough, defense is equally important as offense, and since the implemented simulation strategy does not contain heuristics for complicated defensive positioning, the play-outs' lengths are biased to quick wins and exclude defensive moves.
+Chinese Checkers, Cannon and Amazons achieve the most increase in performance using RB. These games improve the estimates of their length over time, and as such, penalizing long games at the beginning of the match ensures better estimations, since the length of the actual match is much shorter overall. Pentalath is a game with a limited lenght, when the board is nearly filled the game is sure to end. As such, the additional information provided by the length of games is limited.
 \begin{table}
 {\caption{Relative Bonus in GGP, {\sc{CadiaPlayer}}, $a = 0.25$ \newline 30 sec. startclock, 15 sec. playclock} \label{tab:rb_ggp}}
 \begin{center}
@@ -310,11 +311,7 @@ Pentalath &\multicolumn{1}{l|}{1.0} 		& {\bf{51.4}}($\pm$1.39) & 50.3($\pm$1.39)
 \end{tabular}
 \end{center}
 \end{table}
-
-For the relative bonus, results are shown in Tables \ref{tab:rb} and \ref{tab:rb_ggp}. For the implemented games, we witness a significant increase in performance for five of the six games, and no adverse results in the other. The value of $k$ was optimized empirically once for each game, and all experiments use the reported value in the second column. Furthermore, we show that using the online definition of $a'$ leads to increased performance over a fixed value for five games. In Breakthrough, defense is equally important as offense, and since the implemented simulation strategy does not contain heuristics for complicated defensive positioning, the play-outs' lengths are biased to fast wins and exclude defensive moves.
-Chinese Checkers, Cannon and Amazons achieve the most increase in performance using RB. These games improve the estimates of their length over time, and as such, penalizing long games at the beginning of the match ensures better estimations, since the length of the actual match is much shorter overall. Pentalath is a game with a limited lenght, when the board is nearly filled the game is sure to end. As such, the extra information provided by the length of games is limited.
-
-A single value for $a$ was used for GGP because a significant number of simulations is required to compute an accurate $a'$. Moreover, since values for $k$ can not be optimized beforehand, we present the results for two different $k$ values. Although $k$ has an influence on the performance of RB, it is robust with respect to suboptimal values, and an approximate can be used as is made clear by the results in Table \ref{tab:rb_ggp}. Each game that benefits from RB does so for either both values, or it is not disadvantageous for either value.
+For the GGP domain, results are presented in Table \ref{tab:rb_ggp}. A single value for $a$ was used for GGP because a significant number of simulations is required to compute an accurate $a'$. Moreover, since values for $k$ can not be optimized beforehand, we present the results for two different $k$ values. Although $k$ has an influence on the performance of RB, it is robust with respect to suboptimal values, and an approximate can be used as is made clear by the results in Table \ref{tab:rb_ggp}. Each game that benefits from RB does so for either both values, or it is not disadvantageous for either value.
 
 \begin{table}
 {\caption{Qualitative Bonus using different search times, 5000 games} \label{tab:qb}}
@@ -336,14 +333,14 @@ Pentalath &\multicolumn{1}{l|}{1.6} 		& 46.6($\pm$1.38) 	     & 50.5($\pm$1.39) 
 \end{center}
 \end{table}
 
-Results for QB are shown in Table \ref{tab:qb}. A significant increase in performance is achieved for five of the six games. For Pentalath, the quality assessment is expensive and not very informative as the longest row of the opponent is not likely to make a difference in winning the game. Notably, all other games use simple assessments of their terminal states, which required little to no extra computational effort. And in the case of Breakthrough and Cannon, which show the highest overall performance increase, the assessment were not directly linked to winning the game, i.e. the piece count. The results for both RB and QB show that using an extra informative statistic as a control variate in MCTS results can improve performance.
+Results for QB are shown in Table \ref{tab:qb}. A significant increase in performance is achieved for five of the six games. For Pentalath, the quality assessment is expensive and not very informative as the longest row of the opponent is not likely to make a difference in winning the game. Notably, all other games use simple assessments of their terminal states, which required little to no added computational effort. And in the case of Breakthrough and Cannon, which show the highest overall performance increase, the assessment were not directly linked to winning the game, i.e. the piece count. The results for both RB and QB show that using an additional informative statistic as a control variate in MCTS results can improve performance.
 
 %-------------------------------------------------------------------
 \section{CONCLUSION}
 \label{sec:concl}
-Monte-Carlo Tree Search (MCTS) bases decisions on sampling a domain and collecting rewards. So far, not much work has been done to improve the values of the reward signal. In this paper, we show that the performance of MCTS is improved by treating the rewards of simulations as a combination of the reward and a quality measure. The combination is performed by treating the quality measure as a control variate, a variance reduction technique. We show that, given that there is a non-zero correlation between the reward-signal and the quality measure, results can be improved in two player games.
-First, the Relative Bonus (RB) treats the length of a simulation as a measure of its quality. A benefit of this method is that it requires no domain knowledge. Although it works best in games with long play-outs, favoring the shorter ones. When the length of simulations is close to the lenght of the match played, RB provides less extra information, and therefore lesser performance enhancements. RB is especially interesting for General Game Playing (GGP), where knowledge of games is sparse, though in its current state is dependent on the $k$ parameter, which differs between games.
-The Quality Bonus (QB) improved results in all domains, but requires a some extra domain knowledge. Nonetheless, even using simple quality assessment of the terminal state, such as the piece difference between players, improves results considerably.
+Monte-Carlo Tree Search (MCTS) bases decisions on sampling a domain and collecting rewards. So far, not much work has been done to improve the values of the reward signal. In this paper, we show that the performance of MCTS is improved by treating the rewards of simulations as a combination of the reward and a quality measure. The combination is performed by treating the quality measure as a control variate, a variance reduction technique. We show that, given that there is a non-zero correlation between the reward-signal and the quality measure, results can be improved in two-player games.
+First, the Relative Bonus (RB) treats the length of a simulation as a measure of its quality. A benefit of this method is that it requires no domain knowledge. Although it works best in games with long play-outs, favoring the shorter ones. When the length of simulations is close to the lenght of the match played, RB provides less added information, and therefore only minor performance enhancements. RB is especially interesting for General Game Playing (GGP), where knowledge of the games played is sparse.
+The Quality Bonus (QB) improved results in all domains, though it requires additional domain knowledge. Nonetheless, even using simple quality assessment of the terminal state, such as the piece difference between players, improves results considerably.
 
 %-------------------------------------------------------------------
 %\ack This work is partially funded by Scientific Research (NWO) in the framework of the project Go4Nature, grant number 612.000.938, and in the framework of the project GoGeneral, with grant number 612.001.121.
