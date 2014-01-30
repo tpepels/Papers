@@ -153,7 +153,7 @@ Using an estimated mean may cause the search to be biased, i.e. moving into the 
 Since the distribution of $D^\tau$ is not known, $\lambda_r$ can still take on unrestricted values, particularly if the distribution of $D^\tau$ is skewed, or has long tails on either side. Moreover, the relation with the desired reward is not neccesarily linear. As such, in order to both bound, and shape the values of the bonus $b(\lambda_r)$ it is passed to a sigmoid function centered around $0$ on both axes, with range $b(\lambda) \in [-1, 1]$. 
 
 \begin{equation}
-b(\lambda)=\left(-1+\frac{2}{1+e^{-k\lambda}}\right)
+b(\lambda)=-1+\frac{2}{1+e^{-k\lambda}}
 \label{eq:sigmoid}
 \end{equation}
 
@@ -228,7 +228,7 @@ Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and Q
     {\sc bonus}(offset from mean $\delta$, sample std. dev. $\hat{\sigma}$):				\;	\label{alg:bonus}
     \pushline
     	$\lambda \gets \nicefrac{\delta}{\hat{\sigma}}$										\;	\label{alg:lambda}
-    	$b \gets -1+\nicefrac{2}{1+e^{-k\lambda}}$							\;	\label{alg:b}
+    	$b \gets -1+\nicefrac{2}{\left(1+e^{-k\lambda}\right)}$							\;	\label{alg:b}
     \popline
     \bf{return} $b$																			\;
   \vspace{0.3cm}
@@ -244,7 +244,7 @@ To determine the impact on performance of RB and QB, experiments were run on six
 
 \subsection{Experimental Setup}
 \label{subsec:expsetup}
-The proposed enhancements were tested in six distinct two-player games.
+The proposed enhancements are validated in six distinct two-player games. These games are implemented to use a single, uniform implementation of MCTS.
 \begin{itemize}
 \item \emph{Amazons} is played on a 10$\times$10 chessboard. Each player has four amazons that move (and shoot) as queens in chess. However, each move consist of two parts, first the amazon moves, after which she must fire an arrow on an empty position in range, and this square on the board is blocked. The last player to move wins the game.
 \item \emph{Breakthrough} is played on an 8$\times$8 board. Each player starts with 16 pawns on one side of the board and the aim is to move one of them to the opposite side.
@@ -257,6 +257,8 @@ For the value of $q$ the following quality measures are used: \emph{Amazons}: th
 For each quality measure an appropriate fixed, normalizer was used to bring the measure within the $[0,1]$ range.
 
 For each game, an appropriate simulation strategy is used to select moves to make during play-out. Although they were validated to improve performance in all games, the strategies used are not on the level of award-winning programs. Rather, they are implemented to ensure that no obvious mistakes or faulty play is observed in any of the games. All results are reported with these simulation strategies enabled. The results presented for {\sc CadiaPlayer} use the n-grams to learn a simulation strategy online \cite{takngrams}, the statistics for the n-grams were updated with the original result $r$.
+
+GGP experiments were performed using the {\sc CadiaPlayer} codebase, in which the RB enhancement was implemented. In GGP, no domain knowledge is available in advance, rules of the games are interpreted online. Moreover, simulation strategies are learned online, and significantly less simulatitions are available per move. The following two-player turn-based games were used to analyse the performance of the enhancement: Zhadu, TTCC4, Skirmish, SheepWolf, Quad, Merrils, Knightthrough, Connect5, Checkers, Breakthrough, 3DTicTacToe and Chinese Checkers. Moreover, we show results for the following two-player simultaneous move games: Battle, and Chinook.
 
 All experiments were run on 2.2Ghz AMD Opteron CPU, on a Linux operating system. For each game, the constant $k$ used by the sigmoid function was empirically determined by experimenting with values between 0 and 10, with varying increments.
 \subsection{Results}
@@ -283,7 +285,7 @@ Pentalath &\multicolumn{1}{l|}{1.0} 		& {\bf{51.4}}($\pm$1.39) & 50.3($\pm$1.39)
 \end{tabular}
 \end{center}
 \end{table}
-For the relative bonus, results for the implemetned games are shown in Table \ref{tab:rb}. A significant increase in performance is shown for five of the six games, and no adverse results in the other. The value of $k$ was optimized empirically once for each game, and all experiments use the reported value in the second column. Furthermore, we show that using the online definition of $a'$ leads to increased performance over a fixed value for five games. In Breakthrough, defense is equally important as offense, and since the implemented simulation strategy does not contain heuristics for complicated defensive positioning, the play-outs' lengths are biased to quick wins and exclude defensive moves.
+For the relative bonus, results for the implemented games are shown in Table \ref{tab:rb}. A significant increase in performance is shown for five of the six games, and no adverse results in the other. The value of $k$ was optimized empirically once for each game, and all experiments use the reported value in the second column. Furthermore, we show that using the online definition of $a'$ leads to increased performance over a fixed value for five games. In Breakthrough, defense is equally important as offense, and since the implemented simulation strategy does not contain heuristics for complicated defensive positioning, the play-outs' lengths are biased to quick wins and exclude defensive moves.
 Chinese Checkers, Cannon and Amazons achieve the most increase in performance using RB. These games improve the estimates of their length over time, and as such, penalizing long games at the beginning of the match ensures better estimations, since the length of the actual match is much shorter overall. Pentalath is a game with a limited lenght, when the board is nearly filled the game is sure to end. As such, the additional information provided by the length of games is limited.
 \begin{table}
 {\caption{Relative Bonus in GGP, {\sc{CadiaPlayer}}, $a = 0.25$ \newline 30 sec. startclock, 15 sec. playclock} \label{tab:rb_ggp}}
@@ -293,25 +295,26 @@ Chinese Checkers, Cannon and Amazons achieve the most increase in performance us
 & \multicolumn{1}{c}{\textbf{$k = 2$}} & \multicolumn{1}{c}{\textbf{$k = 1.4$}} \\
 \cline{1-3}
 \multicolumn{1}{c|}{\rule{0pt}{12pt}\textbf{Game}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-\multicolumn{1}{r|}{Zhadu} 				&{\bf{54.7}}($\pm$3.00)	& {\bf{53.3}}($\pm$1.86) \\
-\multicolumn{1}{r|}{TTCC4} 				&{\bf{54.8}}($\pm$3.19)	& {\bf{53.3}}($\pm$2.02) \\
-\multicolumn{1}{r|}{Skirmish} 			&49.7($\pm$3.52)		& 50.7($\pm$2.20) \\
-\multicolumn{1}{r|}{SheepWolf} 			&50.9($\pm$2.95)		& {\bf{52.3}}($\pm$1.85) \\
-\multicolumn{1}{r|}{Quad} 				&43.4($\pm$2.78)		& 44.7($\pm$1.75) \\
-\multicolumn{1}{r|}{Merrills} 			&51.6($\pm$4.10)		& 48.9($\pm$2.56) \\
-\multicolumn{1}{r|}{Knightthrough}		&48.9($\pm$3.36)		& 49.2($\pm$2.11) \\
-\multicolumn{1}{r|}{Connect5} 			&{\bf{53.9}}($\pm$2.88)	& {\bf{54.4}}($\pm$1.81) \\
-\multicolumn{1}{r|}{Chinook} 			&49.3($\pm$3.21)		& 49.0($\pm$2.00) \\
-\multicolumn{1}{r|}{Checkers} 			&{\bf{58.2}}($\pm$5.00)	& 52.1($\pm$3.16) \\
-\multicolumn{1}{r|}{Breakthrough}		&47.1($\pm$4.59)		& 51.0($\pm$2.88) \\
-\multicolumn{1}{r|}{Battle}				&50.1($\pm$3.21)		& 49.2($\pm$2.01) \\
-\multicolumn{1}{r|}{3DTicTacToe}		&{\bf{55.7}}($\pm$2.56)	& {\bf{54.5}}($\pm$1.62) \\
-\multicolumn{1}{r|}{Chinese Checkers}	&{\bf{56.9}}($\pm$2.86)	& {\bf{56.0}}($\pm$1.79) \\
+\multicolumn{1}{r|}{Zhadu} 				&{\bf{54.3}}($\pm$1.87)	& {\bf{53.3}}($\pm$1.86) \\
+\multicolumn{1}{r|}{TTCC4} 				&{\bf{55.3}}($\pm$2.00)	& {\bf{53.3}}($\pm$2.02) \\
+\multicolumn{1}{r|}{Skirmish} 			&51.9($\pm$2.20)		& 50.7($\pm$2.20) \\
+\multicolumn{1}{r|}{SheepWolf} 			&51.7($\pm$1.85)		& {\bf{52.3}}($\pm$1.85) \\
+\multicolumn{1}{r|}{Quad} 				&44.7($\pm$1.75)		& 44.7($\pm$1.75) \\
+\multicolumn{1}{r|}{Merrills} 			&51.9($\pm$2.56)		& 48.9($\pm$2.56) \\
+\multicolumn{1}{r|}{Knightthrough}		&49.9($\pm$2.1)		& 49.2($\pm$2.11) \\
+\multicolumn{1}{r|}{Connect5} 			&{\bf{54.0}}($\pm$1.81)	& {\bf{54.4}}($\pm$1.81) \\
+\multicolumn{1}{r|}{Chinook} 			&48.5($\pm$2.00)		& 49.0($\pm$2.00) \\
+\multicolumn{1}{r|}{Checkers} 			&{\bf{54.4}}($\pm$3.04)	& 52.1($\pm$3.16) \\
+\multicolumn{1}{r|}{Breakthrough}		&51.3($\pm$2.89)		& 51.0($\pm$2.88) \\
+\multicolumn{1}{r|}{Battle}				&50.0($\pm$2.01)		& 49.2($\pm$2.01) \\
+\multicolumn{1}{r|}{3DTicTacToe}		&{\bf{55.0}}($\pm$1.61)	& {\bf{54.5}}($\pm$1.62) \\
+\multicolumn{1}{r|}{Chinese Checkers}	&{\bf{56.3}}($\pm$1.79)	& {\bf{56.0}}($\pm$1.79) \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
-For the GGP domain, results are presented in Table \ref{tab:rb_ggp}. A single value for $a$ was used for GGP because a significant number of simulations is required to compute an accurate $a'$. Moreover, since values for $k$ can not be optimized beforehand, we present the results for two different $k$ values. Although $k$ has an influence on the performance of RB, it is robust with respect to suboptimal values, and an approximate can be used as is made clear by the results in Table \ref{tab:rb_ggp}. Each game that benefits from RB does so for either both values, or it is not disadvantageous for either value.
+
+For the GGP domains, results are presented in Table \ref{tab:rb_ggp}. A single value for $a$ was used for GGP because a significant number of simulations are required to compute an accurate $a'$. Moreover, since values for $k$ can not be optimized beforehand, we present the results for two different $k$ values. Although $k$ has an influence on the performance of RB, it is robust with respect to suboptimal values, and an approximate can be used as is made clear by the results in Table \ref{tab:rb_ggp}. All games that benefit from RB does so for either both values, or it is not disadvantageous for either value. Note that the results for Chinese Checkers, Checkers and Breakthrough are similar to those in Table \ref{tab:rb}, demonstrating the robustness of the enhancement.
 
 \begin{table}
 {\caption{Qualitative Bonus using different search times, 5000 games} \label{tab:qb}}
@@ -333,14 +336,17 @@ Pentalath &\multicolumn{1}{l|}{1.6} 		& 46.6($\pm$1.38) 	     & 50.5($\pm$1.39) 
 \end{center}
 \end{table}
 
-Results for QB are shown in Table \ref{tab:qb}. A significant increase in performance is achieved for five of the six games. For Pentalath, the quality assessment is expensive and not very informative as the longest row of the opponent is not likely to make a difference in winning the game. Notably, all other games use simple assessments of their terminal states, which required little to no added computational effort. And in the case of Breakthrough and Cannon, which show the highest overall performance increase, the assessment were not directly linked to winning the game, i.e. the piece count. The results for both RB and QB show that using an additional informative statistic as a control variate in MCTS results can improve performance.
+Results for QB are shown in Table \ref{tab:qb}. A significant increase in performance is achieved for five of the six games. For Pentalath, the quality assessment is expensive and not very informative as the longest row of the opponent is not likely to make a difference in winning the game. Notably, all other games use simple assessments of their terminal states, which required little to no added computational effort. In the case of Breakthrough and Cannon, which show the highest overall performance increase, the quality assessments were not directly linked to winning the game, i.e. the piece count. The results for both RB and QB show that using an additional informative statistic as a control variate in MCTS results can improve performance.
 
 %-------------------------------------------------------------------
 \section{CONCLUSION}
 \label{sec:concl}
-Monte-Carlo Tree Search (MCTS) bases decisions on sampling a domain and collecting rewards. So far, not much work has been done to improve the values of the reward signal. In this paper, we show that the performance of MCTS is improved by treating the rewards of simulations as a combination of the reward and a quality measure. The combination is performed by treating the quality measure as a control variate, a variance reduction technique. We show that, given that there is a non-zero correlation between the reward-signal and the quality measure, results can be improved in two-player games.
-First, the Relative Bonus (RB) treats the length of a simulation as a measure of its quality. A benefit of this method is that it requires no domain knowledge. Although it works best in games with long play-outs, favoring the shorter ones. When the length of simulations is close to the lenght of the match played, RB provides less added information, and therefore only minor performance enhancements. RB is especially interesting for General Game Playing (GGP), where knowledge of the games played is sparse.
-The Quality Bonus (QB) improved results in all domains, though it requires additional domain knowledge. Nonetheless, even using simple quality assessment of the terminal state, such as the piece difference between players, improves results considerably.
+Monte-Carlo Tree Search (MCTS) bases decisions on sampling a domain and collecting rewards. So far, limited work has been done to improve the values of the reward signal. In this paper, we show that the performance of MCTS is improved by treating the rewards of simulations as a combination of the reward and a quality measure. The combination is performed by treating the quality measure as a control variate, a variance reduction technique. We show that, given that there is a non-zero correlation between the reward-signal and the quality measure, results can be improved in two-player games.
+
+The Relative Bonus (RB) treats the length of a simulation as a measure of its quality. The benefit of this method is that it is domain independant. Though it performs best in games with high variance in play-out lengths, favoring the shorter ones. When the length of simulations is close to the lenght of the match played, RB provides less added information, and therefore only minor performance enhancements. RB is especially interesting for General Game Playing (GGP), where knowledge of the games played is sparse.
+The Quality Bonus (QB) improved results in all domains, though it requires additional domain knowledge. Nonetheless, even using simple quality assessment of the terminal state, such as the piece count improves results considerably.
+
+In this paper we consider only cases where play-outs reach a natural end-state. However, for some domains this is not feasable or impractical. Therefore we propose to consider combining early and static cut-offs of play-outs for future research. Although a static cut-off will not be compatible with RB, we expect both to improve performance when used in combination with QB. Moreover, combining RB and QB with the reward signal may be improved by computing a covariance matrix between the simulation's reward signal, RB and QB, and computing separate scaling constants for each to use. Finally, we expect that the proposed enhancements will improve estimates of online learning methods for simulation strategies such as n-grams, or MAST.
 
 %-------------------------------------------------------------------
 %\ack This work is partially funded by Scientific Research (NWO) in the framework of the project Go4Nature, grant number 612.000.938, and in the framework of the project GoGeneral, with grant number 612.001.121.
