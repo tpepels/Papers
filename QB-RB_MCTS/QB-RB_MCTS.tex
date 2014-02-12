@@ -51,15 +51,14 @@ The paper is structured as follows. First, the general MCTS framework is discuss
 %-------------------------------------------------------------------
 \section{MONTE-CARLO TREE SEARCH}
 \label{sec:mcts}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=.45\textwidth]{img/figure1.eps}
-	\caption{Strategic steps of Monte-Carlo Tree Search \cite{chaslot2008progressive}.}
-	\label{fig:mcts-algorithm}
-\end{figure}
+% \begin{figure}[ht]
+% 	\centering
+% 	\includegraphics[width=.45\textwidth]{img/figure1.eps}
+% 	\caption{Strategic steps of Monte-Carlo Tree Search \cite{chaslot2008progressive}.}
+% 	\label{fig:mcts-algorithm}
+% \end{figure}
 
-Monte-Carlo Tree Search (MCTS) is a search method based on random sampling of a domain \cite{coulom2007efficient,kocsis2006bandit}. MCTS grows a search tree online over time, by selecting nodes to \emph{expand} based on a selection policy. Rewards stored at nodes are averaged over the results of numerous simulations.
-Each simulation consist of two parts, 1) the \emph{selection} step, where moves are selected and played inside the tree, according to the selection policy, and 2) the \emph{play-out} step, where moves are played according to a simulation strategy, outside the tree. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is \emph{backpropagated} along the tree from the expanded leaf to the root.
+Monte-Carlo Tree Search (MCTS) is a search method based on random sampling of a domain \cite{coulom2007efficient,kocsis2006bandit}. MCTS grows a search tree online over time, by selecting nodes to \emph{expand} based on a selection policy. Rewards stored at nodes are averaged over the results of numerous simulations. Each simulation consist of two parts, 1) the \emph{selection} step, where moves are selected and played inside the tree, according to the selection policy, and 2) the \emph{play-out} step, where moves are played outside the tree, according to a simulation strategy. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is \emph{backpropagated} along the tree from the expanded leaf to the root.
 
 In its basic form, MCTS requires no evaluation function. Nonetheless, in most domains it is beneficial to add some domain knowledge for selecting moves to play during play-out. Because all rewards are backpropagated immediately, MCTS can be terminated at any time, when some computational limit is reached, to select a move to return, which is selected based on either the node with the highest number of visits, the highest average reward, or a combination \cite{chaslot2008progressive}. 
 
@@ -208,39 +207,39 @@ Because the choice of $Y^w$ is arbitrary, since every game is won by either one 
 Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and QB. Note that negamax backups are used in this setup, and therefore $r$ is relative to the player to move at the node that initiates the play-out. The basic MCTS algorithm used in this paper is the MCTS Solver \cite{Winands2008}, although the details of its implementation are omitted in the psuedo-code. Whenever \emph{update} is used in the algoritm, it refers to updating the average reward for a node, or the sample mean and standard deviation for $\bar{D}^\tau$ and $\bar{Q}^\tau$.
 
 \begin{algorithm2e}[ht]
-\setstretch{1.15}
-  {\sc mcts}(node $p$, node depth $d_{Sp}$):												\;
+\setstretch{1.07}
+  {\sc mcts}(node $p$, node depth $d_{Sp}$):														\;
   \pushline
     \If{isLeaf($p$)}{Expand($p$)}
-    Select a child $i$ according to Eq.~\ref{eq:uct} 										\;
-    $d_{Si} \gets d_{Sp} + 1$																\; \label{alg:depth}
+    Select a child $i$ according to Eq.~\ref{eq:uct} 												\;
+    $d_{Si} \gets d_{Sp} + 1$																		\; \label{alg:depth}
     \eIf{$n_i = 0$}{
-    	$\tuple{r, \tau, q, d_{iT}} \gets$ Playout$(i)$ 									\; \label{alg:results}
-    	$d \gets d_{Si} + d_{iT}$															\;			
+    	$\tuple{r, \tau, q, d_{iT}} \gets$ Playout$(i)$ 											\; \label{alg:results}
+    	$d \gets d_{Si} + d_{iT}$																	\;			
     	\If{enabled$(b_r)$ and $\hat{\sigma}^\tau_D > 0$}{
     		$r \gets r + \sgn(r) \times a \times$ BONUS$(\bar{D}^\tau - d, \hat{\sigma}^\tau_D)$ 	\; \label{alg:rb}
-    		update $\bar{D}^\tau$ and $\hat{\sigma}^\tau_D$ with $d$						\; 		\label{alg:meanstddev}
+    		update $\bar{D}^\tau$ and $\hat{\sigma}^\tau_D$ with $d$								\; 		\label{alg:meanstddev}
 		}
 		\ElseIf{enabled$(b_q)$ and $\hat{\sigma}^\tau_Q > 0$} {
     		$r \gets r + \sgn(r) \times a \times$ BONUS$(q -\bar{Q}^\tau, \hat{\sigma}^\tau_Q)$ 	\; \label{alg:qb}
-    		update $\bar{Q^\tau}$ and $\hat{\sigma}^\tau_Q$ with $q$ 						\;
+    		update $\bar{Q^\tau}$ and $\hat{\sigma}^\tau_Q$ with $q$ 								\;
     	}
-    	update node $i$ with $r$															\;
+    	update node $i$ with $r$																	\;
     }{
-    	$r \gets$ -{\sc mcts}($i$, $d_{Si})$)												\; 
+    	$r \gets$ -{\sc mcts}($i$, $d_{Si})$)														\; 
     }
-    update node $p$ with $r$																\;
+    update node $p$ with $r$																		\;
    \popline
-    {\bf return} $r$																		\;
-  																							\;
-    {\sc bonus}(offset from mean $\delta$, sample std. dev. $\hat{\sigma}$):				\;	\label{alg:bonus}
+    {\bf return} $r$																				\;
+  																									\;
+    {\sc bonus}(offset from mean $\delta$, sample std. dev. $\hat{\sigma}$):						\;	\label{alg:bonus}
     \pushline
-    	$\lambda \gets \nicefrac{\delta}{\hat{\sigma}}$										\;	\label{alg:lambda}
-    	$b \gets -1+\nicefrac{2}{\left(1+e^{-k\lambda}\right)}$								\;	\label{alg:b}
+    	$\lambda \gets \nicefrac{\delta}{\hat{\sigma}}$												\;	\label{alg:lambda}
+    	$b \gets -1+\nicefrac{2}{\left(1+e^{-k\lambda}\right)}$										\;	\label{alg:b}
     \popline
-    \bf{return} $b$																			\;
+    \bf{return} $b$																					\;
   \vspace{0.3cm}
-  \caption{Pseudo-code of the MCTS and BONUS functions (Section \ref{sec:qoreward} \label{alg}}
+  \caption{Pseudo-code of quality-based MCTS (Section \ref{sec:qoreward}) \label{alg}}
 \end{algorithm2e}
 
 During selection, starting from the root, the depth of the current node is updated on line \ref{alg:depth}. Whenever an expandable node is reached, its children are added to the tree and a play-out is initiated from one of them. A play-out returns a tuple of results, on line \ref{alg:results} four different values are returned: 1) the result of the play-out $r \in \{-1, 0, 1\}$, 2) the winning player $\tau$, 3) the assessed quality of the play-out's terminal state $q\in(0,1)$, and 4) the number of moves made during play-out $d_{iT}$ defined in Subsection~\ref{sec:qoreward}. Using these values $r$ is altered. On line \ref{alg:rb} the relative bonus is applied to $r$, using the difference with the winning player's current mean $\bar{D}^\tau - d$, i.e. lower values of $d$ give a higher reward. After which the current mean and standard deviation are updated on line \ref{alg:meanstddev}. QB is applied on line \ref{alg:qb} using the assessed quality of the play-out $q$. Note that the offset from the mean is defined as $q - \bar{Q}^\tau$, because in contrast to RB, positive deviation of $q$ from its mean imply better results. The {\sc bonus} function on line \ref{alg:bonus}, computes the normalized $\lambda$ (line \ref{alg:lambda}) and, successively the bonus $b$ (line \ref{alg:b}) using the sigmoid function, as defined in Subsections \ref{subsec:rb} and \ref{subsec:qb}. The constant $a$ on lines \ref{alg:rb} and \ref{alg:qb} can be either fixed, or computed online as shown in Subsection \ref{subsec:astar}.
@@ -263,18 +262,22 @@ The proposed enhancements are validated in six distinct two-player games. These 
 \end{itemize}
 
 For the value of $q$ the following quality measures are used: \emph{Amazons}: the combined number of moves available for the winning player. \emph{Breakthrough} and \emph{Cannon}: the total piece difference between the winning and losing player. \emph{Checkers}: the total number of pieces in play for the winning player. \emph{Chinese Checkers}: the inverse number of the losing player's pieces that reached the home-base. \emph{Pentalath}: the inverse of the longest row of the losing player, given that this row can be extended to a length of 5.
-For each quality measure an appropriate, fixed, normalizer was used to bring the measure within the $[0,1]$ range. For each game, an appropriate simulation strategy is used to select moves to make during play-out. Although these were validated to improve performance in all games, the strategies used are not on the level of award-winning programs. Rather, they are implemented to ensure that no obvious mistakes or faulty play is observed in any of the games. All results are reported with these simulation strategies enabled. The results presented for {\sc CadiaPlayer} use n-grams to learn a simulation strategy online \cite{takngrams}, the statistics for the n-grams were updated with the unaltered simulation result $r$.
+For each quality measure an appropriate, fixed, normalizer brings the measure within the $[0,1]$ range. 
 
-GGP experiments were performed using the {\sc CadiaPlayer} codebase, in which the RB enhancement was implemented. In GGP, no domain knowledge is available in advance, rules of the games are interpreted online. Moreover, simulation strategies are learned online, and significantly less simulatitions are available per move. The following two-player turn-based games were used to analyse the performance of the enhancement: Zhadu, TTCC4, Skirmish, SheepWolf, Quad, Merrils, Knightthrough, Connect5, Checkers, Breakthrough, 3DTicTacToe and Chinese Checkers. Moreover, we show results for the following two-player simultaneous move games: Battle, and Chinook.
+For each game, an appropriate simulation strategy is used to select moves to make during play-out. Although these were validated to improve performance in all games, the strategies used are not on the level of award-winning programs. Rather, they are implemented to ensure that no obvious mistakes or flawed play is observed. All results are reported with these simulation strategies enabled.
 
-All experiments were run on 2.2Ghz AMD Opteron CPU, on a Linux operating system. For each game, the constant $k$ used by the sigmoid function was empirically determined by experimenting with values between 0 and 10, with varying increments. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was optimized empirically for each game without any enhancements enabled, and was used unaltered for the enhancements in the experiments.
+GGP experiments are performed using the {\sc CadiaPlayer} codebase. In GGP, no domain knowledge is available in advance, rules of the games are interpreted online resulting in low simulation counts. Moreover, simulation strategies are learned online, using N-Grams \cite{takngrams}. The following two-player turn-based games were used to analyse the performance of the enhancement: Zhadu, TTCC4, Skirmish, SheepWolf, Quad, Merrils, Knightthrough, Connect5, Checkers, Breakthrough, 3DTicTacToe and Chinese Checkers. Moreover, we show results for the following two-player simultaneous move games: Battle, and Chinook.
+
+Experiments were run on 2.2Ghz AMD Opteron CPU, on a Linux operating system. For each game, the constant $k$ used by the sigmoid function was empirically determined by experimenting with values between 0 and 10, with varying increments. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was optimized empirically for each game without any enhancements enabled, and was not altered nor re-optimized for the experiments.
 \subsection{Results}
 \label{subsec:results}
-For each result, the winning percentage is reported for the player with the enhancement enabled, alongside the 95\% confidence interval for the result. For each experiment, the players' seats are swapped such that 50\% of the games are played as the first player, and 50\% as the second.
+For each result, the winning percentage is reported for the player with the enhancement enabled, alongside the 95\% confidence interval. For each experiment, the players' seats are swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player bias.
 
 \begin{table}
 {\caption{Relative Bonus enabled using different search times, 5000 games} \label{tab:rb}}
 \begin{center}
+\tabcolsep=0.15cm
+\scalebox{0.93}{
 \begin{tabular}{rlrrrr}
 \hline
 \multicolumn{2}{r}{\rule{0pt}{12pt}\textbf{Search time}} & \multicolumn{2}{c}{\textbf{1 second}} & \multicolumn{2}{c}{\textbf{5 seconds}} \\
@@ -282,14 +285,15 @@ For each result, the winning percentage is reported for the player with the enha
 \rule{0pt}{12pt}
 \textbf{Game} & \multicolumn{1}{c|}{\textbf{$k$}} 
 & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-Amazons &\multicolumn{1}{l|}{2.2}			& {\bf{54.7}}($\pm$1.38) & {\bf{55.7}}($\pm$1.38) 	& & {\bf{54.7}}($\pm$1.38) \\ 
-Breakthrough &\multicolumn{1}{l|}{8.0} 		& 50.0($\pm$1.39)		 & 51.0($\pm$1.39) 			& & {\bf{51.6}}($\pm$1.39) \\ 
-Cannon &\multicolumn{1}{l|}{3.0} 			& {\bf{62.8}}($\pm$1.34) & {\bf{60.6}}($\pm$1.35) 	& & {\bf{58.1}}($\pm$1.37) \\ 
-Checkers &\multicolumn{1}{l|}{2.8}			& {\bf{52.1}}($\pm$0.79) & {\bf{52.7}}($\pm$0.79) 	& & {\bf{50.7}}($\pm$0.64) \\ 
-Chin. Checkers &\multicolumn{1}{l|}{1.2} 	& {\bf{56.8}}($\pm$1.37) & {\bf{53.2}}($\pm$1.38) 	& & {\bf{52.5}}($\pm$1.38) \\
-Pentalath &\multicolumn{1}{l|}{1.0} 		& {\bf{51.4}}($\pm$1.39) & 50.3($\pm$1.39) 			& & 49.5($\pm$1.39) 		\\
+Amazons &\multicolumn{1}{l|}{2.2}			& {\bf{54.7}}$\pm$1.38 	& {\bf{55.7}}$\pm$1.38 	& {\bf{53.6}}$\pm$1.38	& {\bf{54.7}}$\pm$1.38 	\\ 
+Breakthrough &\multicolumn{1}{l|}{8.0} 		& 50.0$\pm$1.39		 	& 51.0$\pm$1.39 		& 50.1$\pm$1.39			& {\bf{51.6}}$\pm$1.39 	\\ 
+Cannon &\multicolumn{1}{l|}{3.0} 			& {\bf{62.8}}$\pm$1.34 	& {\bf{60.6}}$\pm$1.35 	& 49.6$\pm$1.39			& {\bf{58.1}}$\pm$1.37 	\\ 
+Checkers &\multicolumn{1}{l|}{2.8}			& {\bf{52.1}}$\pm$0.79 	& {\bf{52.7}}$\pm$0.79 	& {\bf{48.9}}$\pm$0.67	& {\bf{50.7}}$\pm$0.64 	\\ 
+Chin. Checkers &\multicolumn{1}{l|}{1.2} 	& {\bf{56.8}}$\pm$1.37 	& {\bf{53.2}}$\pm$1.38 	& {\bf{54.9}}$\pm$1.38	& {\bf{52.5}}$\pm$1.38 	\\
+Pentalath &\multicolumn{1}{l|}{1.0} 		& {\bf{51.4}}$\pm$1.39 	& 50.3$\pm$1.39 		& 49.3$\pm$1.39 		& 49.5$\pm$1.39 		\\
 \hline
 \end{tabular}
+}
 \end{center}
 \end{table}
 For the relative bonus, results for the implemented games are shown in Table \ref{tab:rb}. A significant increase in performance is shown for five of the six games, and no adverse results in the other. The value of $k$ was optimized empirically once for each game, and all experiments use the reported value in the second column. Furthermore, we show that using the online definition of $a'$ leads to increased performance over a fixed value for five games. In Breakthrough, defense is equally important as offense, and since the implemented simulation strategy does not contain heuristics for complicated defensive positioning, the play-outs' lengths are biased to quick wins and exclude defensive moves.
@@ -297,62 +301,68 @@ Chinese Checkers, Cannon and Amazons achieve the most increase in performance us
 \begin{table}
 {\caption{Relative Bonus in GGP, {\sc{CadiaPlayer}}, $a = 0.25$ \newline 30 sec. startclock, 15 sec. playclock} \label{tab:rb_ggp}}
 \begin{center}
+\tabcolsep=0.25cm
+\scalebox{0.93}{
 \begin{tabular}{rrr}
 \hline
 & \multicolumn{1}{c}{\textbf{$k = 2$}} & \multicolumn{1}{c}{\textbf{$k = 1.4$}} \\
 \cline{1-3}
 \multicolumn{1}{c|}{\rule{0pt}{12pt}\textbf{Game}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-\multicolumn{1}{r|}{Zhadu} 				&{\bf{54.3}}($\pm$1.87)		& {\bf{53.3}}($\pm$1.86) \\
-\multicolumn{1}{r|}{TTCC4} 				&{\bf{55.3}}($\pm$2.00)		& {\bf{53.3}}($\pm$2.02) \\
-\multicolumn{1}{r|}{Skirmish} 			&51.9($\pm$2.20)			& 50.7($\pm$2.20) \\
-\multicolumn{1}{r|}{SheepWolf} 			&51.7($\pm$1.85)			& {\bf{52.3}}($\pm$1.85) \\
-\multicolumn{1}{r|}{Quad} 				&{\bf{44.7}}($\pm$1.75)		& {\bf{44.7}}($\pm$1.75) \\
-\multicolumn{1}{r|}{Merrills} 			&51.9($\pm$2.56)			& 48.9($\pm$2.56) \\
-\multicolumn{1}{r|}{Knightthrough}		&49.9($\pm$2.1)				& 49.2($\pm$2.11) \\
-\multicolumn{1}{r|}{Connect5} 			&{\bf{54.0}}($\pm$1.81)		& {\bf{54.4}}($\pm$1.81) \\
-\multicolumn{1}{r|}{Chinook} 			&48.5($\pm$2.00)			& 49.0($\pm$2.00) \\
-\multicolumn{1}{r|}{Checkers} 			&{\bf{54.4}}($\pm$3.04)		& 52.1($\pm$3.16) \\
-\multicolumn{1}{r|}{Breakthrough}		&51.3($\pm$2.89)			& 51.0($\pm$2.88) \\
-\multicolumn{1}{r|}{Battle}				&50.0($\pm$2.01)			& 49.2($\pm$2.01) \\
-\multicolumn{1}{r|}{3DTicTacToe}		&{\bf{55.0}}($\pm$1.61)		& {\bf{54.5}}($\pm$1.62) \\
-\multicolumn{1}{r|}{Chinese Checkers}	&{\bf{56.3}}($\pm$1.79)		& {\bf{56.0}}($\pm$1.79) \\
+\multicolumn{1}{r|}{Zhadu} 				&{\bf{54.3}}$\pm$1.87		& {\bf{53.3}}$\pm$1.86 	\\
+\multicolumn{1}{r|}{TTCC4} 				&{\bf{55.3}}$\pm$2.00		& {\bf{53.3}}$\pm$2.02 	\\
+\multicolumn{1}{r|}{Skirmish} 			&51.9$\pm$2.20				& 50.7$\pm$2.20 			\\
+\multicolumn{1}{r|}{SheepWolf} 			&51.7$\pm$1.85				& {\bf{52.3}}$\pm$1.85 	\\
+\multicolumn{1}{r|}{Quad} 				&{\bf{44.7}}$\pm$1.75		& {\bf{44.7}}$\pm$1.75 	\\
+\multicolumn{1}{r|}{Merrills} 			&51.9$\pm$2.56				& 48.9$\pm$2.56 			\\
+\multicolumn{1}{r|}{Knightthrough}		&49.9$\pm$2.1				& 49.2$\pm$2.11 			\\
+\multicolumn{1}{r|}{Connect5} 			&{\bf{54.0}}$\pm$1.81		& {\bf{54.4}}$\pm$1.81 	\\
+\multicolumn{1}{r|}{Chinook} 			&48.5$\pm$2.00				& 49.0$\pm$2.00 			\\
+\multicolumn{1}{r|}{Checkers} 			&{\bf{54.4}}$\pm$3.04		& 52.1$\pm$3.16 			\\
+\multicolumn{1}{r|}{Breakthrough}		&51.3$\pm$2.89				& 51.0$\pm$2.88 			\\
+\multicolumn{1}{r|}{Battle}				&50.0$\pm$2.01				& 49.2$\pm$2.01 			\\
+\multicolumn{1}{r|}{3DTicTacToe}		&{\bf{55.0}}$\pm$1.61		& {\bf{54.5}}$\pm$1.62 	\\
+\multicolumn{1}{r|}{Chin. Checkers}	&{\bf{56.3}}$\pm$1.79			& {\bf{56.0}}$\pm$1.79 	\\
 \hline
 \end{tabular}
+}
 \end{center}
 \end{table}
 
-For the GGP domains, results are presented in Table \ref{tab:rb_ggp}. A single value for $a$ was used for GGP because a significant number of simulations are required to compute an accurate $a'$. Moreover, since values for $k$ can not be optimized beforehand, we present the results for two different $k$ values. Although $k$ has an influence on the performance of RB, it is robust with respect to suboptimal values, and an approximate can be used as is made clear by the results in Table \ref{tab:rb_ggp}. All games that benefit from RB does so for either both values, or it is not disadvantageous for either value. Note that the results for Chinese Checkers, Checkers and Breakthrough are similar to those in Table \ref{tab:rb}, demonstrating the robustness of the enhancement.
+For the GGP domains, results are presented in Table \ref{tab:rb_ggp}. A single value for $a$ was used for GGP because a significant number of simulations are required to compute an accurate $a'$. Moreover, since values for $k$ can not be optimized beforehand, we present the results for two different $k$ values. Although $k$ has an influence on the performance of RB, it is robust with respect to suboptimal values, and an approximate can be used as is made clear by the results in Table \ref{tab:rb_ggp}. All games that benefit from RB does so for either both values, or it is not disadvantageous for either value. Note that the results for Chinese Checkers, Checkers and Breakthrough are similar to those in Table \ref{tab:rb}, demonstrating the robustness of the enhancement. Regarding both Tables \ref{tab:rb} and \ref{tab:rb_ggp}, we have demonstrated that the results are invariant with respect to the number of simulations per move.
 
 \begin{table}
 {\caption{Qualitative Bonus using different search times, 5000 games} \label{tab:qb}}
+\tabcolsep=0.15cm
 \begin{center}
+\scalebox{0.93}{
 \begin{tabular}{rlrrrr}
 \hline
 \multicolumn{2}{r}{\rule{0pt}{12pt}\textbf{Search time}} & \multicolumn{2}{c}{\textbf{1 second}} & \multicolumn{2}{c}{\textbf{5 seconds}} \\
 \cline{1-6}
 \rule{0pt}{12pt} \textbf{Game} & \multicolumn{1}{c|}{\textbf{$k$}} 
 & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-Amazons &\multicolumn{1}{l|}{1.6}			& {\bf{64.5}}($\pm$1.33) & {\bf{58.0}}($\pm$1.37) 	&&{\bf{57.7}}($\pm$1.37) \\
-Breakthrough &\multicolumn{1}{l|}{2.0} 		& {\bf{74.8}}($\pm$1.20) & {\bf{71.9}}($\pm$1.25) 	&&{\bf{78.6}}($\pm$1.14) \\
-Cannon &\multicolumn{1}{l|}{4.0} 			& {\bf{65.9}}($\pm$1.31) & {\bf{63.0}}($\pm$1.34) 	&&{\bf{57.4}}($\pm$1.37) \\
-Checkers &\multicolumn{1}{l|}{2.0}			& {\bf{53.8}}($\pm$0.76) & {\bf{52.7}}($\pm$0.75) 	&&{\bf{52.3}}($\pm$0.61) \\
-Chin. Checkers &\multicolumn{1}{l|}{2.8} 	& {\bf{65.7}}($\pm$1.32) & {\bf{60.1}}($\pm$1.36) 	&&{\bf{58.9}}($\pm$1.36) \\
-Pentalath &\multicolumn{1}{l|}{1.6} 		& 46.6($\pm$1.38) 	     & 50.5($\pm$1.39) 			&&50.1($\pm$1.39) \\
+Amazons &\multicolumn{1}{l|}{1.6}			& {\bf{64.5}}$\pm$1.33 & {\bf{58.0}}$\pm$1.37 	& {\bf{63.0}}$\pm$1.34 	& {\bf{57.7}}$\pm$1.37 \\
+Breakthrough &\multicolumn{1}{l|}{2.0} 		& {\bf{74.8}}$\pm$1.20 & {\bf{71.9}}$\pm$1.25 	& {\bf{76.3}}$\pm$1.18 	& {\bf{78.6}}$\pm$1.14 \\
+Cannon &\multicolumn{1}{l|}{4.0} 			& {\bf{65.9}}$\pm$1.31 & {\bf{63.0}}$\pm$1.34 	& {\bf{54.7}}$\pm$1.38 	& {\bf{57.4}}$\pm$1.37 \\
+Checkers &\multicolumn{1}{l|}{2.0}			& {\bf{53.8}}$\pm$0.76 & {\bf{52.7}}$\pm$0.75 	& {\bf{51.9}}$\pm$0.62 	& {\bf{52.3}}$\pm$0.61 \\
+Chin. Checkers &\multicolumn{1}{l|}{2.8} 	& {\bf{65.7}}$\pm$1.32 & {\bf{60.1}}$\pm$1.36 	& {\bf{61.4}}$\pm$1.35 	& {\bf{58.9}}$\pm$1.36 \\
+Pentalath &\multicolumn{1}{l|}{1.6} 		& 46.6$\pm$1.38 	     & 50.5$\pm$1.39 		& 48.7$\pm$1.39		 	& 50.1$\pm$1.39 \\
 \hline
 \end{tabular}
+}
 \end{center}
 \end{table}
 
-Results for QB are shown in Table \ref{tab:qb}. A significant increase in performance is achieved for five of the six games. For Pentalath, the quality assessment is expensive and not very informative as the longest row of the opponent is not likely to make a difference in winning the game. Notably, all other games use simple assessments of their terminal states, which required little to no added computational effort. In the case of Breakthrough and Cannon, which show the highest overall performance increase, the quality assessments were not directly linked to winning the game, i.e. the piece count. The results for both RB and QB show that using an additional informative statistic as a control variate in MCTS results can improve performance.
+Results for QB are shown in Table \ref{tab:qb}. A significant increase in performance is presented for five of the six games. For Pentalath, the quality assessment is expensive and not very informative as the longest row of the opponent is not likely to make a difference in winning the game. Notably, all other games use simple assessments of their terminal states, which required little to no added computational effort. In the case of Breakthrough and Cannon, which show the highest overall performance increase, the quality assessments were not even directly related to winning the game. As is the case with RB, the results are invariant with respect to the number of simulations per move.
 
 %-------------------------------------------------------------------
 \section{CONCLUSION}
 \label{sec:concl}
-Monte-Carlo Tree Search (MCTS) bases decisions on sampling a domain and collecting rewards. So far, limited work has been done to improve the values of the reward signal. In this paper, we show that the performance of MCTS is improved by treating the rewards of simulations as a combination of the reward and a quality measure. The combination is performed by treating the quality measure as a control variate, a variance reduction technique. We show that, given that there is a non-zero correlation between the reward-signal and the quality measure, results can be improved in two-player games.
+Limited work has been done to improve the reward signal used to approximate positions in Monte-Carlo Tree Search (MCTS). We show that the performance of MCTS is improved by treating the rewards of simulations as a combination of the win/loss state, with a quality measure. The resulting enhancements are implemented by treating the quality measures as control variates, a well-known variance reduction technique. We show that, given that there is a non-zero correlation between the reward-signal and the quality measure, results can be improved in two-player games. The experimental results for both enhancements proposed, show that using an additional informative statistic as a control variate in MCTS' results will improve overall performance in most domains.
 
-The Relative Bonus (RB) treats the length of a simulation as a measure of its quality. The benefit of this method is that it is domain independant. Though it performs best in games with high variance in play-out lengths, favoring the shorter ones. When the length of simulations is close to the lenght of the match played, RB provides less added information, and therefore only minor performance enhancements. RB is especially interesting for General Game Playing (GGP), where knowledge of the games played is sparse.
+The Relative Bonus (RB) treats the length of a simulation as a measure of its quality. The benefit of this method is that it is domain independant. Though it performs best in games with high variance in play-out lengths, favoring the brief ones. When the length of simulations is close to the lenght of the match played, RB provides less added information, and therefore only minor performance enhancements. RB is especially interesting for General Game Playing (GGP), where knowledge of the games played is sparse. In GGP RB improved empirical performance in a number of games.
 
-The Quality Bonus (QB) improved results in all (non-GGP) domains, though it requires additional domain knowledge. Nonetheless, even using simple quality assessments of terminal states, such as a piece count improves results considerably.
+The Quality Bonus (QB) improved results in all (non-GGP) domains, though its implementation requires additional domain knowledge. Nonetheless, even using simple quality assessments of terminal states, such as a piece count improves results considerably.
 
 In this paper we considered only cases where play-outs reach a natural end-state. However, for some domains this is not feasable or impractical. Therefore we propose to consider combining early and static cut-offs of play-outs for future research. Although a static cut-off will not be compatible with RB, we expect both to improve performance in combination with QB. Moreover, combining RB and QB with the reward signal may be improved by computing a covariance matrix between the simulation's reward signal, the simulation's duration, and quality assessment, and computing separate scaling constants for each. Finally, we expect that the proposed enhancements will improve estimates of online learning methods for simulation strategies such as n-grams, or MAST, though this is left for future research.
 
