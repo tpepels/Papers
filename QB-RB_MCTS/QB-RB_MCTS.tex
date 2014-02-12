@@ -61,12 +61,8 @@ The paper is structured as follows. First, the general MCTS framework is discuss
 % 	\label{fig:mcts-algorithm}
 % \end{figure}
 
-<<<<<<< HEAD
-Monte-Carlo Tree Search (MCTS) is a search method based on random sampling of a domain \cite{coulom2007efficient,kocsis2006bandit}. MCTS grows a search tree online over time, by selecting nodes to \emph{expand} based on a selection policy. Rewards stored at nodes are averaged over the results of numerous simulations. Each simulation consist of two parts, 1) the \emph{selection} step, where moves are selected and played inside the tree, according to the selection policy, and 2) the \emph{play-out} step, where moves are played outside the tree, according to a simulation strategy. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is \emph{backpropagated} along the tree from the expanded leaf to the root.
-=======
 Monte-Carlo Tree Search (MCTS) is a simulation-based search method~\cite{coulom2007efficient,kocsis2006bandit}. MCTS grows a search tree incrementally over time, by \emph{expanding} a leaf node of the tree every simulation. Values of the rewards stored at nodes, when averaged over the results of numerous simulations, represent an estimate of the win probability of simulations that pass through the node. 
 Each simulation consist of two parts, 1) the \emph{selection} step, where moves are selected and played inside the tree according to the selection policy, and 2) the \emph{play-out} step, where moves are played according to a simulation strategy, outside the tree. At the end of each play-out a terminal state is reached and the result $r$, usually expressed numerically in some discrete range, e.g. $r \in \{-1, 0, 1\}$ representing a loss, draw or win, respectively, is \emph{backpropagated} along the tree from the expanded leaf to the root. 
->>>>>>> 85bfd91e3851380b139fb113ae8ea0128410bc20
 
 In its basic form, MCTS does not require an evaluation function. Nonetheless, in most domains it is beneficial to add some domain knowledge for selecting moves to play during play-out. Because all rewards are backpropagated immediately, MCTS can be terminated at any time, when some computational limit is reached to select a move to return. The final move at the root is selected by choosing either the child node with the highest number of visits, the highest average reward, or a combination \cite{chaslot2008progressive}. 
 
