@@ -45,7 +45,10 @@ Monte-Carlo Tree Search is a best-first search technique based on simulations to
 \label{sec:intro}
 Monte-Carlo Tree Search (MCTS) \cite{coulom2007efficient,kocsis2006bandit} is a simulation-based best-first search technique for sequential decision-making problems. Recently, MCTS has shown to improve performance in different domains, such as various two-player games like Go \cite{lee2010current}, Lines of Action \cite{Winands2010b}, and Hex \cite{arneson2010monte}. Moreover, MCTS has seen successes in other domains such as real-time strategy games \cite{browne2012survey}, arcade games such as Ms Pac-Man \cite{enhancementspacmancig12} and the Physical Travelling Salesman problem \cite{powleytsp}, but also in real-life domains such as optimization, scheduling and security \cite{browne2012survey}.
 
-Several techniques for determining the quality of simulations have been previously proposed such as early cut-offs which terminates a play-out and returns a heuristic value of the state~\cite{Winands2011}. Evaluating the final \emph{score} of a game and combining it with win/loss rewards has shown to improve results in games that base the winning player on the one with the highest score \cite{shibahara2008combining}. However, for some domains a heuristic evaluation may not be available or too time-consuming, and certainly not all games determine the winning player on the highest scoring player. Moreover, generally MCTS runs simulated play-outs until a terminal state is reached. By merely using the loss/draw/win state of the play-out's final position, other information about the play-out is disregarded. We propose assessing the quality of play-outs based on any information available at a terminal state.
+Several techniques for determining the quality of simulations have been previously proposed such as early cut-offs which terminates a play-out and returns a heuristic value of the state~\cite{Winands2011}. Evaluating the final \emph{score} of a game and combining it with win/loss rewards has shown to improve results in games that base the winning player on the one with the highest score \cite{shibahara2008combining}. However, for some domains a heuristic evaluation may not be available or too time-consuming, and certainly not all games determine the winning player on the highest scoring player. Moreover, generally MCTS runs simulated play-outs until a terminal state is reached. By merely using the loss/draw/win state of the play-out's final position, other information about the play-out is disregarded. 
+Previous work has shown that {\it balancing} the Monte Carlo simulations can lead to improvements in performance~\cite{silver09monte,huang11monte}. 
+We use a similar motivation and propose assessing the quality of play-outs based on any information available at a terminal state and use these assessments to 
+modify the rewards. 
 
 In this paper, two techniques are proposed for determining the quality of a simulation based on properties of each play-out. The first, Relative Bonus, assesses the quality of a simulation based on its duration. The second, Qualitative Bonus, formulates a quality assessment of the terminal state. We show that adjusting results in a specific way using these quantities leads to increased performance in six distinct two-player games. Furthermore, we determine the advantages of using the Relative Bonus in the General Game-playing agent {\sc CadiaPlayer} \cite{bjornsson2009cadiaplayer}, which won the International GGP competition in 2007, 2008, and 2012.
 
@@ -87,7 +90,7 @@ where $v_i$ is the score of the child $i$ based on the average result of simulat
 
 \section{ASSESSING SIMULATION QUALITY}
 \label{sec:poqual}
-In this section, two measures by which the quality of the terminal state of a simulation can be assessed are discussed. First, in Subsection \ref{sub:simdur} the duration of a simulation is discussed as a measure of its quality. Second, in Subsection \ref{sub:termqual} a quality assessment of the terminal state of a match is considered. In the next section we establish how these quantities can be used to enhance the rewards of MCTS simulations.
+In this section, two measures by which the quality of the terminal state of a simulation can be assessed are discussed. First, in Subsection \ref{sub:simdur} the duration of a simulation is discussed as a measure of its quality. Second, in Subsection \ref{sub:termqual} a quality assessment of the terminal state of a match is considered. In the next section we establish how these quantities can be used to enhance the rewards of MCTS simulations. 
 
 \subsection{Simulation Duration} 
 \label{sub:simdur}
@@ -110,13 +113,16 @@ the total number of moves made by both players before reaching the terminal stat
 \end{figure}
 Moves played during play-out are selected by some play-out policy. Generally the play-out policy chooses moves at each state uniformly randomly, or is rule-based, reactive, or is combined with a source of expert or heuristic information such as an $\epsilon$-greedy policy \cite{sturtevant2008analysis, sutton1998reinforcement}. Various alternative methods have been proposed, such as using low-level $\alpha\beta$ searches \cite{Winands2011}, and methods that learn a strategy online, such and the Last-Good-Reply policy \cite{baier2010power}, Move-average Sampling Technique (MAST) \cite{finnsson2008simulation}, or using N-Grams \cite{Tak2012}. However, moves sampled from the play-out policy are far from optimal. Because numerous simulations are to be made during the time allowed for search, any play-out policy must be computationally efficient. Each move taken in the play-out step ultimately increases the uncertainty of the result obtained. Hence, the duration of the simulation may be regarded as an indicator of the certainty of the accuracy of the result.
 
-The main benefit of using simulation duration as a quality measure is that it is domain independent. Unless the number of moves in the game is fixed, the duration of a simulation can be informative in determining its quality. Moreover, in certain games, such as Chinese Checkers, simulation length has been used to enhance the heuristic value of a state \cite{roschke2013cc}.
+The main benefit of using simulation duration as a quality measure is that it is domain independent. Unless the number of moves in the game is fixed, the duration of a simulation can be informative in determining its quality. In addition, simulation length has also previously been used to enhance the performance of the search~\cite{roschke2013cc,keller13thts}.
 
 \subsection{Terminal State Quality}
 \label{sub:termqual}
 The second measure of a simulation's quality is based on a quality assessment of its specific terminal state reached. Evaluation functions can be designed for most games, they are used to evaluate non-terminal states and assign them a specific value. However, MCTS generally performs a play-out until a terminal state is reached. Therefore, we are interested in determining the quality of this terminal state directly to augment the information used by MCTS rather than the evaluation of an intermediary state. In some domains MCTS' performance is improved by using either a static, or an early cut-off of the simulations. In this paper, we do not consider these forms of quality assessmens based on early cut-offs but rather we consider any extra information that can help describe the quality of a terminal state, such how convincing of a win it was for one side from in-game scores. 
 
 As before, consider a single MCTS simulation as depicted in Figure \ref{fig:mcts-simulation}. When a terminal state is reached, a quality assessment function is called to evaluate the position with respect to the winning player. This measure $q$, should reflect the quality of a terminal state. For instance, in a game with material such as Breakthrough, Chess or Checkers, an evaluation can be based on scoring the remaining material of the winning player. For a racing game such as Chinese Checkers, the inverse of the number of pieces the opponent has in his target base can be considered. As such, the quality is based on the a posteriori evaluation of the terminal state. Having witnessed the states and actions performed from \node{S} to \node{T}, the score is based on an assessment of \node{T} given the progression \node{S} \ldots \node{N} \ldots \node{T} (see Figure \ref{fig:mcts-simulation}).
+
+A similar quality bonus has previously been shown to enhance the performance of MCTS in BlokusDuo~\cite{shibahara2008combining}. Ours differs in that the quality bonus
+is a function of its value compared to the mean quality value over all the play-outs.  
 
 %-------------------------------------------------------------------
 \section{QUALITY-BASED SIMULATION REWARDS}
@@ -133,6 +139,7 @@ Variance reduction methods in mathematical simulation are used to improve estima
 Control variates take advantage of a correlation between two random variables $X$ and $Y$, to improve estimators of $X$ given that the mean $v=\E{Y}$ is known. This is achieved by adding the deviation of $Y$ from its mean, scaled by a constant $a$, to $X$. We define a new random variable, 
 \begin{equation}
 Z=X+a\left(Y-v\right)
+\label{eq:cv}
 \end{equation}
 and instead base estimates from observations of $Z$, which are based on paired observations $(X,Y)$, rather than just $X$ by itself. 
 Here, $Y$ is called a {\it control variate} because its deviation from $\E{Y}$ is used to control the observed value $X$. 
@@ -140,7 +147,9 @@ One can show that there is a value $a^*=-\Cov{X,Y}\mathbin{/}\Var{Y}$ that minim
 
 We define $X$ as the simulation outcome, i.e. $X_i=r$, and define $Y$ as as one of the quality measures discussed in Section \ref{sec:poqual}, $Y_i=d$ or $Y_i=q$. Then, assuming that $X$ and $Y$ are correlated, i.e. $\Corr{X,Y}\neq0$, we can compute an estimate of  $a^*$ from observations such that variance in the reward is reduced. In common practical domains, no fixed values for $v$, $\Cov{X,Y}$, or $\Var{Y}$ are known and appropriate estimators for these quantities are required.
 
-Although using these quality measures as control variates is appropriate for MCTS, it is not necessarily the case that variance reduction results in performance increase. Therefore, although we expect that reducing the variance in the reward signal of MCTS is beneficial, it is not a guarantee. It is possible that a larger performance increase is gained by using a different value for $a$, as the quality measures may provide more advantage than variance reduction alone. Therefore, in this paper, we concentrate mainly on how these techniques can be used to improveme play performance. 
+% Let's move this to later
+%Although using these quality measures as control variates is appropriate for MCTS, it is not necessarily the case that variance reduction results in performance increase. Therefore, although we expect that reducing the variance in the reward signal of MCTS is beneficial, it is not a guarantee. It is possible that a larger performance increase is gained by using a different value for $a$, as the quality measures may provide more advantage than variance reduction alone. Therefore, in this paper, we concentrate mainly on how these techniques can be used to improveme play performance. 
+
 %In conclusion, although we propose to define the quality-based rewards as control variates, in this paper we are not concerned with the actual reduction in variance, but rather the improvement in performance.
 
 \subsection{Relative Bonus}
@@ -152,57 +161,60 @@ First, note that $d$ depends on the domain, the progress of the game, and the pl
 %As such, using it as a control variate as is, leads to a biased distribution of the value over time, where, at the beginning of a game, $d$ takes on higher values than when the game nears its end. 
 Also, the range of $d$ varies accordingly. 
 %Considering that the length of a game cannot be determined beforehand, we have no accurate way of normalizing the observed values absolutely, based on the expected total length of the game. 
-Therefore, $d$ is standardized by defining it as a \emph{t}-statistic. A sample mean can be approximated online, by maintaining an average $\bar{D}^\tau$ for each player (indexed by $\tau$), over the distribution of observed $d$ values $D^\tau$. After each simulation, $\bar{D}^\tau$ is updated with the observed $d$, then $\hat{\sigma}^\tau_D$ is the sample standard deviation of the distribution $D^\tau$. Using these statistics, we can define a standardized value $\lambda_r$ as follows:
+Therefore, $d$ is standardized by defining it as a \emph{t}-statistic. A sample mean can be approximated online, by maintaining an average $\bar{D}^\tau$ for each player (indexed by $\tau$), over the distribution of observed $d$ values $D^\tau$. After each simulation, $\bar{D}^\tau$ is updated with the observed $d$, then $\hat{\sigma}^\tau_D$ is the sample standard deviation of the distribution $D^\tau$. Using these statistics, we define a standardized value $\lambda_r$ as follows:
 
 \begin{equation}
 \lambda_r = \frac{\bar{D}^\tau - d}{\hat{\sigma}^\tau_D}
 \label{eq:rb_norm}
 \end{equation}
 
-$\lambda_r$ is both normalized with the sample standard deviation, and is relative to $\bar{D}^\tau$. It is both independent of the progress of the game, and normalized with respect to the current variance in the length of simulations. Since $\E{\lambda_r} = 0$ due to standardization, $\lambda_r$ can be added to $r$ as a control variate with $v = 0$. Note that, values of $\lambda_r$ are higher for shorter simulations.
+Note that $\lambda_r$ is a function of $d$ but to simplify the notation we omit the dependency since it is always clear from the context. Also, $\lambda_r$ is both normalized with the sample standard deviation and is relative to $\bar{D}^\tau$. It is both independent of the progress of the game, and normalized with respect to the current variance in the length of simulations. When the number of samples is large, $\E{\lambda_r} \approx 0$ due to standardization and so $\lambda_r$ can be added to $r$ as a control variate with $v = 0$ in Eq.~\ref{eq:cv}. Note that, values of $\lambda_r$ are higher for shorter simulations.
 
 Using an estimated mean may cause the search to be biased, i.e. moving into the dierction of shorter games. Although there is no immediate sollution to this problem, we propose to reset $\bar{D}^\tau$ and $\hat{\sigma}^\tau_D$ between moves. Moreover, rewards of the first $5\%$ of the expected number of simulations are not altered during search, and $\bar{D}^\tau$ and $\hat{\sigma}^\tau_D$ are updated during this time without altered selection.
 
-Since the distribution of $D^\tau$ is not known, $\lambda_r$ can still take on unrestricted values, particularly if the distribution of $D^\tau$ is skewed, or has long tails on either side. Moreover, the relation with the desired reward is not neccesarily linear. As such, in order to both bound, and shape the values of the bonus $b(\lambda_r)$ it is passed to a sigmoid function centered around $0$ on both axes, with range $b(\lambda) \in [-1, 1]$. 
-
+Since the distribution of $D^\tau$ is not known, $\lambda_r$ can still take on unrestricted values, particularly if the distribution of $D^\tau$ is skewed, or has heavy tails on either side. Moreover, its relationship with the desired reward is not neccesarily linear. As such, in order to both bound and shape the values of the bonus it is passed to a sigmoid function centered around $0$ on both axes whose range is $[-1,1]$,
+%$b(\lambda) =-1+\frac{2}{1+e^{-k\lambda}}$, 
 \begin{equation}
-b(\lambda)=-1+\frac{2}{1+e^{-k\lambda}}
+b(\lambda)=-1+\frac{2}{1+e^{-k\lambda}}.
 \label{eq:sigmoid}
 \end{equation}
+Here, $k$ is a constant to be determined by experimentation, it both slopes and bounds the bonus to be added to $r$. 
+%Higher values of $k$ determine both the steepness and the horizontal asymptotes of the sigmoid function. 
+This type of function is commonly used to smooth reward values of evaluation functions. 
+In \cite{shibahara2008combining}, $r$ was replaced by a sigmoid representing the final score.
 
-$k$ is a constant to be determined by experimentation, it both slopes and bounds the bonus to be added to $r$. Higher values of $k$ determine both the steepness, and the start and end of the horizontal asymptotes of the sigmoid function. This type of function is commonly used to smooth reward values of evaluation functions. Moreover in \cite{shibahara2008combining} $r$ was replaced by a sigmoid representing the final score in Go.
-
-Finally, the reward $r$ returned by the original simulation is given by $b(\lambda_r)$ as follows:
+Finally, the modified reward with the relative bonus is, 
+%the original simulation is given by $b(\lambda_r)$ as follows:
 \begin{equation}
-r_b=r+\sgn(r)\times a \times b(\lambda_r)
+r_b=r+\sgn(r) \cdot a \cdot b(\lambda_r).
 \label{eq:rb}
 \end{equation}
-
-This value is backpropagated from the expanded leaf to the root node. The range of $r_b$ is now $[-1-a, 1+a]$, i.e. the bonus $r_b$ is centered around the possible values of $r$. $a$ is either an empirically determined value, or computed off or on-line as described in Subsection \ref{subsec:astar}.
+This value is backpropagated from the expanded leaf to the root node. The range of $r_b$ is $[-1-a, 1+a]$, i.e. the bonus $r_b$ is centered around the possible values of $r$. $a$ is either an empirically determined value, or computed off or on-line as described in Subsection \ref{subsec:astar}.
 
 \subsection{Qualitative Bonus}
 \label{subsec:qb}
-Calculation of the Qualitative Bonus follows the same procedure as the Relative Bonus. Similar to RB, the average $\bar{Q}^\tau$ and standard deviation $\hat{\sigma}^\tau_Q$ of observed $q$ values is maintained for each player $\tau$. The value of $q$ is determined by an assessment of the quality of the match's terminal state. Assuming that higher values of $q$ represent a higher quality terminal state for the winning player $\tau$, $\lambda_q$ is defined as:
+The Qualitative Bonus follows the same procedure as the Relative Bonus. Similar to RB, the average $\bar{Q}^\tau$ and standard deviation $\hat{\sigma}^\tau_Q$ of observed $q$ values is maintained for each player $\tau$. The value of $q$ is determined by an assessment of the quality of the match's terminal state. Assuming that higher values of $q$ represent a higher quality terminal state for the winning player $\tau$, $\lambda_q$ is defined as:
 \begin{equation}
 \lambda_q = \frac{q - \bar{Q}^\tau}{\hat{\sigma}^\tau_Q}
 \label{eq:qb_norm}
 \end{equation}
-Finally the bonus $b(\lambda_q)$ is computed using the sigmoid function in Equation \ref{eq:sigmoid} with an optimized $k$ constant, and summed with the result of the simulation $r$.
+Finally the bonus $b(\lambda_q)$ is computed using the sigmoid function in Equation \ref{eq:sigmoid} with an optimized $k$ constant, and summed with the result of the simulation $r$,
 \begin{equation}
-r_q=r+\sgn(r)\times a \times b(\lambda_q)
+r_q=r+\sgn(r) \cdot a \cdot b(\lambda_q).
 \label{eq:qb}
 \end{equation}
 
 \subsection{Estimating $a$}
 \label{subsec:astar}
 In gameplay, $X$ is a nominal variable, i.e. loss, draw, or win, and in our case, $Y$ is a discrete scalar. Therefore the method of determining $a^*$ is not straightforward. Moreover, since the quantities required to compute $a^*$, either online during search, or offline, are unknown for complex domains, $a^*$ can be an approximation at best. 
-Efforts to determine a value for $a^*$ based on the intuitive definition of $X$ and $Y$, shown in Subsection \ref{sub:cv} did not result in practical values. Among others, determing the biserial covariance between $X$ and $Y$ was tried. However, due to the small covariance measured, the resuling range of $a^*$ is too small to make any impact on performance.
+Efforts to determine a value for $a^*$ based on the intuitive definition of $X$ and $Y$, shown in Subsection \ref{sub:cv} did not result in practical values. Among others, determing the biserial covariance between $X$ and $Y$ was tried. However, due to the small covariance measured, the resuling range of $a^*$ was 
+too small to make any impact on performance.
 
 Nonetheless, a usable value for $a$, $a'$ can be computed and used online by using an alternative definition of $a^*$. As before, let $Y$ be either one of the proposed quality measured, i.e. $Y_i=d$ or $Y_i=q$, and let $\rho$ be the search player, i.e. the player running MCTS. Now separate $Y$ in another distinct random variable $Y^w$ such that
 \begin{equation}
 Y^w_i =
 \begin{cases}
-   Y_i & \text{if $\rho$ wins the play-out,} \\
+   Y_i & \text{if $w$ wins the play-out,} \\
    0   & \text{otherwise}
 \end{cases}
 \label{eq:ywin}
@@ -210,6 +222,7 @@ Y^w_i =
 Using this definition we can determine the sample covariance, $\SCov{Y^w,Y}$ in terms of $Y$ values only. This ensures there are no numerical differences between the quantities. Next, we can compute 
 \begin{equation}
 	a'=\left|{\SCov{Y^w,Y}}\mathbin{/}{\SVar{Y}}\right|
+\label{eq:onlinea}
 \end{equation}
 and use it, as the value for $a$ in Equations \ref{eq:rb} and \ref{eq:qb}. 
 
@@ -217,24 +230,24 @@ Because the choice of $Y^w$ is arbitrary, since every game is won by either one 
 
 %-------------------------------------------------------------------
 \section{PSEUDO-CODE}
-Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and QB. Note that negamax backups are used in this setup, and therefore $r$ is relative to the player to move at the node that initiates the play-out. The basic MCTS algorithm used in this paper is the MCTS Solver \cite{Winands2008}, although the details of its implementation are omitted in the psuedo-code. Whenever \emph{update} is used in the algoritm, it refers to updating the average reward for a node, or the sample mean and standard deviation for $\bar{D}^\tau$ and $\bar{Q}^\tau$.
+Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB or QB. Note that negamax backups are used in this setup, and therefore $r$ is relative to the player to move at the node that initiates the play-out. The basic MCTS algorithm used in this paper is the MCTS-Solver \cite{Winands2008}, although the details of its implementation are omitted in the psuedo-code. Whenever \emph{update} is used in the algoritm, it refers to updating the average reward for a node, or the sample mean and standard deviation for $\bar{D}^\tau$ and $\bar{Q}^\tau$.
 
 \begin{algorithm2e}[ht]
 \setstretch{1.07}
   {\sc mcts}(node $p$, node depth $d_{Sp}$):														\;
   \pushline
-    \If{isLeaf($p$)}{Expand($p$)}
+    \lIf{isLeaf($p$)}{Expand($p$)}
     Select a child $i$ according to Eq.~\ref{eq:uct} 												\;
     $d_{Si} \gets d_{Sp} + 1$																		\; \label{alg:depth}
     \eIf{$n_i = 0$}{
-    	$\tuple{r, \tau, q, d_{iT}} \gets$ Playout$(i)$ 											\; \label{alg:results}
+    	$\tuple{r, \tau, q, d_{iT}} \gets$ {\sc playout}$(i)$ 											\; \label{alg:results}
     	$d \gets d_{Si} + d_{iT}$																	\;			
     	\If{enabled$(b_r)$ and $\hat{\sigma}^\tau_D > 0$}{
-    		$r \gets r + \sgn(r) \times a \times$ BONUS$(\bar{D}^\tau - d, \hat{\sigma}^\tau_D)$ 	\; \label{alg:rb}
+    		$r \gets r + \sgn(r) \cdot a \cdot$ {\sc bonus}$(\bar{D}^\tau - d, \hat{\sigma}^\tau_D)$ 	\; \label{alg:rb}
     		update $\bar{D}^\tau$ and $\hat{\sigma}^\tau_D$ with $d$								\; 		\label{alg:meanstddev}
 		}
 		\ElseIf{enabled$(b_q)$ and $\hat{\sigma}^\tau_Q > 0$} {
-    		$r \gets r + \sgn(r) \times a \times$ BONUS$(q -\bar{Q}^\tau, \hat{\sigma}^\tau_Q)$ 	\; \label{alg:qb}
+    		$r \gets r + \sgn(r) \cdot a \cdot$ {\sc bonus}$(q -\bar{Q}^\tau, \hat{\sigma}^\tau_Q)$ 	\; \label{alg:qb}
     		update $\bar{Q^\tau}$ and $\hat{\sigma}^\tau_Q$ with $q$ 								\;
     	}
     	update node $i$ with $r$																	\;
@@ -252,10 +265,10 @@ Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and Q
     \popline
     \bf{return} $b$																					\;
   \vspace{0.3cm}
-  \caption{Pseudo-code of quality-based MCTS (Section \ref{sec:qoreward}) \label{alg}}
+  \caption{Pseudo-code of quality-based MCTS (Section \ref{sec:qoreward}). \label{alg}}
 \end{algorithm2e}
 
-During selection, starting from the root, the depth of the current node is updated on line \ref{alg:depth}. Whenever an expandable node is reached, its children are added to the tree and a play-out is initiated from one of them. A play-out returns a tuple of results, on line \ref{alg:results} four different values are returned: 1) the result of the play-out $r \in \{-1, 0, 1\}$, 2) the winning player $\tau$, 3) the assessed quality of the play-out's terminal state $q\in(0,1)$, and 4) the number of moves made during play-out $d_{iT}$ defined in Subsection~\ref{sec:qoreward}. Using these values $r$ is altered. On line \ref{alg:rb} the relative bonus is applied to $r$, using the difference with the winning player's current mean $\bar{D}^\tau - d$, i.e. lower values of $d$ give a higher reward. After which the current mean and standard deviation are updated on line \ref{alg:meanstddev}. QB is applied on line \ref{alg:qb} using the assessed quality of the play-out $q$. Note that the offset from the mean is defined as $q - \bar{Q}^\tau$, because in contrast to RB, positive deviation of $q$ from its mean imply better results. The {\sc bonus} function on line \ref{alg:bonus}, computes the normalized $\lambda$ (line \ref{alg:lambda}) and, successively the bonus $b$ (line \ref{alg:b}) using the sigmoid function, as defined in Subsections \ref{subsec:rb} and \ref{subsec:qb}. The constant $a$ on lines \ref{alg:rb} and \ref{alg:qb} can be either fixed, or computed online as shown in Subsection \ref{subsec:astar}.
+During selection, starting from the root, the depth of the current node is updated on line \ref{alg:depth}. Whenever an expandable node is reached, its children are added to the tree and a play-out is initiated from one of them. A play-out returns a tuple of results, on line \ref{alg:results} four different values are returned: 1) the result of the play-out $r \in \{-1, 0, 1\}$, 2) the winning player $\tau$, 3) the assessed quality of the play-out's terminal state $q\in(0,1)$, and 4) the number of moves made during play-out $d_{iT}$ defined in Subsection~\ref{sub:simdur}. Using these values $r$ is altered. On line \ref{alg:rb} the relative bonus is applied to $r$, using the difference with the winning player's current mean $\bar{D}^\tau - d$, i.e. lower values of $d$ give a higher reward. After which the current mean and standard deviation are updated on line \ref{alg:meanstddev}. QB is applied on line \ref{alg:qb} using the assessed quality of the play-out $q$. Note that the offset from the mean is defined as $q - \bar{Q}^\tau$, because in contrast to RB, positive deviation of $q$ from its mean imply better results. The {\sc bonus} function on line \ref{alg:bonus}, computes the normalized $\lambda$ (line \ref{alg:lambda}) and, successively the bonus $b$ (line \ref{alg:b}) using the sigmoid function, as defined in Subsections \ref{subsec:rb} and \ref{subsec:qb}. The constant $a$ on lines \ref{alg:rb} and \ref{alg:qb} can be either fixed, or computed online as shown in Subsection \ref{subsec:astar}.
 
 %-------------------------------------------------------------------
 \section{EXPERIMENTS}
@@ -277,14 +290,17 @@ The proposed enhancements are validated in six distinct two-player games. These 
 For the value of $q$ the following quality measures are used: \emph{Amazons}: the combined number of moves available for the winning player. \emph{Breakthrough} and \emph{Cannon}: the total piece difference between the winning and losing player. \emph{Checkers}: the total number of pieces in play for the winning player. \emph{Chinese Checkers}: the inverse number of the losing player's pieces that reached the home-base. \emph{Pentalath}: the inverse of the longest row of the losing player, given that this row can be extended to a length of 5.
 For each quality measure an appropriate, fixed, normalizer brings the measure within the $[0,1]$ range. 
 
-For each game, an appropriate simulation strategy is used to select moves to make during play-out. Although these were validated to improve performance in all games, the strategies used are not on the level of award-winning programs. Rather, they are implemented to ensure that no obvious mistakes or flawed play is observed. All results are reported with these simulation strategies enabled.
+For each game, an appropriate play-out policy is used to select moves to make during play-out. 
+% I don't understand why we would say the next sentence. 
+%Although these were validated to improve performance in all games, the play-out policies used are not on the level of award-winning programs. 
+Rather, they are implemented to ensure that no obvious mistakes or flawed play is observed. All results are reported with these play-out policies enabled.
 
 GGP experiments are performed using the {\sc CadiaPlayer} codebase. In GGP, no domain knowledge is available in advance, rules of the games are interpreted online resulting in low simulation counts. Moreover, simulation strategies are learned online, using N-Grams \cite{takngrams}. The following two-player turn-based games were used to analyse the performance of the enhancement: Zhadu, TTCC4, Skirmish, SheepWolf, Quad, Merrils, Knightthrough, Connect5, Checkers, Breakthrough, 3DTicTacToe and Chinese Checkers. Moreover, we show results for the following two-player simultaneous move games: Battle, and Chinook.
 
-Experiments were run on 2.2Ghz AMD Opteron CPU, on a Linux operating system. For each game, the constant $k$ used by the sigmoid function was empirically determined by experimenting with values between 0 and 10, with varying increments. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was optimized empirically for each game without any enhancements enabled, and was not altered nor re-optimized for the experiments.
+Experiments were run on 2.2Ghz AMD Opteron CPU, on a Linux operating system. For each game, the constant $k$ used by the sigmoid function was determined by experimenting with values between 0 and 10, with varying increments. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was optimized or each game without any enhancements enabled and was not altered nor re-optimized for the experiments.
 \subsection{Results}
 \label{subsec:results}
-For each result, the winning percentage is reported for the player with the enhancement enabled, alongside the 95\% confidence interval. For each experiment, the players' seats are swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player bias.
+For each result, the winning percentage is reported for the player with the enhancement enabled, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias.
 
 \begin{table}
 {\caption{Relative Bonus enabled using different search times, 5000 games} \label{tab:rb}}
@@ -298,19 +314,26 @@ For each result, the winning percentage is reported for the player with the enha
 \rule{0pt}{12pt}
 \textbf{Game} & \multicolumn{1}{c|}{\textbf{$k$}} 
 & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-Amazons &\multicolumn{1}{l|}{2.2}			& {\bf{54.7}}$\pm$1.38 	& {\bf{55.7}}$\pm$1.38 	& {\bf{54.8}}$\pm$1.38	& {\bf{54.7}}$\pm$1.38 	\\ 
-Breakthrough &\multicolumn{1}{l|}{8.0} 		& 50.0$\pm$1.39		 	& 51.0$\pm$1.39 		& 47.6$\pm$1.38			& {\bf{51.6}}$\pm$1.39 	\\ 
-Cannon &\multicolumn{1}{l|}{3.0} 			& {\bf{62.8}}$\pm$1.34 	& {\bf{60.6}}$\pm$1.35 	& {\bf{58.82}}$\pm$1.36			& {\bf{58.1}}$\pm$1.37 	\\ 
-Checkers &\multicolumn{1}{l|}{2.8}			& {\bf{52.1}}$\pm$0.79 	& {\bf{52.7}}$\pm$0.79 	& {\bf{48.9}}$\pm$0.67	& {\bf{50.7}}$\pm$0.64 	\\ 
-Chin. Checkers &\multicolumn{1}{l|}{1.2} 	& {\bf{56.8}}$\pm$1.37 	& {\bf{53.2}}$\pm$1.38 	& {\bf{54.9}}$\pm$1.38	& {\bf{52.5}}$\pm$1.38 	\\
-Pentalath &\multicolumn{1}{l|}{1.0} 		& {\bf{51.4}}$\pm$1.39 	& 50.3$\pm$1.39 		& 49.3$\pm$1.39 		& 49.5$\pm$1.39 		\\
+%Amazons &\multicolumn{1}{l|}{2.2}			& {\bf{54.7}}$\pm$1.38 	& {\bf{55.7}}$\pm$1.38 	& {\bf{54.8}}$\pm$1.38	& {\bf{54.7}}$\pm$1.38 	\\ 
+%Breakthrough &\multicolumn{1}{l|}{8.0} 		& 50.0$\pm$1.39		 	& 51.0$\pm$1.39 		& 47.6$\pm$1.38			& {\bf{51.6}}$\pm$1.39 	\\ 
+%Cannon &\multicolumn{1}{l|}{3.0} 			& {\bf{62.8}}$\pm$1.34 	& {\bf{60.6}}$\pm$1.35 	& {\bf{58.82}}$\pm$1.36			& {\bf{58.1}}$\pm$1.37 	\\ 
+%Checkers &\multicolumn{1}{l|}{2.8}			& {\bf{52.1}}$\pm$0.79 	& {\bf{52.7}}$\pm$0.79 	& {\bf{48.9}}$\pm$0.67	& {\bf{50.7}}$\pm$0.64 	\\ 
+%Chin. Checkers &\multicolumn{1}{l|}{1.2} 	& {\bf{56.8}}$\pm$1.37 	& {\bf{53.2}}$\pm$1.38 	& {\bf{54.9}}$\pm$1.38	& {\bf{52.5}}$\pm$1.38 	\\
+%Pentalath &\multicolumn{1}{l|}{1.0} 		& {\bf{51.4}}$\pm$1.39 	& 50.3$\pm$1.39 		& 49.3$\pm$1.39 		& 49.5$\pm$1.39 		\\
+Amazons &\multicolumn{1}{l|}{2.2}			    & {\bf{54.7}} $\pm$ 1.4 	& {\bf{55.7}} $\pm$ 1.4 	& {\bf{54.8}} $\pm$ 1.4	 & {\bf{54.7}} $\pm$ 1.4 	\\ 
+Breakthrough &\multicolumn{1}{l|}{8.0} 		& 50.0 $\pm$ 1.4		    	& 51.0 $\pm$ 1.4 		      & 47.6 $\pm$ 1.4			   & {\bf{51.6}} $\pm$ 1.4 	\\ 
+Cannon &\multicolumn{1}{l|}{3.0} 			    & {\bf{62.8}} $\pm$ 1.3 	& {\bf{60.6}} $\pm$ 1.3 	& {\bf{58.82}} $\pm$ 1.4 & {\bf{58.1}} $\pm$ 1.4 	\\ 
+Checkers &\multicolumn{1}{l|}{2.8}			  & {\bf{52.1}} $\pm$ 0.8 	& {\bf{52.7}} $\pm$ 0.8 	& {\bf{48.9}} $\pm$ 0.7	 & {\bf{50.7}} $\pm$ 0.6 	\\ 
+Chin. Checkers &\multicolumn{1}{l|}{1.2} 	& {\bf{56.8}} $\pm$ 1.4 	& {\bf{53.2}} $\pm$ 1.4 	& {\bf{54.9}} $\pm$ 1.4	 & {\bf{52.5}} $\pm$ 1.4 	\\
+Pentalath &\multicolumn{1}{l|}{1.0} 		  & {\bf{51.4}} $\pm$ 1.4 	& 50.3 $\pm$ 1.4 		      & 49.3 $\pm$ 1.4 		     & 49.5 $\pm$ 1.4 		\\
 \hline
 \end{tabular}
 }
 \end{center}
 \end{table}
-For the relative bonus, results for the implemented games are shown in Table \ref{tab:rb}. A significant increase in performance is shown for five of the six games, and no adverse results in the other. The value of $k$ was optimized empirically once for each game, and all experiments use the reported value in the second column. Furthermore, we show that using the online definition of $a'$ leads to increased performance over a fixed value for five games. In Breakthrough, defense is equally important as offense, and since the implemented simulation strategy does not contain heuristics for complicated defensive positioning, the play-outs' lengths are biased to quick wins and exclude defensive moves.
-Chinese Checkers, Cannon and Amazons achieve the most increase in performance using RB. These games improve the estimates of their length over time, and as such, penalizing long games at the beginning of the match ensures better estimations, since the length of the actual match is much shorter overall. Pentalath is a game with a limited lenght, when the board is nearly filled the game is sure to end. As such, the additional information provided by the length of games is limited.
+For the relative bonus, results for the games are shown in Table \ref{tab:rb}. A significant increase in performance is shown for five of the six games, and no adverse results in the other. The value of $k$ was optimized empirically once for each game, and all experiments use the reported value in the second column. 
+We try a fixed value of $a = 0.25$ in addition to online definition of $a'$ from Eq.~\ref{eq:onlinea}. We see that the online $a'$ leads to increased performance over a fixed value for five games. In Breakthrough, defense is equally important as offense, and since the play-out policy does not contain heuristics for complicated defensive positioning, the play-outs' lengths favors quick wins and exclude defensive moves.
+Chinese Checkers, Cannon and Amazons achieve the most increase in performance using RB. These games improve the estimates of their length over time, and as such, penalizing long games at the beginning of the match ensures better estimates, since the length of the actual match is much shorter overall. Pentalath is a game with a limited length, when the board is nearly filled the game is sure to end. As such, the additional information provided by the length of games is limited.
 \begin{table}
 {\caption{Relative Bonus in GGP, {\sc{CadiaPlayer}}, $a = 0.25$ \newline 30 sec. startclock, 15 sec. playclock} \label{tab:rb_ggp}}
 \begin{center}
@@ -321,20 +344,34 @@ Chinese Checkers, Cannon and Amazons achieve the most increase in performance us
 & \multicolumn{1}{c}{\textbf{$k = 2$}} & \multicolumn{1}{c}{\textbf{$k = 1.4$}} \\
 \cline{1-3}
 \multicolumn{1}{c|}{\rule{0pt}{12pt}\textbf{Game}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-\multicolumn{1}{r|}{Zhadu} 				&{\bf{54.3}}$\pm$1.87		& {\bf{53.3}}$\pm$1.86 	\\
-\multicolumn{1}{r|}{TTCC4} 				&{\bf{55.3}}$\pm$2.00		& {\bf{53.3}}$\pm$2.02 	\\
-\multicolumn{1}{r|}{Skirmish} 			&51.9$\pm$2.20				& 50.7$\pm$2.20 			\\
-\multicolumn{1}{r|}{SheepWolf} 			&51.7$\pm$1.85				& {\bf{52.3}}$\pm$1.85 	\\
-\multicolumn{1}{r|}{Quad} 				&{\bf{44.7}}$\pm$1.75		& {\bf{44.7}}$\pm$1.75 	\\
-\multicolumn{1}{r|}{Merrills} 			&51.9$\pm$2.56				& 48.9$\pm$2.56 			\\
-\multicolumn{1}{r|}{Knightthrough}		&49.9$\pm$2.1				& 49.2$\pm$2.11 			\\
-\multicolumn{1}{r|}{Connect5} 			&{\bf{54.0}}$\pm$1.81		& {\bf{54.4}}$\pm$1.81 	\\
-\multicolumn{1}{r|}{Chinook} 			&48.5$\pm$2.00				& 49.0$\pm$2.00 			\\
-\multicolumn{1}{r|}{Checkers} 			&{\bf{54.4}}$\pm$3.04		& 52.1$\pm$3.16 			\\
-\multicolumn{1}{r|}{Breakthrough}		&51.3$\pm$2.89				& 51.0$\pm$2.88 			\\
-\multicolumn{1}{r|}{Battle}				&50.0$\pm$2.01				& 49.2$\pm$2.01 			\\
-\multicolumn{1}{r|}{3DTicTacToe}		&{\bf{55.0}}$\pm$1.61		& {\bf{54.5}}$\pm$1.62 	\\
-\multicolumn{1}{r|}{Chin. Checkers}	&{\bf{56.3}}$\pm$1.79			& {\bf{56.0}}$\pm$1.79 	\\
+%\multicolumn{1}{r|}{Zhadu} 				&{\bf{54.3}}$\pm$1.87		& {\bf{53.3}}$\pm$1.86 	\\
+%\multicolumn{1}{r|}{TTCC4} 				&{\bf{55.3}}$\pm$2.00		& {\bf{53.3}}$\pm$2.02 	\\
+%\multicolumn{1}{r|}{Skirmish} 			&51.9$\pm$2.20				& 50.7$\pm$2.20 			\\
+%\multicolumn{1}{r|}{SheepWolf} 			&51.7$\pm$1.85				& {\bf{52.3}}$\pm$1.85 	\\
+%\multicolumn{1}{r|}{Quad} 				&{\bf{44.7}}$\pm$1.75		& {\bf{44.7}}$\pm$1.75 	\\
+%\multicolumn{1}{r|}{Merrills} 			&51.9$\pm$2.56				& 48.9$\pm$2.56 			\\
+%\multicolumn{1}{r|}{Knightthrough}		&49.9$\pm$2.1				& 49.2$\pm$2.11 			\\
+%\multicolumn{1}{r|}{Connect5} 			&{\bf{54.0}}$\pm$1.81		& {\bf{54.4}}$\pm$1.81 	\\
+%\multicolumn{1}{r|}{Chinook} 			&48.5$\pm$2.00				& 49.0$\pm$2.00 			\\
+%\multicolumn{1}{r|}{Checkers} 			&{\bf{54.4}}$\pm$3.04		& 52.1$\pm$3.16 			\\
+%\multicolumn{1}{r|}{Breakthrough}		&51.3$\pm$2.89				& 51.0$\pm$2.88 			\\
+%\multicolumn{1}{r|}{Battle}				&50.0$\pm$2.01				& 49.2$\pm$2.01 			\\
+%\multicolumn{1}{r|}{3DTicTacToe}		&{\bf{55.0}}$\pm$1.61		& {\bf{54.5}}$\pm$1.62 	\\
+%\multicolumn{1}{r|}{Chin. Checkers}	&{\bf{56.3}}$\pm$1.79			& {\bf{56.0}}$\pm$1.79 	\\
+\multicolumn{1}{r|}{Zhadu} 			  	&{\bf{54.3}} $\pm$ 1.9		& {\bf{53.3}} $\pm$ 1.9 	\\
+\multicolumn{1}{r|}{TTCC4} 				  &{\bf{55.3}} $\pm$ 2.0		& {\bf{53.3}} $\pm$ 2.0 	\\
+\multicolumn{1}{r|}{Skirmish} 			&51.9 $\pm$ 2.2		    		& 50.7 $\pm$ 2.2 			\\
+\multicolumn{1}{r|}{SheepWolf} 			&51.7 $\pm$ 1.8   				& {\bf{52.3}} $\pm$ 1.8 	\\
+\multicolumn{1}{r|}{Quad} 				  &{\bf{44.7}} $\pm$ 1.7		& {\bf{44.7}} $\pm$ 1.7 	\\
+\multicolumn{1}{r|}{Merrills} 			&51.9 $\pm$ 2.6		    		& 48.9 $\pm$ 2.6 			\\
+\multicolumn{1}{r|}{Knightthrough}	&49.9 $\pm$ 2.1   				& 49.2 $\pm$ 2.1 			\\
+\multicolumn{1}{r|}{Connect5} 			&{\bf{54.0}} $\pm$ 1.8		& {\bf{54.4}} $\pm$ 1.8 	\\
+\multicolumn{1}{r|}{Chinook} 			  &48.5 $\pm$ 2.0	    			& 49.0 $\pm$ 2.0 			\\
+\multicolumn{1}{r|}{Checkers} 			&{\bf{54.4}} $\pm$ 3.0		& 52.1 $\pm$ 3.2 			\\
+\multicolumn{1}{r|}{Breakthrough}		&51.3 $\pm$ 2.9			    	& 51.0 $\pm$ 2.9 			\\
+\multicolumn{1}{r|}{Battle}				  &50.0 $\pm$ 2.0	    			& 49.2 $\pm$ 2.0 			\\
+\multicolumn{1}{r|}{3DTicTacToe}		&{\bf{55.0}} $\pm$ 1.6		& {\bf{54.5}} $\pm$ 1.6 	\\
+\multicolumn{1}{r|}{Chin. Checkers}	&{\bf{56.3}} $\pm$ 1.8		& {\bf{56.0}} $\pm$ 1.8 	\\
 \hline
 \end{tabular}
 }
@@ -354,12 +391,18 @@ For the GGP domains, results are presented in Table \ref{tab:rb_ggp}. A single v
 \cline{1-6}
 \rule{0pt}{12pt} \textbf{Game} & \multicolumn{1}{c|}{\textbf{$k$}} 
 & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-Amazons &\multicolumn{1}{l|}{1.6}			& {\bf{64.5}}$\pm$1.33 & {\bf{58.0}}$\pm$1.37 	& {\bf{63.0}}$\pm$1.34 	& {\bf{57.7}}$\pm$1.37 \\
-Breakthrough &\multicolumn{1}{l|}{2.0} 		& {\bf{74.8}}$\pm$1.20 & {\bf{71.9}}$\pm$1.25 	& {\bf{76.3}}$\pm$1.18 	& {\bf{78.6}}$\pm$1.14 \\
-Cannon &\multicolumn{1}{l|}{4.0} 			& {\bf{65.9}}$\pm$1.31 & {\bf{63.0}}$\pm$1.34 	& {\bf{54.7}}$\pm$1.38 	& {\bf{57.4}}$\pm$1.37 \\
-Checkers &\multicolumn{1}{l|}{2.0}			& {\bf{53.8}}$\pm$0.76 & {\bf{52.7}}$\pm$0.75 	& {\bf{51.9}}$\pm$0.62 	& {\bf{52.3}}$\pm$0.61 \\
-Chin. Checkers &\multicolumn{1}{l|}{2.8} 	& {\bf{65.7}}$\pm$1.32 & {\bf{60.1}}$\pm$1.36 	& {\bf{61.4}}$\pm$1.35 	& {\bf{58.9}}$\pm$1.36 \\
-Pentalath &\multicolumn{1}{l|}{1.6} 		& 46.6$\pm$1.38 	     & 50.5$\pm$1.39 		& 48.7$\pm$1.39		 	& 50.1$\pm$1.39 \\
+%Amazons &\multicolumn{1}{l|}{1.6}			& {\bf{64.5}}$\pm$1.33 & {\bf{58.0}}$\pm$1.37 	& {\bf{63.0}}$\pm$1.34 	& {\bf{57.7}}$\pm$1.37 \\
+%Breakthrough &\multicolumn{1}{l|}{2.0} 		& {\bf{74.8}}$\pm$1.20 & {\bf{71.9}}$\pm$1.25 	& {\bf{76.3}}$\pm$1.18 	& {\bf{78.6}}$\pm$1.14 \\
+%Cannon &\multicolumn{1}{l|}{4.0} 			& {\bf{65.9}}$\pm$1.31 & {\bf{63.0}}$\pm$1.34 	& {\bf{54.7}}$\pm$1.38 	& {\bf{57.4}}$\pm$1.37 \\
+%Checkers &\multicolumn{1}{l|}{2.0}			& {\bf{53.8}}$\pm$0.76 & {\bf{52.7}}$\pm$0.75 	& {\bf{51.9}}$\pm$0.62 	& {\bf{52.3}}$\pm$0.61 \\
+%Chin. Checkers &\multicolumn{1}{l|}{2.8} 	& {\bf{65.7}}$\pm$1.32 & {\bf{60.1}}$\pm$1.36 	& {\bf{61.4}}$\pm$1.35 	& {\bf{58.9}}$\pm$1.36 \\
+%Pentalath &\multicolumn{1}{l|}{1.6} 		& 46.6$\pm$1.38 	     & 50.5$\pm$1.39 		& 48.7$\pm$1.39		 	& 50.1$\pm$1.39 \\
+Amazons &\multicolumn{1}{l|}{1.6}			    & {\bf{64.5}} $\pm$ 1.3 & {\bf{58.0}} $\pm$ 1.4 	& {\bf{63.0}} $\pm$ 1.3 	& {\bf{57.7}} $\pm$ 1.4 \\
+Breakthrough &\multicolumn{1}{l|}{2.0} 		& {\bf{74.8}} $\pm$ 1.2 & {\bf{71.9}} $\pm$ 1.2 	& {\bf{76.3}} $\pm$ 1.2 	& {\bf{78.6}} $\pm$ 1.1 \\
+Cannon &\multicolumn{1}{l|}{4.0} 			    & {\bf{65.9}} $\pm$ 1.3 & {\bf{63.0}} $\pm$ 1.3 	& {\bf{54.7}} $\pm$ 1.4 	& {\bf{57.4}} $\pm$ 1.4 \\
+Checkers &\multicolumn{1}{l|}{2.0}			  & {\bf{53.8}} $\pm$ 0.8 & {\bf{52.7}} $\pm$ 0.7 	& {\bf{51.9}} $\pm$ 0.6 	& {\bf{52.3}} $\pm$ 0.6 \\
+Chin. Checkers &\multicolumn{1}{l|}{2.8} 	& {\bf{65.7}} $\pm$ 1.3 & {\bf{60.1}} $\pm$ 1.4 	& {\bf{61.4}} $\pm$ 1.3 	& {\bf{58.9}} $\pm$ 1.4 \\
+Pentalath &\multicolumn{1}{l|}{1.6} 		  & 46.6 $\pm$ 1.4  	     & 50.5 $\pm$ 1.4 		    & 48.7 $\pm$ 1.4		 	    & 50.1 $\pm$ 1.4 \\
 \hline
 \end{tabular}
 }
