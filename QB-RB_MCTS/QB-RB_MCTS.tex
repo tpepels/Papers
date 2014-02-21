@@ -197,7 +197,7 @@ Y^w_i =
 \end{equation}
 Using this definition we can determine the sample covariance, $\SCov{Y^w,Y}$ in terms of $Y$ values only. This ensures there are no numerical differences between the quantities. Next, we can compute 
 \begin{equation}
-	a'=\left|{\SCov{Y^w,Y}}\mathbin{/}{\SVar{Y}}\right|
+	a'=\left|{\SCov{Y^w,Y}}\mathbin{/}{\SVar{Y}}\right|,
 \label{eq:onlinea}
 \end{equation}
 \noindent and use it, as the value for $a$ in Equations \ref{eq:rb} and \ref{eq:qb}. 
@@ -294,7 +294,7 @@ Breakthrough &\multicolumn{1}{l|}{8.0} 			& 50.0 $\pm$ 1.4		    	& 51.0 $\pm$ 1.
 Cannon &\multicolumn{1}{l|}{3.0} 			    & {\bf{62.8}} $\pm$ 1.3 		& {\bf{60.6}} $\pm$ 1.3 		& {\bf{58.8}} $\pm$ 1.4 	& {\bf{58.1}} $\pm$ 1.4 	\\ 
 Checkers &\multicolumn{1}{l|}{2.8}			  	& {\bf{52.1}} $\pm$ 0.8 		& {\bf{52.7}} $\pm$ 0.8 		& 48.9 $\pm$ 0.7	 		& {\bf{50.7}} $\pm$ 0.6 	\\ 
 Chin. Checkers &\multicolumn{1}{l|}{1.2} 		& {\bf{56.8}} $\pm$ 1.4 		& {\bf{53.2}} $\pm$ 1.4 		& {\bf{54.9}} $\pm$ 1.4	 	& {\bf{52.5}} $\pm$ 1.4 	\\
-Pentalath &\multicolumn{1}{l|}{1.0} 		  	& {\bf{51.4}} $\pm$ 1.4 		& 50.3 $\pm$ 1.4 		      	& 49.3 $\pm$ 1.4 		    & 49.5 $\pm$ 1.4 		\\
+Pentalath &\multicolumn{1}{l|}{1.0} 		  	& 51.4 $\pm$ 1.4 		& 50.3 $\pm$ 1.4 		      	& 49.3 $\pm$ 1.4 		    & 49.5 $\pm$ 1.4 		\\
 \hline
 \end{tabular}
 }
@@ -374,13 +374,14 @@ Breakthrough 	& {\bf{77.9}} $\pm$ 1.2 & {\bf{72.9}} $\pm$ 1.2	& $\pm$  & {{\bf78
 Cannon 			& {\bf{72.5}} $\pm$ 1.2 & {\bf{69.3}} $\pm$ 1.3 	& $\pm$  & {{\bf62.3}} $\pm$ 1.3 	\\
 Checkers 		& {\bf{53.6}} $\pm$ 0.8 & {\bf{54.1}} $\pm$ 0.8 	& $\pm$  & {{\bf53.5}} $\pm$ 0.7	\\
 Chin. Checkers 	& {\bf{69.9}} $\pm$ 1.3 & {\bf{63.1}} $\pm$ 1.3  	& $\pm$  & {{\bf70.0}} $\pm$ 1.4	\\
-Pentalath 		& 50.7 $\pm$ 1.4 & 51.2 $\pm$ 1.4  			& $\pm$  & {{\bf51.4}} $\pm$ 1.4 	\\
+Pentalath 		& 50.7 $\pm$ 1.4 & 51.2 $\pm$ 1.4  			& $\pm$  & 51.4 $\pm$ 1.4 	\\
 \hline
 \end{tabular}
 }
 \end{table}
 
-Note that, while the gains are higher for QB, RB does not require any domain knowledge. An immediate question is whether the two methods are complementary. Results with both methods enabled are shown in Table~\ref{tab:qbrb}. Comparing to Tables~\ref{tab:rb} and \ref{tab:qb}, in $X$ of the $Y$ cases the gain for the combination is higher than each bonus on its own.
+Note that, while the gains are higher for QB, RB does not require any domain knowledge. An immediate question is whether the two methods are complementary. Results with both methods enabled are shown in Table~\ref{tab:qbrb}. Comparing to Tables~\ref{tab:rb} and \ref{tab:qb}, 
+{\bf \color{red} in $X$ of the $Y$ cases the gain for the combination is higher than each bonus on its own.}
 
 %-------------------------------------------------------------------
 \section{CONCLUSION}
@@ -392,11 +393,12 @@ In this paper, we show that the performance of MCTS is improved by treating the 
 The Relative Bonus (RB) treats the length of a simulation as a measure of its quality. The benefit of this method is that it is domain-independent. It seems to perform best in games where there is high variance in play-out lengths, favoring the shorter ones. 
 %When the length of simulations is close to the length of the match played, RB provides less added information, and therefore only minor performance enhancements. 
 %RB is especially interesting for General Game-Playing (GGP), where knowledge of the games played is sparse. 
-In General Game-Playing, RB improved empirical performance in 14 of the 24 sequential game cases, and did not significantly decrease performance in any of the cases. 
+In General Game-Playing, RB improved empirical performance in 7 of the 12 sequential games, 
+and only significantly decreased performance in one of the cases. 
 The Quality Bonus (QB) improved results in all (non-GGP) domains, though its implementation requires additional knowledge. Nonetheless, even simple quality assessments of terminal states, such as a piece count, improves results considerably.
 
 %We considered only cases where play-outs reach a natural end-state. 
-For some domains this is not feasible or practical for play-outs to reach a natural terminal state. Therefore, we propose combining early and static cut-offs of play-outs as future research. Although a static cut-off will not be compatible with RB, we expect both to improve performance in combination with QB. Moreover, combining RB and QB with the reward signal may be improved by computing the $a'$ from the covariance matrix as is standard when combining control variates. 
+For some domains this is not feasible or practical for play-outs to reach a natural terminal state. Therefore, we propose combining early and static cut-offs of play-outs as future research. Although a static cut-off may not be compatible with RB, we expect both to improve performance in combination with QB. Moreover, combining RB and QB with the reward signal may be improved by computing the $a'$ from the covariance matrix as is standard when combining control variates. 
 %between the simulation's reward signal, the simulation's duration, and quality assessment, and computing separate scaling constants for each.
 Finally, we hope that the proposed enhancements could improve estimates of online learning methods for play-out policies such as n-grams, or MAST. % though this is left for future research.
 
