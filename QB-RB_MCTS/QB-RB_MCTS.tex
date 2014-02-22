@@ -211,7 +211,7 @@ Because the choice of $Y^w$ is arbitrary, since every game is won by either one 
 Algorithm~\ref{alg} summarizes a single iteration of MCTS enhanced with RB and/or QB. Note that negamax backups are used in this setup, and therefore $r$ is relative to the player to move at the start of the play-out. Although we use the MCTS-Solver \cite{Winands2008}, details of its implementation are omitted in the pseudo-code. Whenever \emph{update} is used in the algorithm, it refers to updating the average reward for a node, or the sample mean and standard deviation for $\bar{D}^\tau$ and $\bar{Q}^\tau$.
 
 \begin{algorithm2e}[b]
-\setstretch{1.06}
+\setstretch{1.05}
   {\sc mcts}(node $p$, node depth $d_{Sp}$):														\;
   \pushline
     \lIf{isLeaf($p$)}{Expand($p$)}
@@ -267,8 +267,7 @@ The proposed enhancements are validated in six distinct two-player games, which 
 
 The following quality assessments are used for each game. \emph{Amazons}: the combined number of moves available for the winning player. \emph{Breakthrough} and \emph{Cannon}: the total piece difference between the winning and losing player. \emph{Checkers}: the total number of pieces in play for the winning player. \emph{Chinese Checkers}: the inverse number of the losing player's pieces that reached the home-base. \emph{Pentalath}: the inverse of the longest row of the losing player, given that this row can be extended to a length of 5. For each game a fixed normalizer brings the values of $q$ within the $[0,1]$ range. 
 
-Appropriate play-out policies are used to select moves to make during play-out for each game. These are implemented to ensure that no obvious mistakes nor flawed play is observed. All results are reported with these play-out policies enabled. 
-{\bf \color{red} MCTS with these play-out policies win between X\%-Y\% of games against MCTS with random play-outs.}
+Appropriate play-out policies are used to select moves to make during play-out for each game. These are implemented to ensure that no obvious mistakes nor flawed play is observed. All results are reported with these play-out policies enabled. MCTS with these play-out policies enabled wins between 57\%-99\% of games against MCTS with random play-outs. The policies used are varied, in some games and $\epsilon$-greedy policy is used, others select over a non-uniform move distribution. Moreover, for Amazons, Breakthrough and Pentalath MAST \cite{finnsson2008simulation} is used.
 
 GGP experiments are performed using the {\sc CadiaPlayer} code base. In GGP, no domain knowledge is available in advance, and rules of the games are interpreted online resulting in a low number of simulations. Moreover, play-out policies are learned online, using N-Grams \cite{takngrams}. The Relative Bonus enhancement is tested in the following two-player sequential games: Zhadu, TTCC4, Skirmish, SheepWolf, Quad, Merrils, Knightthrough, Connect5, Checkers, Breakthrough, 3DTicTacToe and Chinese Checkers. We show results for two simultaneous move games: Battle and Chinook.
 
@@ -294,19 +293,19 @@ Breakthrough &\multicolumn{1}{l|}{8.0} 			& 50.0 $\pm$ 1.4		    	& 51.0 $\pm$ 1.
 Cannon &\multicolumn{1}{l|}{3.0} 			    & {\bf{62.8}} $\pm$ 1.3 		& {\bf{60.6}} $\pm$ 1.3 		& {\bf{58.8}} $\pm$ 1.4 	& {\bf{58.1}} $\pm$ 1.4 	\\ 
 Checkers &\multicolumn{1}{l|}{2.8}			  	& {\bf{52.1}} $\pm$ 0.8 		& {\bf{52.7}} $\pm$ 0.8 		& 48.9 $\pm$ 0.7	 		& {\bf{50.7}} $\pm$ 0.6 	\\ 
 Chin. Checkers &\multicolumn{1}{l|}{1.2} 		& {\bf{56.8}} $\pm$ 1.4 		& {\bf{53.2}} $\pm$ 1.4 		& {\bf{54.9}} $\pm$ 1.4	 	& {\bf{52.5}} $\pm$ 1.4 	\\
-Pentalath &\multicolumn{1}{l|}{1.0} 		  	& 51.4 $\pm$ 1.4 		& 50.3 $\pm$ 1.4 		      	& 49.3 $\pm$ 1.4 		    & 49.5 $\pm$ 1.4 		\\
+Pentalath &\multicolumn{1}{l|}{1.0} 		  	& {\bf{51.4}} $\pm$ 1.4 		& 50.3 $\pm$ 1.4 		      	& 49.3 $\pm$ 1.4 		    & 49.5 $\pm$ 1.4 		\\
 \hline
 \end{tabular}
 }
 \end{table}
 
-Results for relative bonus are shown in Table \ref{tab:rb}. Depending on the search time, significant increases in performance are shown for five of the six games. The value of $k$ used for each game is reported in the second column. We used a fixed value of $a = 0.25$ in addition to the online definition of $a'$ from Equation~\ref{eq:onlinea}. We see that the online $a'$ leads to increased performance over a fixed value for five games. Interestingly, a fixed value tends to lead to more consistent results over the five games. In Breakthrough, because the play-out policy does not contain heuristics for defensive positioning, the play-outs favor quick wins and excludes defensive moves, leading to bad approximations of the actual game's length. Chinese Checkers, Cannon and Amazons achieve the most increase in performance using RB. The difference between a simulation's length, and the length of the actual matches played differ the most in these games. As such RB improves the estimates of the simulations' lengths over the course of the match by favoring the shorter ones. These gains are significant at both one second and five seconds of search time. Pentalath is a game with a limited length, when the board is nearly filled the game is sure to end. As such, the additional information provided by the length of games is limited. 
+Results for relative bonus are shown in Table \ref{tab:rb}. Depending on the search time, significant increases in performance are shown for five of the six games. The value of $k$ used for each game is reported in the second column. We used a fixed value of $a = 0.25$ in addition to the online definition of $a'$ from Equation~\ref{eq:onlinea}. We see that the online $a'$ leads to increased performance over a fixed value for five games. Interestingly, a fixed value tends to lead to more consistent results over the five games. In Breakthrough, because the play-out policy does not contain heuristics for defensive positioning, the play-outs favor quick wins and excludes defensive moves, leading to bad approximations of the actual game's length. Chinese Checkers, Cannon and Amazons achieve the most increase in performance using RB. The difference between a simulation's length, and the length of the actual matches played differ the most in these games. As such RB improves the estimates of the simulations' lengths over the course of the match by favoring the shorter ones. These gains are significant at both one second and five seconds of search time. Pentalath is a game with a restricted length. As such, the additional information provided by the length of games is limited. 
 
 \begin{table}
 {\caption{Relative Bonus in GGP, {\sc{CadiaPlayer}}, $a = 0.25$ \newline 30 sec. startclock, 15 sec. playclock} \label{tab:rb_ggp}}
 \centering
 \tabcolsep=0.25cm
-\scalebox{0.91}{
+\scalebox{0.90}{
 \begin{tabular}{rrr}
 \hline
 & \multicolumn{1}{c}{\textbf{$k = 2$}} & \multicolumn{1}{c}{\textbf{$k = 1.4$}} \\
@@ -333,7 +332,6 @@ Results for relative bonus are shown in Table \ref{tab:rb}. Depending on the sea
 \end{table}
 
 For GGP, results are presented in Table \ref{tab:rb_ggp}. A single value for $a$ was used for GGP because a significant number of simulations are required to compute an accurate $a'$ online. Moreover, since values for $k$ can not be optimized beforehand, we present the results for two different $k$ values. Although $k$ has an influence on the performance of RB, it is robust with respect to suboptimal values, and an approximation can be used as is made clear by the results in Table \ref{tab:rb_ggp}. All games that benefit from RB does so for either both values, or it is not disadvantageous for either value. Note that the results for Chinese Checkers, Checkers and Breakthrough are similar to those in Table \ref{tab:rb}, demonstrating the robustness of the enhancement accross implementations.
-%Regarding both Tables \ref{tab:rb} and \ref{tab:rb_ggp}, we have demonstrated that the results are invariant with respect to the number of simulations.
 
 \begin{table}
 {\caption{Qualitative Bonus using different search times, 5000 games} \label{tab:qb}}
@@ -369,19 +367,18 @@ Results for QB are shown in Table \ref{tab:qb}. A significant increase in perfor
 \multicolumn{1}{r}{\rule{0pt}{12pt}\textbf{Search time}} & \multicolumn{2}{c}{\textbf{1 second}} & \multicolumn{2}{c}{\textbf{5 seconds}} \\
 \cline{1-5}
 \rule{0pt}{12pt} \textbf{Game} & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} & \multicolumn{1}{c}{\textbf{$a'$}} & \multicolumn{1}{c}{\textbf{$a = 0.25$}} \\ \hline
-Amazons 		& {\bf{65.9}} $\pm$ 1.3 & {\bf{61.9}} $\pm$ 1.4	& $\pm$  & {{\bf60.9}} $\pm$ 1.4	\\
-Breakthrough 	& {\bf{77.9}} $\pm$ 1.2 & {\bf{72.9}} $\pm$ 1.2	& $\pm$  & {{\bf78.6}} $\pm$ 1.1 	\\
-Cannon 			& {\bf{72.5}} $\pm$ 1.2 & {\bf{69.3}} $\pm$ 1.3 	& $\pm$  & {{\bf62.3}} $\pm$ 1.3 	\\
-Checkers 		& {\bf{53.6}} $\pm$ 0.8 & {\bf{54.1}} $\pm$ 0.8 	& $\pm$  & {{\bf53.5}} $\pm$ 0.7	\\
-Chin. Checkers 	& {\bf{69.9}} $\pm$ 1.3 & {\bf{63.1}} $\pm$ 1.3  	& $\pm$  & {{\bf70.0}} $\pm$ 1.4	\\
-Pentalath 		& 50.7 $\pm$ 1.4 & 51.2 $\pm$ 1.4  			& $\pm$  & 51.4 $\pm$ 1.4 	\\
+Amazons 		& {\bf{65.9}} $\pm$ 1.3 & {\bf{61.9}} $\pm$ 1.4		& {\bf{62.0}} $\pm$ 1.4 & {{\bf60.9}} $\pm$ 1.4	\\
+Breakthrough 	& {\bf{77.9}} $\pm$ 1.2 & {\bf{72.9}} $\pm$ 1.2		& {\bf{78.6}} $\pm$ 1.1 & {{\bf78.6}} $\pm$ 1.1 \\
+Cannon 			& {\bf{72.5}} $\pm$ 1.2 & {\bf{69.3}} $\pm$ 1.3 	& {\bf{61.1}} $\pm$ 1.4 & {{\bf62.3}} $\pm$ 1.3 \\
+Checkers 		& {\bf{53.6}} $\pm$ 0.8 & {\bf{54.1}} $\pm$ 0.8 	& {\bf{51.7}} $\pm$ 0.7 & {{\bf53.5}} $\pm$ 0.7	\\
+Chin. Checkers 	& {\bf{69.9}} $\pm$ 1.3 & {\bf{63.1}} $\pm$ 1.3  	& {\bf{64.6}} $\pm$ 1.3 & {{\bf70.0}} $\pm$ 1.4	\\
+Pentalath 		& 50.7 $\pm$ 1.4 		& 51.2 $\pm$ 1.4  			& {\bf{51.9}} $\pm$ 1.4 & {{\bf51.4}} $\pm$ 1.4 \\
 \hline
 \end{tabular}
 }
 \end{table}
 
-Note that, while the gains are higher for QB, RB does not require any domain knowledge. An immediate question is whether the two methods are complementary. Results with both methods enabled are shown in Table~\ref{tab:qbrb}. Comparing to Tables~\ref{tab:rb} and \ref{tab:qb}, 
-{\bf \color{red} in $X$ of the $Y$ cases the gain for the combination is higher than each bonus on its own.}
+Note that, while the gains are higher for QB, RB does not require any domain knowledge. An immediate question is whether the two methods are complementary. Results with both methods enabled are shown in Table~\ref{tab:qbrb}. Comparing to Tables~\ref{tab:rb} and \ref{tab:qb}, in 14 of the 24 cases the gain for the combination is significantly higher than each bonus on its own.
 
 %-------------------------------------------------------------------
 \section{CONCLUSION}
