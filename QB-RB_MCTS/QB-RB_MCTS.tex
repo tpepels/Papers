@@ -137,7 +137,8 @@ First, note that $d$ depends on the domain, the progress of the game, and the pl
 \label{eq:rb_norm}
 \end{equation}
 
-Note that $\lambda_r$ is a function of $d$ but to simplify the notation we omit the dependency.%% since it is always clear from the context. 
+Note that $\lambda_r$ is a function of $d$ but to simplify the notation we omit the dependency. 
+%% since it is always clear from the context. 
 Also, $\lambda_r$ is both normalized with the sample standard deviation and is relative to $\bar{D}^\tau$. It is both independent of the progress of the game, and normalized with respect to the current variance in the length of simulations. When the number of samples is large, $\E{\lambda_r} \approx 0$ due to standardization and so $\lambda_r$ can be added to $r$ as a control variate with $v = 0$ in Equation~\ref{eq:cv}. Note that, values of $\lambda_r$ are higher for shorter simulations.
 
 Using an estimated mean may cause the search to be biased, i.e. moving into the direction of shorter games. Although there is no immediate solution to this problem, we propose to reset $\bar{D}^\tau$ and $\hat{\sigma}^\tau_D$ between moves. Moreover, rewards of the first $5\%$ of the expected number of simulations are not altered during search, and $\bar{D}^\tau$ and $\hat{\sigma}^\tau_D$ are updated during this time without altered selection.
