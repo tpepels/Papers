@@ -1,0 +1,209 @@
+% Class ikatcite
+% Jeroen Donkers, Floris Wiesman (October 2000)
+\NeedsTeXFormat{LaTeX2e} \ProvidesPackage{ikatcite}[2000/05/10] \typeout{IKAT
+CITATION STYLE 10/10/2000}
+% ikatcite based on umcite, rlcite and rlxcite
+% Adds to LaTeX four macros to make it possible to cite as follows:
+% \citeaby renders `Van den Bosch {\em et~al}. (1989)'
+% \citebay renders `(Van den Bosch {\em et~al}., 1989)'
+% \citeay renders `Van den Bosch {\em et~al}., 1989'
+% \citeby renders `(1989)'
+% \citey renders `1989'
+% added citeref stuff. Use option [CiteRef] to turn it on.
+% Last change: Oktober 2000 J. Donkers
+\newif\if@bibtex
+\@bibtextrue
+\newif\if@citeref
+\@citereffalse
+\DeclareOption{NoBibtex}{\@bibtexfalse}
+\DeclareOption{CiteRef}{\@citereftrue}
+\ProcessOptions
+
+
+\def\@namedef#1{\expandafter\def\csname #1\endcsname}%
+
+% for citeref
+\def\@namexdef#1{\expandafter\xdef\csname #1\endcsname}%
+\def\citepageref#1#2{%
+        \xdef\cpr@testa{\@nameuse{cpr@last@#1}}%
+        \xdef\cpr@testb{#2}%
+        \ifx\cpr@testa\cpr@testb%
+                \relax%
+        \else%
+                \@namexdef{cpr@last@#1}{#2}%
+                \@ifundefined{cpr@#1}%
+                        {\@namexdef{cpr@#1}{#2}}%
+                        {\@namexdef{cpr@#1}{\@nameuse{cpr@#1}, #2}}%
+        \fi
+        }
+\def\@cprwrite#1={\write\@auxout{\string\citepageref{#1}{\thepage}}}%
+\def\@fcwarning#1{\typeout{CiteRef Warning: #1.}}
+\def\@citerefpages#1{\@ifundefined{cpr@#1}%
+      {{\bf -}\@fcwarning{Never cited from `\@nameuse{#1}'}}%
+      {\@nameuse{cpr@#1}}%
+}
+
+
+% Definition of a \ikatbibitem, arguments should be in this order:
+% 1. full authors 2. The authors, 3. The year 4. The label 5. The text.
+% E.g. \ikatbibitem{Knuth}{Knuth}{1901}{knuth01}{Knuth D. E. (1901). Text ...}
+\def\ikatbibitem#1#2#3#4#5{\item\if@filesw
+      \immediate\write\@auxout{\string\ikatbibcite{#4}{#2}{#3}{#1}
+      }\fi\ignorespaces%
+        #5%
+        \if@citeref \newblock [\@citerefpages{#4}] \fi}
+% macro for et-al in ikatbibitem
+\newcommand{\etal}{{\noexpand\em ~et~al.}}
+
+% 1. label 2. The authors, 3. The year 4. Full authors.
+\def\ikatbibcite#1#2#3#4{%
+        \global\@namedef{c@#1}{\@ikatbiblabelc{\sellabel{#1}{#2}{#4}}{#3}}
+        \global\@namedef{d@#1}{\@ikatbiblabeld{\sellabel{#1}{#2}{#4}}{#3}}
+        \global\@namedef{e@#1}{\@ikatbiblabele{\sellabel{#1}{#2}{#4}}{#3}}
+        \global\@namedef{f@#1}{\@ikatbiblabelf{#2}{#3}}
+        \global\@namedef{g@#1}{\@ikatbiblabelg{#2}{#3}}
+        \global\@namedef{first@#1}{TRUE}
+        }
+% this construction causes that the first appearance of a three-author citation
+% shows all three authors, but the other appearances show 'et-al'.
+\def\sellabel#1#2#3{\def\res{#2}%
+\def\a{TRUE}\edef\b{\csname first@#1\endcsname}%
+\ifx\a\b\def\res{#3}\fi\global\@namedef{first@#1}{false}%
+\res}
+
+% better names for the citations
+\def\citeaby{\@ifnextchar [{\@tempswatrue\@ikatcitexc}{\@tempswafalse\@ikatcitexc[]}}
+\def\citebay{\@ifnextchar [{\@tempswatrue\@ikatcitexd}{\@tempswafalse\@ikatcitexd[]}}
+\def\citeay{\@ifnextchar [{\@tempswatrue\@ikatcitexe}{\@tempswafalse\@ikatcitexe[]}}
+\def\citeby{\@ifnextchar [{\@tempswatrue\@ikatcitexf}{\@tempswafalse\@ikatcitexf[]}}
+\def\citey{\@ifnextchar [{\@tempswatrue\@ikatcitexg}{\@tempswafalse\@ikatcitexg[]}}
+
+\def\citec{\@ifnextchar [{\@tempswatrue\@ikatcitexc}{\@tempswafalse\@ikatcitexc[]}}
+\def\cited{\@ifnextchar [{\@tempswatrue\@ikatcitexd}{\@tempswafalse\@ikatcitexd[]}}
+\def\citee{\@ifnextchar [{\@tempswatrue\@ikatcitexe}{\@tempswafalse\@ikatcitexe[]}}
+\def\citef{\@ifnextchar [{\@tempswatrue\@ikatcitexf}{\@tempswafalse\@ikatcitexf[]}}
+\def\citeg{\@ifnextchar [{\@tempswatrue\@ikatcitexg}{\@tempswafalse\@ikatcitexg[]}}
+
+\def\@ikatcitexc[#1]#2{\if@filesw\immediate\write\@auxout{\string\citation{#2}}\fi
+  \def\@citea{}\@ikatcitec{\@for\@citeb:=#2\do
+    {\@citea\def\@citea{,\penalty\@m\ }%
+    \if@filesw%
+       \immediate\write\@auxout{\string\citation{\@citeb}}%
+       \expandafter\@cprwrite\@citeb=%
+    \fi%
+    \@ifundefined{c@\@citeb}{{\bf Undefined reference}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname c@\@citeb\endcsname}}}{#1}}
+
+\def\@ikatcitexd[#1]#2{\if@filesw\immediate\write\@auxout{\string\citation{#2}}\fi
+  \def\@citea{}\@ikatcited{\@for\@citeb:=#2\do
+    {\@citea\def\@citea{;\penalty\@m\ }%
+    \if@filesw%
+       \immediate\write\@auxout{\string\citation{\@citeb}}%
+       \expandafter\@cprwrite\@citeb=%
+    \fi%
+    \@ifundefined
+       {d@\@citeb}{{\bf Undefined reference}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname d@\@citeb\endcsname}}}{#1}}
+
+\def\@ikatcitexe[#1]#2{\if@filesw\immediate\write\@auxout{\string\citation{#2}}\fi
+  \def\@citea{}\@ikatcitee{\@for\@citeb:=#2\do
+    {\@citea\def\@citea{;\penalty\@m\ }%
+    \if@filesw%
+       \immediate\write\@auxout{\string\citation{\@citeb}}%
+       \expandafter\@cprwrite\@citeb=%
+    \fi%
+    \@ifundefined
+       {e@\@citeb}{{\bf Undefined reference}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname e@\@citeb\endcsname}}}{#1}}
+
+\def\@ikatcitexf[#1]#2{\if@filesw\immediate\write\@auxout{\string\citation{#2}}\fi
+  \def\@citea{}\@ikatcitef{\@for\@citeb:=#2\do
+    {\@citea\def\@citea{;\penalty\@m\ }%
+    \if@filesw%
+       \immediate\write\@auxout{\string\citation{\@citeb}}%
+       \expandafter\@cprwrite\@citeb=%
+    \fi%
+    \@ifundefined
+       {f@\@citeb}{{\bf Undefined reference}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname f@\@citeb\endcsname}}}{#1}}
+
+\def\@ikatcitexg[#1]#2{\if@filesw\immediate\write\@auxout{\string\citation{#2}}\fi
+  \def\@citea{}\@ikatciteg{\@for\@citeb:=#2\do
+    {\@citea\def\@citea{;\penalty\@m\ }%
+    \if@filesw%
+       \immediate\write\@auxout{\string\citation{\@citeb}}%
+       \expandafter\@cprwrite\@citeb=%
+    \fi%
+    \@ifundefined
+       {g@\@citeb}{{\bf Undefined reference}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname g@\@citeb\endcsname}}}{#1}}
+
+% improved the handling of brackets in multiple citations.
+\def\@ikatcitec#1#2{{#1\if@tempswa , #2\fi}}
+\def\@ikatcited#1#2{({#1\if@tempswa , #2\fi})}
+\def\@ikatcitee#1#2{{#1\if@tempswa , #2\fi}}
+\def\@ikatcitef#1#2{({#1\if@tempswa #2\fi})}
+\def\@ikatciteg#1#2{{#1\if@tempswa #2\fi}}
+
+\def\@ikatbiblabelc#1#2{#1\ (#2)}
+\def\@ikatbiblabeld#1#2{#1, #2}
+\def\@ikatbiblabele#1#2{#1, #2}
+\def\@ikatbiblabelf#1#2{#2}
+\def\@ikatbiblabelg#1#2{#2}
+
+\def\url#1{%
+\hyphenchar\font=47
+#1%
+\hyphenchar\font=45
+}
+
+\if@bibtex
+\renewcommand{\@biblabel}[1]{}% empty label
+\renewenvironment{thebibliography}[1]
+     {\section{\refname
+        \@mkboth{\MakeUppercase\refname}{\MakeUppercase\refname}}%
+      \list{}%
+           {\settowidth\labelwidth{0}%
+            \@openbib@code
+            \leftmargin 0pt
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+\else
+\renewenvironment{thebibliography}[1]
+     {\section{\refname
+        \@mkboth{\MakeUppercase\refname}{\MakeUppercase\refname}}%
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+\fi
+%------------------------------
+%------ end of ikatcite style
+%------------------------------
+\bibliographystyle{ikatcite}

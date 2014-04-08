@@ -1,0 +1,124 @@
+
+
+% =============================
+% Front matter
+\documentclass{kecsmstr}
+\title{Novel Selection Methods For Monte-Carlo Tree Search}
+\author{Tom Pepels}
+
+\thesistype{Master of Science of Artificial Intelligence}
+
+\thesisdate{June 2014} \thesisnumber{00-00}
+
+%Thesiscommittee: use \\ to separate members
+\committee{Prof.~dr.~????\\
+           Prof.~dr.~???? \\
+           Dr.~ir. ???? \\
+           Dr.~?????}
+% ================================
+
+
+\begin{document}
+
+% leave this in place! =============
+\makeheaders \pagenumbering{roman} \maketitle \setcounter{page}{2}
+\emptypage
+% ================
+
+\chapterx{Preface} \emptypage
+
+\chapterx{Summary} \emptypage
+
+\tableofcontents  \emptypage \pagenumbering{arabic}
+
+\chapter{introduction}
+
+\begin{chapterintro}
+You can use this chapterintro environment to start each chapter
+with an introductory section. This introduction is set in a
+different font type and forms a nice contrast to the rest of the
+text.
+\end{chapterintro}
+
+\begin{chaptercontents}
+This chapter gives an overview of Monte-Carlo Tree Search and the main topic of this Thesis: Simple Regret Minimization applied to Monte-Carlo Tree Search. Moreover, the problem statement and research questions are outlined and a general outline of the structure of the thesis is given.
+
+\section{Monte-Carlo Tree Search}
+Monte-Carlo Tree Search (MCTS) is a best-first search method based on random sampling by Monte-Carlo simulations of the state space for a specified domain \citeaby{coulom2007eﬃcient, kocsis2006bandit}. In gameplay, this means that decisions are made based on the results of randomly simulated play-outs. MCTS has been successfully applied to various turn-based games such as Go \citeaby{lee2010current} and Hex \citeaby{arneson2010monte}. Moreover, MCTS has been used for agents playing real-time games such as the Physical Traveling Salesman  \citeaby{powleytsp}, real-time strategy games \citeaby{balla2009uct}, and Ms~Pac-Man \citeaby{realtime2014}.
+
+In MCTS, a tree is built incrementally over time and maintains statistics at each node corresponding the rewards collected at those nodes and number of times  they have been visited. The root of this tree corresponds to the current position. The basic version of MCTS consists of four steps, which are performed iteratively until a computational threshold is reached, i.e. a set number of iterations, an upper limit on memory usage, or a time constraint. The four steps at each iteration are \citeaby{chaslot2008progressive}:
+\begin{itemize}
+\item {\bf Selection}. Starting at the root node, children are selected recursively according to a selection policy. When a leaf node is reached that does not represent a terminal state it is selected for expansion.
+\item {\bf Expansion}. All children are added to the selected leaf node given available moves.
+\item {\bf Play-out}. A simulated play-out is run, starting from the state of the added node. Moves are performed randomly or according to a heuristic strategy until a terminal state is reached.
+\item {\bf Backpropagation}. The result of the simulated play-out is propagated immediately from the selected node back up to the root node. Statistics are updated along the tree for each node selected during the selection phase and visit counts are increased.
+\end{itemize}
+The combination of moves selected during the selection step, and the play-out form a single simulation. During the selection step, moves are executed according to the nodes selected in the tree, and during play-out moves are performed randomly, or according to some play-out policy.
+
+Because results are immediately backpropagated, MCTS can be terminated anytime to determine the decision to be made. Moreover, no static heuristic evaluation is required when simulations reach an end state. However, in most cases it is beneficial to add domain knowledge for choosing moves made during the play-out. 
+
+\section{Simple Regret and MCTS}
+
+In recent years, simple regret has been proposed as a new criterion for assessing the performance of Monte Carlo Tree Search algorithms~\citeaby{Tolpin12MCTSSR,Feldman12BRUE}. This is a naturally fitting quantity to opitmize in the MCTS setting, since in reality all of the $t-1$ trials are indeed applied in a synthetic tree built only for the purposes of simulation. The final move chosen after the simulations are done is the one that really counts, since it is played in the real game.
+
+The driving force behind simple regret optimization (increased exploration) has practical problems in games, especially at low search times and without informed simulation policies. On the other hand, algorithms based on cumulative regret perform particularly well in comparison under these limited circumstances. 
+Inspired by this analysis, a hybrid algorithm that begins with an explorative depth-limited search that applies a specific exploration/removal policy, upon reaching its depth limit frontier, where the computational budget is lower, the algorithm drops down to best-first UCT. This algorithm generalizes previous algorithms in \citeaby{Tolpin12MCTSSR} and a recent algoritm, SHOT~\citeaby{Cazenave14SHOT}, an MCTS algorithm based on sequential-halving~\citeaby{Karnin13SH}. Additional removal policies based on successive rejects~\citeaby{Audibert10Best}, and thoroughly evaluate the algorithms in 4 games: Amazons, Breakthrough, 2 player Chinese Checkers and Pentalath.
+
+\section{Problem Statement and Research Questions}
+
+\section{Thesis Outline}
+
+\end{chaptercontents}
+
+\chapter{The Multi-Armed Bandit Problem}
+\begin{chapterintro}
+You can use this chapterintro environment to start each chapter
+with an introductory section. This introduction is set in a
+different font type and forms a nice contrast to the rest of the
+text.
+\end{chapterintro}
+\begin{chaptercontents}
+\section{Introduction}
+The multi-armed bandit problem is defined as a stochastic decision making problem \citeaby{auer2002using}. An agent is faced with several options, each with their own reward distribution. Based on empirical experimentation a decision it to be made to select the option with the best reward distribution. Generally the problem is described as choosing between the most rewarding arm of a multi-armed slot machine found in casino's. The agent can explore by pulling an arm and observing the resulting reward. Each time, the result is drawn from either a fixed or changing propability distribution. In the classical setting, the goal is to maximize the cumulative sum of rewards, i.e. winning the most money in the slot machine example. Since the agent does not know the distribution of the arms beforehand, he has to \emph{explore} the possible choices, and when a rewarding arm is found, \emph{exploit} this option to gain a high total reward. Generally, after a certain limit, e.g. a time-span or number of pulls, the agant must return a recommendation to determine the best arm.
+
+The performance of the agent can be evaluated by observing the difference in the rewards obtained over time and the theoretical reward obtained by pulling only the best arm.
+
+\section{Formal Definition}
+Suppose a trial is setup such that a player has $a \in [[K]] = \{ 1, 2, \cdots , K \}$ actions which can be repeatedly chosen over $t \in [[T]] = \{ 1, 2, \cdots, T \}$ trials. At each step, the player receives a utility $u(a^t) \sim D_a$ according to some underlying fixed distribution $D_a$. Suppose further that the play employs a randomized algorithm $A(t)$ which outputs some $a$ at time $t$. 
+
+Cumulative regret is defined to be the regret of having not played the best single action in hindsight, 
+\begin{equation}
+R_c^T = \bE \left[ \max_{a' \in [[K]]} \left\{ \sum_{t=1}^T u(a') - \sum_{t=1}^T u(A(t)) \right\} \right].
+\end{equation}
+
+In other words, the regret is assumulated at every step of the algorithm. There are many algorithms that 
+mimimize cumulative regret~\cite{}, but particularly popular one is Upper Confidence Bounds (UCB)~\cite{UCB}, which is the foundation of the most popular MCTS algorithm, UCT~\cite{UCT}.
+
+Now suppose we change the experimental setup and the actions chosen on trials $1, 2, \ldots, T-1$ are taken under some realistic ``simulated environment'' that represents the true online decision problem but without committing to the actions chose, and the only {\it real} decision is made at step $T$ after having played $T-1$ simulations. In contrast, simple regret~\cite{Bubeck11Pure} quantifies only the regret for choose the action at step $T$,
+
+\begin{equation}
+R_s^T = \bE \left[  \max_{a' \in [[K]]} \left\{ u(a') - u(A(T)) \right\} \right].
+\end{equation}
+
+\end{chaptercontents}
+
+\chapter{Experiments}
+
+\chapter{Results}
+
+\chapter{Conclusions}
+
+\bibliography{thesis} \emptypage
+
+\appendix
+
+\appchapter{Algorithms}
+
+\appchapter{Detailed results}
+
+
+\chapterx{Samenvatting} \emptypage
+
+% this can be a translation of the abstract
+
+\end{document}

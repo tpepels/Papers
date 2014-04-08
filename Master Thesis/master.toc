@@ -1,0 +1,16 @@
+\select@language {english}
+\contentsline {chapter}{Preface}{iii}
+\contentsline {chapter}{Summary}{v}
+\contentsline {chapter}{Contents}{vii}
+\contentsline {chapter}{\numberline {1}introduction}{1}
+\contentsline {section}{\numberline {1.1}Citations}{1}
+\contentsline {section}{\numberline {1.2}Source}{1}
+\contentsline {chapter}{\numberline {2}Related work}{3}
+\contentsline {chapter}{\numberline {3}Experiments}{5}
+\contentsline {chapter}{\numberline {4}Results}{7}
+\contentsline {chapter}{\numberline {5}Conclusions}{9}
+\contentsline {chapter}{References}{11}
+\contentsline {chapter}{Appendices}{}
+\contentsline {chapter}{\numberline {A}Algorithms}{13}
+\contentsline {chapter}{\numberline {B}Detailed results}{15}
+\contentsline {chapter}{Samenvatting}{17}
