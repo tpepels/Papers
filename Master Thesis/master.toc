@@ -2,15 +2,30 @@
 \contentsline {chapter}{Preface}{iii}
 \contentsline {chapter}{Summary}{v}
 \contentsline {chapter}{Contents}{vii}
-\contentsline {chapter}{\numberline {1}introduction}{1}
-\contentsline {section}{\numberline {1.1}Citations}{1}
-\contentsline {section}{\numberline {1.2}Source}{1}
-\contentsline {chapter}{\numberline {2}Related work}{3}
-\contentsline {chapter}{\numberline {3}Experiments}{5}
-\contentsline {chapter}{\numberline {4}Results}{7}
-\contentsline {chapter}{\numberline {5}Conclusions}{9}
-\contentsline {chapter}{References}{11}
+\contentsline {chapter}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {1.1}Artificial Intelligence and Games}{1}
+\contentsline {section}{\numberline {1.2}Monte-Carlo Tree Search}{1}
+\contentsline {section}{\numberline {1.3}Regret Minimization}{2}
+\contentsline {section}{\numberline {1.4}Problem Statement and Research Questions}{2}
+\contentsline {section}{\numberline {1.5}Thesis Outline}{3}
+\contentsline {chapter}{\numberline {2}Monte-Carlo Tree Search}{5}
+\contentsline {section}{\numberline {2.1}Introduction}{5}
+\contentsline {section}{\numberline {2.2}UCT}{6}
+\contentsline {chapter}{\numberline {3}Multi-Armed Bandits}{7}
+\contentsline {section}{\numberline {3.1}Introduction}{7}
+\contentsline {section}{\numberline {3.2}The Multi-Armed Bandit Problem}{7}
+\contentsline {section}{\numberline {3.3}Pure Exploration in Multi-Armed Bandits}{8}
+\contentsline {section}{\numberline {3.4}Relation to MCTS}{9}
+\contentsline {chapter}{\numberline {4}Simple Reret Based MCTS}{11}
+\contentsline {section}{\numberline {4.1}Introduction}{11}
+\contentsline {section}{\numberline {4.2}$MCTS_{\mathcal {S}\mathcal {R}}$}{12}
+\contentsline {section}{\numberline {4.3}$MCTS_{\mathcal {S}\mathcal {R}}$-SOLVER}{12}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{13}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{13}
+\contentsline {section}{\numberline {5.2}Results}{13}
+\contentsline {chapter}{\numberline {6}Conclusion}{15}
+\contentsline {chapter}{References}{17}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{13}
-\contentsline {chapter}{\numberline {B}Detailed results}{15}
-\contentsline {chapter}{Samenvatting}{17}
+\contentsline {chapter}{\numberline {A}Algorithms}{19}
+\contentsline {chapter}{\numberline {B}Detailed results}{21}
+\contentsline {chapter}{Samenvatting}{23}

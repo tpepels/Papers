@@ -10,7 +10,7 @@
 \RequirePackage{index}
 \RequirePackage{calc}
 \RequirePackage[english]{babel}
-\RequirePackage{dropping}
+\RequirePackage{lettrine}
 \typeout{KECSMSTR class 27/09/2006}
 
 

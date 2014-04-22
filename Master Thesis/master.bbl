@@ -1,10 +1,185 @@
+\newcommand{\etalchar}[1]{{\noexpand\em ~et~al.}}
 \begin{thebibliography}{[100]}
 
-\ikatbibitem{Zermelo}{Zermelo}{1913}{zer13}{%
-Zermelo, E. (1913).
-\newblock {\"U}ber eine Anwendung der Mengenlehre auf die Theorie des
-  Schachspiels.
-\newblock {\sl Proceedings of the Fifth Congress of Mathematicians (Cambridge
-  1912)}, pp. 501--504, Cambridge University Press.}
+\ikatbibitem{Allis, Van~der Meulen, and Van
+  Den~Herik}{Allis{\etalchar{+}}}{1994}{allis1994proof}{%
+Allis, L.V., Meulen, M. van~der, and Van Den~Herik, H.J. (1994).
+\newblock Proof-number search.
+\newblock {\sl Artificial Intelligence}, Vol.~66, No.~1, pp. 91--124.}
+
+\ikatbibitem{Arneson, Hayward, and
+  Henderson}{Arneson{\etalchar{+}}}{2010}{arneson2010monte}{%
+Arneson, B., Hayward, R.~B., and Henderson, P. (2010).
+\newblock {Monte-Carlo} Tree Search in {Hex}.
+\newblock {\sl IEEE Trans. Comput. Intell. AI in Games}, Vol.~2, No.~4, pp.
+  251--258.}
+
+\ikatbibitem{Audibert, Bubeck, and
+  Munos}{Audibert{\etalchar{+}}}{2010}{audibert2010best}{%
+Audibert, J., Bubeck, S., and Munos, R. (2010).
+\newblock Best arm identification in multi-armed bandits.
+\newblock {\sl Proc. 23rd Conf. on Learn. Theory}, pp. 41--53.}
+
+\ikatbibitem{Auer, Cesa-Bianchi, and
+  Fischer}{Auer{\etalchar{+}}}{2002}{auer2002using}{%
+Auer, P., Cesa-Bianchi, N., and Fischer, P. (2002).
+\newblock Finite-time analysis of the multiarmed bandit problem.
+\newblock {\sl Machine Learning}, Vol.~47, Nos. 2--3, pp. 235--256.}
+
+\ikatbibitem{Baier and Drake}{Baier and Drake}{2010}{baier2010power}{%
+Baier, H. and Drake, P.~D. (2010).
+\newblock The power of forgetting: Improving the last-good-reply policy in
+  {M}onte {C}arlo {G}o.
+\newblock {\sl IEEE Trans. on Comput. Intell. AI in Games}, Vol.~2, No.~4, pp.
+  303--309.}
+
+\ikatbibitem{Balla and Fern}{Balla and Fern}{2009}{balla2009uct}{%
+Balla, R.~K. and Fern, A. (2009).
+\newblock {UCT} for tactical assault planning in real-time strategy games.
+\newblock {\sl Proc. of the 21st Int. Joint Conf. on Artif. Intel.(IJCAI)}~(ed.
+  C. Boutilier), pp. 40--45.}
+
+\ikatbibitem{Browne{\etalchar{+}}}{Browne{\etalchar{+}}}{2012}{browne2012survey}{%
+Browne, C., Powley, E., Whitehouse, D., Lucas, S.~M., Cowling, P.~I.,
+  Rohlfshagen, P., Tavener, S., Perez, D., Samothrakis, S., and Colton, S.
+  (2012).
+\newblock A Survey of {Monte-Carlo} Tree Search Methods.
+\newblock {\sl IEEE Trans. on Comput. Intell. AI in Games}, Vol.~4, No.~1, pp.
+  1--43.}
+
+\ikatbibitem{Bubeck, Munos, and
+  Stoltz}{Bubeck{\etalchar{+}}}{2010}{Bubeck11Pure}{%
+Bubeck, S., Munos, R., and Stoltz, G. (2010).
+\newblock Pure exploration in finitely-armed and continuous-armed bandits.
+\newblock {\sl Theoretical Computer Science}, Vol.~412, No.~19, pp.
+  1832--1852.}
+
+\ikatbibitem{Campbell, Hoane~Jr, and
+  Hsu}{Campbell{\etalchar{+}}}{2002}{campbell2002deep}{%
+Campbell, Murray, Hoane~Jr, A~Joseph, and Hsu, Feng-hsiung (2002).
+\newblock Deep blue.
+\newblock {\sl Artificial intelligence}, Vol.~134, No.~1, pp. 57--83.}
+
+\ikatbibitem{Cazenave}{Cazenave}{2014}{Cazenave14SHOT}{%
+Cazenave, T. (2014).
+\newblock Sequential Halving applied to Trees.}
+
+\ikatbibitem{Chaslot{\etalchar{+}}}{Chaslot{\etalchar{+}}}{2008}{chaslot2008progressive}{%
+Chaslot, G.~M.~J-B., Winands, M.~H.~M., Herik, H.~J. van~den, Uiterwijk,
+  J.~W.~H.~M., and Bouzy, B. (2008).
+\newblock Progressive strategies for {Monte-Carlo} tree search.
+\newblock {\sl New Math. Nat. Comput.}, Vol.~4, No.~3, pp. 343--357.}
+
+\ikatbibitem{Coulom}{Coulom}{2007}{coulom2007efficient}{%
+Coulom, R. (2007).
+\newblock Efficient Selectivity and Backup Operators in {M}onte-{C}arlo Tree
+  Search.
+\newblock {\sl Proc. 5th Int. Conf. Comput. and Games}~(eds. H.~J. van~den
+  Herik, P. Ciancarini, and H.~H.~L.~M. Donkers), Vol. 4630 of {\sl Lecture
+  Notes in Computer Science (LNCS)}, pp. 72--83, Springer-Verlag.}
+
+\ikatbibitem{Feldman and Domshlak}{Feldman and Domshlak}{2012}{Feldman12BRUE}{%
+Feldman, Z. and Domshlak, C. (2012).
+\newblock Simple Regret Optimization in Online Planning for Markov Decision
+  Processes.
+\newblock {\sl CoRR}, Vol.~abs/1206.3382.}
+
+\ikatbibitem{Finnsson and Bj{\"o}rnsson}{Finnsson and
+  Bj{\"o}rnsson}{2008}{finnsson2008simulation}{%
+Finnsson, H. and Bj{\"o}rnsson, Y. (2008).
+\newblock {Simulation-Based Approach to General Game Playing}.
+\newblock {\sl Proc. Assoc. Adv. Artif. Intell.}, Vol.~8, pp. 259--264.
+\newblock  \url{http://www.aaai.org/Papers/AAAI/2008/AAAI08-041.pdf}.}
+
+\ikatbibitem{Gelly and Silver}{Gelly and Silver}{2007}{gelly2007}{%
+Gelly, Sylvain and Silver, David (2007).
+\newblock {Combining Online and Offline Knowledge in UCT}.
+\newblock {\sl Proc. 24th Annu. Int. Conf. Mach. Learn.}, pp. 273--280, ACM,
+  Corvalis, Oregon.
+\newblock  \url{http://portal.acm.org/citation.cfm?id=1273496.1273531}.}
+
+\ikatbibitem{Karnin, Koren, and
+  Somekh}{Karnin{\etalchar{+}}}{2013}{Karnin13SH}{%
+Karnin, Z., Koren, T., and Somekh, O. (2013).
+\newblock Almost optimal exploration in multi-armed bandits.
+\newblock {\sl Proc. of the Int. Conf. on Mach. Learn.}, pp. 1238--1246.}
+
+\ikatbibitem{Knuth and Moore}{Knuth and Moore}{1976}{knuth1976analysis}{%
+Knuth, Donald~E and Moore, Ronald~W (1976).
+\newblock An analysis of alpha-beta pruning.
+\newblock {\sl Artificial intelligence}, Vol.~6, No.~4, pp. 293--326.}
+
+\ikatbibitem{Kocsis and Szepesv\'{a}ri}{Kocsis and
+  Szepesv\'{a}ri}{2006}{kocsis2006bandit}{%
+Kocsis, L. and Szepesv\'{a}ri, C. (2006).
+\newblock Bandit Based {M}onte-{C}arlo Planning.
+\newblock {\sl Euro. Conf. Mach. Learn.}~(eds. J. F\"{u}rnkranz, T. Scheffer,
+  and M. Spiliopoulou), Vol. 4212 of {\sl Lecture Notes in Artificial
+  Intelligence}, pp. 282--293.}
+
+\ikatbibitem{Lai and Robbins}{Lai and Robbins}{1985}{lai1985asymptotically}{%
+Lai, Tze~Leung and Robbins, Herbert (1985).
+\newblock Asymptotically efficient adaptive allocation rules.
+\newblock {\sl Advances in applied mathematics}, Vol.~6, No.~1, pp. 4--22.}
+
+\ikatbibitem{Marsland}{Marsland}{1983}{marsland1983relative}{%
+Marsland, T~Anthony (1983).
+\newblock Relative Efficiency of Alpha-Beta Implementations.
+\newblock {\sl IJCAI}, pp. 763--766.}
+
+\ikatbibitem{Pepels, Winands, and
+  Lanctot}{Pepels{\etalchar{+}}}{2014}{realtime2014}{%
+Pepels, T., Winands, M.~H.~M., and Lanctot, M. (2014).
+\newblock Real-Time {Monte-Carlo} Tree Search in {Ms Pac-Man}.
+\newblock {\sl IEEE Trans. Comp. Intell. AI Games}, Vol.~PP.}
+
+\ikatbibitem{Powley, Whitehouse, and
+  Cowling}{Powley{\etalchar{+}}}{2012}{powleytsp}{%
+Powley, E.~J., Whitehouse, D., and Cowling, P.~I. (2012).
+\newblock {Monte Carlo} Tree Search with macro-actions and heuristic route
+  planning for the Physical Travelling Salesman Problem.
+\newblock {\sl IEEE Conf. Comput. Intell. Games}, pp. 234--241, IEEE.}
+
+\ikatbibitem{Rimmel{\etalchar{+}}}{Rimmel{\etalchar{+}}}{2010}{lee2010current}{%
+Rimmel, A., Teytaud, O., Lee, C., Yen, S., Wang, M., and Tsai, S. (2010).
+\newblock Current frontiers in computer {Go}.
+\newblock {\sl IEEE Trans. Comput. Intell. AI in Games}, Vol.~2, No.~4, pp.
+  229--238.}
+
+\ikatbibitem{Tak, Winands, and
+  Bj\"{o}rnsson}{Tak{\etalchar{+}}}{2012}{Tak2012}{%
+Tak, M.~J.~W., Winands, M.~H.~M., and Bj\"{o}rnsson, Y. (2012).
+\newblock {N-Grams and the Last-Good-Reply Policy Applied in General Game
+  Playing}.
+\newblock {\sl IEEE Trans. Comp. Intell. AI Games}, Vol.~4, No.~2, pp. 73--83.}
+
+\ikatbibitem{Tolpin and Shimony}{Tolpin and Shimony}{2012}{tolpin2012mcts}{%
+Tolpin, David and Shimony, Solomon~Eyal (2012).
+\newblock {MCTS} Based on Simple Regret.
+\newblock {\sl Proc. Assoc. Adv. Artif. Intell.}, pp. 570--576.}
+
+\ikatbibitem{Turing}{Turing}{1988}{turing1988chess}{%
+Turing, A (1988).
+\newblock Chess.
+\newblock {\sl Computer chess compendium}, pp. 14--17, Springer.}
+
+\ikatbibitem{Winands and Bj\"{o}rnsson}{Winands and
+  Bj\"{o}rnsson}{2011}{Winands2011}{%
+Winands, M.~H.~M. and Bj\"{o}rnsson, Y. (2011).
+\newblock {$\alpha$$\beta$-based Play-outs in Monte-Carlo Tree Search}.
+\newblock {\sl IEEE Conf. Comput. Intell. Games}, pp. 110--117.}
+
+\ikatbibitem{Winands, Bj\"{o}rnsson, and
+  Saito}{Winands{\etalchar{+}}}{2008}{Winands2008}{%
+Winands, M.~H.~M., Bj\"{o}rnsson, Y., and Saito, J-T. (2008).
+\newblock {Monte-Carlo Tree Search Solver}.
+\newblock {\sl Proc. Comput. and Games}, Vol. 5131 of {\sl LNCS}, pp. 25--36.}
+
+\ikatbibitem{Winands, Bj\"{o}rnsson, and
+  Saito}{Winands{\etalchar{+}}}{2010}{Winands2010b}{%
+Winands, M.~H.~M., Bj\"{o}rnsson, Y., and Saito, J-T. (2010).
+\newblock {Monte Carlo Tree Search in Lines of Action}.
+\newblock {\sl IEEE Trans. Comp. Intell. AI Games}, Vol.~2, No.~4, pp.
+  239--250.}
 
 \end{thebibliography}
