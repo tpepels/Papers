@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.8.29)  22 APR 2014 16:50
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.8.29)  7 MAY 2014 12:11
 entering extended mode
 **D:/Dropbox/Workspaces/GitHub/Papers/Master*Thesis/master.tex
 ("D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/master.tex"
@@ -670,13 +670,31 @@ Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 \@vwid@loff=\dimen165
 \@vwid@roff=\dimen166
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\algorithm2e\algorithm2e.sty"
-Package: algorithm2e 2013/01/06 v5.00 algorithms environments
-\c@AlgoLine=\count125
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\setspace\setspace.sty"
+Package: setspace 2011/12/19 v6.7a set line spacing
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\algorithms\algorithm.sty"
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ifthen.sty"
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
+\@float@every@algorithm=\toks24
+\c@algorithm=\count125
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\fixltx2e.sty"
+Package: fixltx2e 2006/09/13 v1.1m fixes to LaTeX
+LaTeX Info: Redefining \em on input line 420.
+LaTeX Info: The control sequence `\(' is already robust on input line 469.
+LaTeX Info: The control sequence `\)' is already robust on input line 470.
+LaTeX Info: The control sequence `\[' is already robust on input line 471.
+LaTeX Info: The control sequence `\]' is already robust on input line 472.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\algorithm2e\algorithm2e.sty"
+Package: algorithm2e 2013/01/06 v5.00 algorithms environments
+\c@AlgoLine=\count126
+
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\xspace.sty"
 Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
 )
@@ -718,24 +736,24 @@ subscribe by emailing sympa@lirmm.fr with 'subscribe <list> <firstname name>'
 \algoheightrule=\skip74
 \algotitleheightruledefault=\skip75
 \algotitleheightrule=\skip76
-\c@algocfline=\count126
-\c@algocfproc=\count127
-\c@algocf=\count128
+\c@algocfline=\count127
+\c@algocfproc=\count128
+\c@algocf=\count129
 \algocf@algoframe=\box40
 \algocf@algobox=\box41
 ) ("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.aux")
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 49.
-LaTeX Font Info:    ... okay on input line 49.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 49.
-LaTeX Font Info:    ... okay on input line 49.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 49.
-LaTeX Font Info:    ... okay on input line 49.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 49.
-LaTeX Font Info:    ... okay on input line 49.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 49.
-LaTeX Font Info:    ... okay on input line 49.
-LaTeX Font Info:    Checking defaults for U/mathx/m/n on input line 49.
-LaTeX Font Info:    ... okay on input line 49.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for U/mathx/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -773,17 +791,17 @@ LaTeX Font Info:    ... okay on input line 49.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count129
+\scratchcounter=\count130
 \scratchdimen=\dimen173
 \scratchbox=\box42
-\nofMPsegments=\count130
-\nofMParguments=\count131
-\everyMPshowfont=\toks24
-\MPscratchCnt=\count132
+\nofMPsegments=\count131
+\nofMParguments=\count132
+\everyMPshowfont=\toks25
+\MPscratchCnt=\count133
 \MPscratchDim=\dimen174
-\MPnumerator=\count133
-\makeMPintoPDFobject=\count134
-\everyMPtoPDFconversion=\toks25
+\MPnumerator=\count134
+\makeMPintoPDFobject=\count135
+\everyMPtoPDFconversion=\toks26
 )
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
@@ -794,12 +812,12 @@ Package caption Info: End \AtBeginDocument code.
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 59--61
+Underfull \hbox (badness 10000) in paragraph at lines 64--66
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 59--61
+Underfull \hbox (badness 10000) in paragraph at lines 64--66
 
  []
 
@@ -814,19 +832,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 59--61
 
 
 ] ("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.toc"
-LaTeX Font Info:    Try loading font information for U+msa on input line 6.
+LaTeX Font Info:    Try loading font information for U+msa on input line 7.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 6.
+LaTeX Font Info:    Try loading font information for U+msb on input line 7.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
-\tf@toc=\write4
- [7
+) [7
 
-] [8
+])
+\tf@toc=\write4
+ [8]
+("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.loa")
+\tf@loa=\write5
+ [9
+
+
+] [10
 
 
 ]
@@ -834,29 +858,6 @@ Chapter 1.
 [1
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 96--101
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 96--101
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 104--107
-
- []
-
-[2]
-Underfull \hbox (badness 10000) in paragraph at lines 109--113
-
- []
-
-[3] [4
-
-]
-Chapter 2.
 Package epstopdf Info: Source file: <img/figure1.eps>
 (epstopdf)                    date: 2013-12-03 15:31:31
 (epstopdf)                    size: 305874 bytes
@@ -865,111 +866,159 @@ Package epstopdf Info: Source file: <img/figure1.eps>
 (epstopdf)                    size: 19622 bytes
 (epstopdf)             Command: <epstopdf --outfile=img/figure1-eps-converted-t
 o.pdf img/figure1.eps>
-(epstopdf)             \includegraphics on input line 133.
+(epstopdf)             \includegraphics on input line 98.
 Package epstopdf Info: Output file is already uptodate.
-<img/figure1-eps-converted-to.pdf, id=49, 1192.455pt x 512.91624pt>
+ <img/figure1-eps-converted-to.pdf, id=45, 1192.455pt x 512.91624pt>
 File: img/figure1-eps-converted-to.pdf Graphic file (type pdf)
 
 <use img/figure1-eps-converted-to.pdf>
-Package pdftex.def Info: img/figure1-eps-converted-to.pdf used on input line 13
-3.
+Package pdftex.def Info: img/figure1-eps-converted-to.pdf used on input line 98
+.
 (pdftex.def)             Requested size: 386.96027pt x 166.44536pt.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 140.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 104.
 
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 140.
- [5 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/figure1-eps-converte
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 104.
+ [2 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/figure1-eps-converte
 d-to.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 123--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 123--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--134
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 136--138
+
+ []
+
+[3] [4]
+Chapter 2.
+[5
+
+]
+Overfull \hbox (0.79999pt too wide) detected at line 209
+|[]|
+ []
+
+
+Overfull \hbox (0.79999pt too wide) detected at line 245
+|[]|
+ []
+
 [6]
+Overfull \hbox (0.79999pt too wide) detected at line 272
+|[]|
+ []
+
+[7] [8] [9] [10
+
+]
 Chapter 3.
-[7
 
-]
-Overfull \hbox (0.79999pt too wide) detected at line 223
+Overfull \hbox (1.911pt too wide) in paragraph at lines 332--333
+[]\OT1/cmr/m/n/10 Next, SHOT ([]Cazenave, 2014), which is an MCTS al-go-rithm b
+ased on sequential-halving ([]Karnin \OT1/cmr/m/it/10 et al.\OT1/cmr/m/n/10 ,
+ []
+
+[11]
+Overfull \hbox (0.79999pt too wide) detected at line 380
 |[]|
  []
 
-
-Overfull \hbox (0.79999pt too wide) detected at line 246
-|[]|
- []
-
-[8] [9] [10
-
-]
+[12]
 Chapter 4.
+
+Overfull \hbox (0.79999pt too wide) detected at line 456
+|[]|
+ []
+
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [11]
-[12]
-Chapter 5.
-[13
+ [13
 
-] [14
+]
+Overfull \vbox (37.52425pt too high) has occurred while \output is active []
+
+
+[14]
+Chapter 5.
+[15
+
+] [16
 
 ]
 Chapter 6.
-("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.bbl" [15] [16
+("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.bbl" [17] [18
 
 ]
-[17]) [18]
+[19]) [20]
 Appendix A.
-[19
+[21
 
 
 
-] [20
+] [22
 
 ]
 Appendix B.
-[21] [22
+[23] [24
 
-] [23] [24
+] [25] [26
 
 
 ]
 ("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.aux") ) 
 Here is how much of TeX's memory you used:
- 7499 strings out of 493921
- 109227 string characters out of 3144882
- 210567 words of memory out of 3000000
- 10634 multiletter control sequences out of 15000+200000
- 20008 words of font info for 70 fonts, out of 3000000 for 9000
+ 7614 strings out of 493921
+ 111133 string characters out of 3144882
+ 215118 words of memory out of 3000000
+ 10735 multiletter control sequences out of 15000+200000
+ 19148 words of font info for 67 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 42i,16n,45p,1204b,460s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 42i,21n,45p,1158b,639s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\To
 m\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\mathb10.pk> <C
 :\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\math
-a5.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dp
-i600\mathx10.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\
-mathabx\dpi600\matha7.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfou
+a7.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dp
+i600\matha5.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\m
+athabx\dpi600\mathx10.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfou
 r\public\mathabx\dpi600\matha10.pk><C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
 /public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/p
 ublic/amsfonts/cm/cmbx7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publ
 ic/amsfonts/cm/cmbx9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/
+amsfonts/cm/cmbxti10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/
 amsfonts/cm/cmcsc10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
 msfonts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/ams
-fonts/cm/cmmi12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfo
-nts/cm/cmmi7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts
-/cm/cmmi9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
-/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
-r12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.
-pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb>
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsl10.pfb><C
-:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/
-Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Pro
-gram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Progra
-m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program 
-Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on master.pdf (32 pages, 318010 bytes).
+fonts/cm/cmmi5.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmmi7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/
+cm/cmmi9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
+cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr
+12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.p
+fb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb><
+C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsl10.pfb><C:
+/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/P
+rogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Prog
+ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Progra
+m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt8.pfb><C:/Program F
+iles (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on master.pdf (36 pages, 347980 bytes).
 PDF statistics:
- 250 PDF objects out of 1000 (max. 8388607)
+ 277 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

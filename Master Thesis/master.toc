@@ -2,30 +2,36 @@
 \contentsline {chapter}{Preface}{iii}
 \contentsline {chapter}{Summary}{v}
 \contentsline {chapter}{Contents}{vii}
+\contentsline {chapter}{List of Algorithms}{ix}
 \contentsline {chapter}{\numberline {1}Introduction}{1}
 \contentsline {section}{\numberline {1.1}Artificial Intelligence and Games}{1}
 \contentsline {section}{\numberline {1.2}Monte-Carlo Tree Search}{1}
-\contentsline {section}{\numberline {1.3}Regret Minimization}{2}
-\contentsline {section}{\numberline {1.4}Problem Statement and Research Questions}{2}
-\contentsline {section}{\numberline {1.5}Thesis Outline}{3}
-\contentsline {chapter}{\numberline {2}Monte-Carlo Tree Search}{5}
+\contentsline {section}{\numberline {1.3}Regret Minimization}{3}
+\contentsline {section}{\numberline {1.4}Problem Statement and Research Questions}{3}
+\contentsline {section}{\numberline {1.5}Thesis Outline}{4}
+\contentsline {chapter}{\numberline {2}Regret And Multi-Armed Bandits}{5}
 \contentsline {section}{\numberline {2.1}Introduction}{5}
-\contentsline {section}{\numberline {2.2}UCT}{6}
-\contentsline {chapter}{\numberline {3}Multi-Armed Bandits}{7}
-\contentsline {section}{\numberline {3.1}Introduction}{7}
-\contentsline {section}{\numberline {3.2}The Multi-Armed Bandit Problem}{7}
-\contentsline {section}{\numberline {3.3}Pure Exploration in Multi-Armed Bandits}{8}
-\contentsline {section}{\numberline {3.4}Relation to MCTS}{9}
-\contentsline {chapter}{\numberline {4}Simple Reret Based MCTS}{11}
-\contentsline {section}{\numberline {4.1}Introduction}{11}
-\contentsline {section}{\numberline {4.2}$MCTS_{\mathcal {S}\mathcal {R}}$}{12}
-\contentsline {section}{\numberline {4.3}$MCTS_{\mathcal {S}\mathcal {R}}$-SOLVER}{12}
-\contentsline {chapter}{\numberline {5}Experiments and Results}{13}
-\contentsline {section}{\numberline {5.1}Experimental Setup}{13}
-\contentsline {section}{\numberline {5.2}Results}{13}
-\contentsline {chapter}{\numberline {6}Conclusion}{15}
-\contentsline {chapter}{References}{17}
+\contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{5}
+\contentsline {section}{\numberline {2.3}UCB}{6}
+\contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{6}
+\contentsline {section}{\numberline {2.5}Relation to MCTS}{8}
+\contentsline {subsection}{\numberline {2.5.1}UCT}{8}
+\contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{8}
+\contentsline {chapter}{\numberline {3}Simple Regret In MCTS}{11}
+\contentsline {section}{\numberline {3.1}Introduction}{11}
+\contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{11}
+\contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{12}
+\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{13}
+\contentsline {section}{\numberline {4.1}Introduction}{13}
+\contentsline {section}{\numberline {4.2}Hybrid MCTS}{14}
+\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{14}
+\contentsline {section}{\numberline {4.4}History Heuristics for Hybrid MCTS}{14}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{15}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{15}
+\contentsline {section}{\numberline {5.2}Results}{15}
+\contentsline {chapter}{\numberline {6}Conclusion}{17}
+\contentsline {chapter}{References}{19}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{19}
-\contentsline {chapter}{\numberline {B}Detailed results}{21}
-\contentsline {chapter}{Samenvatting}{23}
+\contentsline {chapter}{\numberline {A}Algorithms}{21}
+\contentsline {chapter}{\numberline {B}Detailed results}{23}
+\contentsline {chapter}{Samenvatting}{25}
