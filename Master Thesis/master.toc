@@ -14,24 +14,26 @@
 \contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{5}
 \contentsline {section}{\numberline {2.3}UCB}{6}
 \contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{6}
-\contentsline {section}{\numberline {2.5}Relation to MCTS}{8}
-\contentsline {subsection}{\numberline {2.5.1}UCT}{8}
-\contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{8}
+\contentsline {subsection}{\numberline {2.4.1}Successive Rejects}{7}
+\contentsline {subsection}{\numberline {2.4.2}Sequential Halving}{8}
+\contentsline {section}{\numberline {2.5}Relation to MCTS}{9}
+\contentsline {subsection}{\numberline {2.5.1}UCT}{9}
+\contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{9}
 \contentsline {chapter}{\numberline {3}Simple Regret In MCTS}{11}
 \contentsline {section}{\numberline {3.1}Introduction}{11}
 \contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{11}
-\contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{12}
-\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{13}
-\contentsline {section}{\numberline {4.1}Introduction}{13}
-\contentsline {section}{\numberline {4.2}Hybrid MCTS}{14}
-\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{14}
-\contentsline {section}{\numberline {4.4}History Heuristics for Hybrid MCTS}{14}
-\contentsline {chapter}{\numberline {5}Experiments and Results}{15}
-\contentsline {section}{\numberline {5.1}Experimental Setup}{15}
-\contentsline {section}{\numberline {5.2}Results}{15}
-\contentsline {chapter}{\numberline {6}Conclusion}{17}
-\contentsline {chapter}{References}{19}
+\contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{13}
+\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{17}
+\contentsline {section}{\numberline {4.1}Introduction}{17}
+\contentsline {section}{\numberline {4.2}Hybrid MCTS}{18}
+\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{18}
+\contentsline {section}{\numberline {4.4}History Heuristics for Hybrid MCTS}{18}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{19}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{19}
+\contentsline {section}{\numberline {5.2}Results}{19}
+\contentsline {chapter}{\numberline {6}Conclusion}{21}
+\contentsline {chapter}{References}{23}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{21}
-\contentsline {chapter}{\numberline {B}Detailed results}{23}
-\contentsline {chapter}{Samenvatting}{25}
+\contentsline {chapter}{\numberline {A}Algorithms}{25}
+\contentsline {chapter}{\numberline {B}Detailed results}{27}
+\contentsline {chapter}{Samenvatting}{29}
