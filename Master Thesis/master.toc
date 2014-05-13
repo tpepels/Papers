@@ -5,35 +5,35 @@
 \contentsline {chapter}{List of Algorithms}{ix}
 \contentsline {chapter}{\numberline {1}Introduction}{1}
 \contentsline {section}{\numberline {1.1}Artificial Intelligence and Games}{1}
-\contentsline {section}{\numberline {1.2}Monte-Carlo Tree Search}{1}
+\contentsline {section}{\numberline {1.2}Monte-Carlo Tree Search}{2}
 \contentsline {section}{\numberline {1.3}Regret Minimization}{3}
-\contentsline {section}{\numberline {1.4}Problem Statement and Research Questions}{3}
+\contentsline {section}{\numberline {1.4}Problem Statement and Research Questions}{4}
 \contentsline {section}{\numberline {1.5}Thesis Outline}{4}
 \contentsline {chapter}{\numberline {2}Regret And Multi-Armed Bandits}{5}
 \contentsline {section}{\numberline {2.1}Introduction}{5}
 \contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{5}
 \contentsline {section}{\numberline {2.3}UCB}{6}
-\contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{6}
+\contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{7}
 \contentsline {subsection}{\numberline {2.4.1}Successive Rejects}{7}
 \contentsline {subsection}{\numberline {2.4.2}Sequential Halving}{8}
 \contentsline {section}{\numberline {2.5}Relation to MCTS}{9}
 \contentsline {subsection}{\numberline {2.5.1}UCT}{9}
-\contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{9}
+\contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{10}
 \contentsline {chapter}{\numberline {3}Simple Regret In MCTS}{11}
 \contentsline {section}{\numberline {3.1}Introduction}{11}
-\contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{11}
+\contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{12}
 \contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{13}
-\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{17}
-\contentsline {section}{\numberline {4.1}Introduction}{17}
-\contentsline {section}{\numberline {4.2}Hybrid MCTS}{18}
-\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{18}
-\contentsline {section}{\numberline {4.4}History Heuristics for Hybrid MCTS}{18}
-\contentsline {chapter}{\numberline {5}Experiments and Results}{19}
-\contentsline {section}{\numberline {5.1}Experimental Setup}{19}
-\contentsline {section}{\numberline {5.2}Results}{19}
+\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{16}
+\contentsline {section}{\numberline {4.1}Introduction}{16}
+\contentsline {section}{\numberline {4.2}Hybrid MCTS}{17}
+\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{19}
+\contentsline {section}{\numberline {4.4}History Heuristics for Hybrid MCTS}{19}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{20}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{20}
+\contentsline {section}{\numberline {5.2}Results}{20}
 \contentsline {chapter}{\numberline {6}Conclusion}{21}
-\contentsline {chapter}{References}{23}
+\contentsline {chapter}{References}{22}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{25}
-\contentsline {chapter}{\numberline {B}Detailed results}{27}
-\contentsline {chapter}{Samenvatting}{29}
+\contentsline {chapter}{\numberline {A}Algorithms}{24}
+\contentsline {chapter}{\numberline {B}Detailed results}{25}
+\contentsline {chapter}{Samenvatting}{26}

@@ -56,13 +56,14 @@ Bubeck, S., Munos, R., and Stoltz, G. (2010).
 
 \ikatbibitem{Campbell, Hoane~Jr, and
   Hsu}{Campbell{\etalchar{+}}}{2002}{campbell2002deep}{%
-Campbell, Murray, Hoane~Jr, A~Joseph, and Hsu, Feng-hsiung (2002).
+Campbell, M., Hoane~Jr, A.~J., and Hsu, F. (2002).
 \newblock Deep blue.
 \newblock {\sl Artificial intelligence}, Vol.~134, No.~1, pp. 57--83.}
 
 \ikatbibitem{Cazenave}{Cazenave}{2014}{Cazenave14SHOT}{%
 Cazenave, T. (2014).
-\newblock Sequential Halving applied to Trees.}
+\newblock Sequential Halving applied to Trees.
+\newblock Vol. Preprint.}
 
 \ikatbibitem{Chaslot{\etalchar{+}}}{Chaslot{\etalchar{+}}}{2008}{chaslot2008progressive}{%
 Chaslot, G.~M.~J-B., Winands, M.~H.~M., Herik, H.~J. van~den, Uiterwijk,
@@ -85,26 +86,23 @@ Feldman, Z. and Domshlak, C. (2012).
 \newblock {\sl CoRR}, Vol.~abs/1206.3382.}
 
 \ikatbibitem{Feldman and Domshlak}{Feldman and Domshlak}{2013}{Feldman13}{%
-Feldman, Zohar and Domshlak, Carmel (2013).
+Feldman, Z. and Domshlak, C. (2013).
 \newblock Monte-Carlo Planning: Theoretically Fast Convergence Meets Practical
   Efficiency.
-\newblock {\sl Proceedings of the Twenty-Ninth Conference Annual Conference on
-  Uncertainty in Artificial Intelligence (UAI-13)}, pp. 212--221, AUAI Press,
-  Corvallis, Oregon.}
+\newblock {\sl Proceedings of the Conference on Uncertainty in Artificial
+  Intelligence}, pp. 212--221, AUAI Press, Corvallis, Oregon.}
 
 \ikatbibitem{Finnsson and Bj{\"o}rnsson}{Finnsson and
   Bj{\"o}rnsson}{2008}{finnsson2008simulation}{%
 Finnsson, H. and Bj{\"o}rnsson, Y. (2008).
 \newblock {Simulation-Based Approach to General Game Playing}.
-\newblock {\sl Proc. Assoc. Adv. Artif. Intell.}, Vol.~8, pp. 259--264.
-\newblock  \url{http://www.aaai.org/Papers/AAAI/2008/AAAI08-041.pdf}.}
+\newblock {\sl Proc. Assoc. Adv. Artif. Intell.}, Vol.~8, pp. 259--264.}
 
 \ikatbibitem{Gelly and Silver}{Gelly and Silver}{2007}{gelly2007}{%
-Gelly, Sylvain and Silver, David (2007).
+Gelly, S. and Silver, D. (2007).
 \newblock {Combining Online and Offline Knowledge in UCT}.
-\newblock {\sl Proc. 24th Annu. Int. Conf. Mach. Learn.}, pp. 273--280, ACM,
-  Corvalis, Oregon.
-\newblock  \url{http://portal.acm.org/citation.cfm?id=1273496.1273531}.}
+\newblock {\sl Proceedings of the Annual International Conference on Machine
+  Learning}, pp. 273--280, ACM.}
 
 \ikatbibitem{Karnin, Koren, and
   Somekh}{Karnin{\etalchar{+}}}{2013}{Karnin13SH}{%
@@ -113,7 +111,7 @@ Karnin, Z., Koren, T., and Somekh, O. (2013).
 \newblock {\sl Proc. of the Int. Conf. on Mach. Learn.}, pp. 1238--1246.}
 
 \ikatbibitem{Knuth and Moore}{Knuth and Moore}{1975}{knuth1976analysis}{%
-Knuth, Donald~E and Moore, Ronald~W (1975).
+Knuth, D.~E. and Moore, R.~W. (1975).
 \newblock An analysis of alpha-beta pruning.
 \newblock {\sl Artificial intelligence}, Vol.~6, No.~4, pp. 293--326.}
 
@@ -131,7 +129,7 @@ Lai, Tze~Leung and Robbins, Herbert (1985).
 \newblock {\sl Advances in applied mathematics}, Vol.~6, No.~1, pp. 4--22.}
 
 \ikatbibitem{Marsland}{Marsland}{1983}{marsland1983relative}{%
-Marsland, T~Anthony (1983).
+Marsland, T.~A. (1983).
 \newblock Relative Efficiency of Alpha-Beta Implementations.
 \newblock {\sl IJCAI}, pp. 763--766.}
 
@@ -139,7 +137,7 @@ Marsland, T~Anthony (1983).
   Lanctot}{Pepels{\etalchar{+}}}{2014}{realtime2014}{%
 Pepels, T., Winands, M.~H.~M., and Lanctot, M. (2014).
 \newblock Real-Time {Monte-Carlo} Tree Search in {Ms Pac-Man}.
-\newblock {\sl IEEE Trans. Comp. Intell. AI Games}, Vol.~PP.}
+\newblock {\sl IEEE Trans. Comp. Intell. AI Games}, Vol.~Preprint.}
 
 \ikatbibitem{Powley, Whitehouse, and
   Cowling}{Powley{\etalchar{+}}}{2012}{powleytsp}{%
@@ -147,6 +145,13 @@ Powley, E.~J., Whitehouse, D., and Cowling, P.~I. (2012).
 \newblock {Monte Carlo} Tree Search with macro-actions and heuristic route
   planning for the Physical Travelling Salesman Problem.
 \newblock {\sl IEEE Conf. Comput. Intell. Games}, pp. 234--241, IEEE.}
+
+\ikatbibitem{Ramanujan, Sabharwal, and
+  Selman}{Ramanujan{\etalchar{+}}}{2010}{Ramanujan2010a}{%
+Ramanujan, R., Sabharwal, A., and Selman, B. (2010).
+\newblock {Understanding Sampling Style Adversarial Search Methods}.
+\newblock {\sl Proceedings of the Conference on Uncertainty in Artificial
+  Intelligence}, pp. 474--483.}
 
 \ikatbibitem{Rimmel{\etalchar{+}}}{Rimmel{\etalchar{+}}}{2010}{lee2010current}{%
 Rimmel, A., Teytaud, O., Lee, C., Yen, S., Wang, M., and Tsai, S. (2010).
@@ -162,12 +167,12 @@ Tak, M.~J.~W., Winands, M.~H.~M., and Bj\"{o}rnsson, Y. (2012).
 \newblock {\sl IEEE Trans. Comp. Intell. AI Games}, Vol.~4, No.~2, pp. 73--83.}
 
 \ikatbibitem{Tolpin and Shimony}{Tolpin and Shimony}{2012}{tolpin2012mcts}{%
-Tolpin, David and Shimony, Solomon~Eyal (2012).
+Tolpin, D. and Shimony, S.~E. (2012).
 \newblock {MCTS} Based on Simple Regret.
 \newblock {\sl Proc. Assoc. Adv. Artif. Intell.}, pp. 570--576.}
 
 \ikatbibitem{Turing}{Turing}{1953}{turing1988chess}{%
-Turing, A (1953).
+Turing, A. (1953).
 \newblock Chess.
 \newblock {\sl Digital Computers Applied to Games}, pp. 288--295.
 \newblock Reprinted in 1988 in Computer Chess Compendium, pages 14-17.}

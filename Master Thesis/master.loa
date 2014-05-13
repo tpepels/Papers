@@ -1,13 +1,13 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {algocf}{\numberline {1}{\ignorespaces UCB1~\citebay {auer2002using}. \relax }}{6}
-\contentsline {algocf}{\numberline {2}{\ignorespaces Successive Rejects~\citebay {audibert2010best}. \relax }}{7}
-\contentsline {algocf}{\numberline {3}{\ignorespaces Sequential Halving~\citebay {Karnin13SH}. \relax }}{8}
+\contentsline {algocf}{\numberline {1}{\ignorespaces Upper Confidence Bounds (UCB1)}}{6}
+\contentsline {algocf}{\numberline {2}{\ignorespaces Successive Rejects}}{7}
+\contentsline {algocf}{\numberline {3}{\ignorespaces Sequential Halving}}{8}
 \addvspace {10\p@ }
-\contentsline {algocf}{\numberline {4}{\ignorespaces Two-stage Monte-Carlo Tree Search. \relax }}{12}
-\contentsline {algocf}{\numberline {5}{\ignorespaces Sequential Halving applied to Trees (SHOT)~\citebay {Cazenave14SHOT}. \relax }}{13}
+\contentsline {algocf}{\numberline {4}{\ignorespaces Two-stage Monte-Carlo Tree Search}}{12}
+\contentsline {algocf}{\numberline {5}{\ignorespaces Sequential Halving applied to Trees (SHOT)}}{13}
 \addvspace {10\p@ }
-\contentsline {algocf}{\numberline {6}{\ignorespaces Hybrid-MCTS. \relax }}{18}
+\contentsline {algocf}{\numberline {6}{\ignorespaces Hybrid Monte-Carlo Tree Search (H-MCTS). \relax }}{18}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
