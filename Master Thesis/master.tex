@@ -115,7 +115,7 @@ The main benefit of MCTS is that it requires no explicit heuristic state evaluat
 \section{Regret Minimization}
 The driving force behind MCTS is the notion of regret minimization. Algorithms used in multi-armed bandit (MAB) research have been developed to minimize \emph{cumulative regret}. Cumulative regret is the expected regret of not having sampled the optimal decision. This type of regret is accumulated during execution of the algorithm, each time a non-optimal arm is sampled the cumulative regret increases. UCB1~\citebay{auer2002using} is a selection policy for the MAB problem, which minimizes cumulative at a fast rate, converging to the empirically best arm fast. Once the best arm is found by exploring the available options, it exploits it by repeatedly pulling that arm, minimizing overall cumulative regret. This policy was adapted to be used in MCTS in the form of UCT~\citebay{kocsis2006bandit}
 
-Recently, \emph{simple regret} has been proposed as a new criterion for assessing the performance of both MAB~\citebay{audibert2010best,Bubeck11Pure} and MCTS~\citebay{tolpin2012mcts,Feldman12BRUE} algorithms. Simple regret is defined as the expected error between an algorithm's recommendation, and the optimal decision. This is a naturally fitting quantity to optimize in the MCTS setting. All simulations executed by MCTS are for the purpose of learning good moves. However, the final move chosen after all simulations are performed, \ie the \emph{recommendation}, is the one that has real consequences. Therefore, the choice of this move should have as low as possible simple regret. Moreover, once MCTS finds a good move with high certainty, the utility of re-selecting that move diminishes over time. When a promising node, or group of nodes is visited too often, at a certain point insufficient simulation time remains to determine whether there exists a viable alternative. Rather it may be favourable to explore other options sooner, even if a single move is identified as the best. At the same time, MCTS should not `waste' its time one moves that are expected to be bad.
+Recently, \emph{simple regret} has been proposed as a new criterion for assessing the performance of both MAB~\citebay{audibert2010best,Bubeck11Pure} and MCTS~\citebay{tolpin2012mcts,Feldman12BRUE} algorithms. Simple regret is defined as the expected error between an algorithm's recommendation, and the optimal decision. A naturally fitting quantity to optimize in the MCTS setting, since all simulations executed by MCTS are for the mere purpose of learning good moves. However, the final move chosen after all simulations are performed, \ie the \emph{recommendation}, is the one that has real consequence. Therefore, the choice of this move should have as low as possible simple regret. Moreover, once MCTS finds a good move with high certainty, the utility of re-selecting that move diminishes over time. When a promising node, or group of nodes is visited too often, at a certain point insufficient simulation time remains to determine whether there exists a viable alternative. Rather it may be favourable to explore other options sooner, even if a single move is identified as the best. At the same time, MCTS should not `waste' its time one moves that are expected to be bad.
 
 This is the driving idea behind full exploration algorithms such as Successive Rejects~\citebay{audibert2010best} and Sequential Halving~\citebay{Karnin13SH}. Contrary to UCB, these algorithms have no specific exploitation phase, they divide their time uniformly between a continuously reduced set of options. The final recommendation is the single arm that remains after all trials are finished.
 \newpage
@@ -156,7 +156,7 @@ Next, \textbf{Chapter \ref{chap:hybmcts}} goes into detail on Hybrid MCTS. Based
 \end{chaptercontents}
 
 \section{Introduction}
-The multi-armed bandit (MAB) problem is defined as a stochastic decision making problem~\citebay{auer2002using}. An agent is faced with several options, each with their own reward distribution. Based on empirical experimentation a decision to select the option with the best reward distribution. Generally the problem is described as choosing between the most rewarding arm of a multi-armed slot machine found in casino's. The agent can explore by pulling an arm and observing the resulting reward. The reward is drawn from either a fixed or changing probability distribution. Each pull and the returned reward constitutes a trial. 
+The multi-armed bandit (MAB) problem is defined as a stochastic decision making problem~\citebay{auer2002using}. An agent is faced with several options, each with their own reward distribution. Based on empirical experimentation an agent must decide to select the option with the best reward distribution. Generally the problem is described as choosing between the most rewarding arm of a multi-armed slot machine found in casino's. The agent can explore by pulling an arm and observing the resulting reward. The reward is drawn from either a fixed or changing probability distribution. Each pull and the returned reward constitutes a trial. 
 
 In the classic MAB setting, the goal is to maximize the cumulative sum of rewards, \ie winning the most money in the slot machine example. Since the agent does not know the distribution of the arms beforehand, he has to \emph{explore} the possible choices, and when a rewarding arm is found, \emph{exploit} this option to gain a high total reward. Generally, after a certain limit, \eg a time-span or number of trials, the agent must return a recommendation to determine the best arm.
 
@@ -167,21 +167,22 @@ In this chapter the different facets of MAB are discussed and related to MCTS. I
 
 \section{Regret and The Multi-Armed Bandit Problem}
 \label{sec:mabprob}
-Suppose a trial is setup such that a forecaster (player or agent) has $a \in [[K]] = \{ 1, 2, \cdots , K \}$ actions which can be repeatedly sampled over $t \in [[T]] = \{ 1, 2, \cdots, T \}$ trials. At each step, the forecaster receives a utility $u(a^t) \sim D_a$ according to some underlying distribution $D_a$. Suppose further that the forecaster employs a selection policy $I(t)$ which outputs some $a$ to be sampled at time $t$, and a recommendation policy $J(T)$ which selects the best arm at $T$.
+Suppose a trial is set-up such that a forecaster (a player, or agent) has $i \in [[K]] = \{ 1, 2, \cdots , K \}$ actions which can be repeatedly sampled over $n \in \{ 1, 2, \cdots, T \}$ trials. Each arm has an expected reward $\mu_i$, and there exists a single optimal arm with expected reward $\mu^*$.Suppose further that the forecaster employs a selection policy $I(n)$ which outputs some $a$ to be sampled at time $n$, and a recommendation policy $J(n)$ which selects the best arm at $T$.
 
-\emph{Cumulative regret} is defined to be the regret of having not sampled the best single action in hindsight, 
+\emph{Cumulative regret} is defined as the regret of having not sampled the best single action in hindsight, 
 \begin{equation}
-R_c^T = \bE \left[ \max_{a' \in [[K]]} \left\{ \sum_{t=1}^T u(a') - \sum_{t=1}^T u(I(t)) \right\} \right].
+R_n = \sum_{t = 1}^{n}{\mu^* - \mu_{I(t)}}.
 \end{equation}
-In other words, the regret is accumulated over time, at each trial.
+In other words, the regret is accumulated over time, for each sample the forecaster takes.
 
-Now suppose we change the experimental setup, such that the actions chosen on trials $1, 2, \ldots, T-1$ are taken under some realistic ``simulated environment'' that represents the true online decision problem but without committing to the actions. The only \emph{real} decision is made at step $T$ after having played $T-1$ simulations. In contrast, \emph{simple regret}~\citebay{Bubeck11Pure} quantifies only the regret for the recommendation policy $J$ at time $T$,
+Now suppose that we change the experimental set-up, such that the actions chosen on trials $1, 2, \ldots, T-1$ are taken under some realistic ``simulated environment'' that represents the true on-line decision problem but without committing to the actions. The only \emph{real} decision is made at step $T$ after having played $T-1$ simulations. In contrast, \emph{simple regret}~\citebay{Bubeck11Pure} quantifies only the regret for the recommendation policy $J$ at time $T$,
 
 \begin{equation}
-R_s^T = \bE \left[  \max_{a' \in [[K]]} \left\{ u(a') - u(J(T)) \right\} \right].
+r_n = \mu^* - \mu_{J(n)},
 \end{equation}
+\ie the regret of not having recommended the best action.
 
-In their analysis of the links between simple and cumulative regret~\citebay{Bubeck11Pure} found that upper bounds on $R_c^T$ lead to lower bounds on $R_s^T$, and that the smaller the upper bound on $R_c^T$, the higher the lower the lower bound on $R_s^T$, regardless of the recommendation policy, \ie the smaller the cumulative regret, the larger the simple regret. As such, no policy can give an optimal guarantee on both simple and cumulative regret at the same time. In the case of a multi-armed bandit the strategy used depends on the context of the problem.
+In their analysis of the links between simple and cumulative regret~\citebay{Bubeck11Pure} found that upper bounds on $R_n$ lead to lower bounds on $r_n$, and that the smaller the upper bound on $R_n$, the higher the lower the lower bound on $r_n$, regardless of the recommendation policy, \ie the smaller the cumulative regret, the larger the simple regret. As such, no policy can give an optimal guarantee on both simple and cumulative regret at the same time. In the case of a multi-armed bandit the strategy used depends on the context of the problem.
 
 \section{UCB}
 \label{sec:ucb}
@@ -215,9 +216,9 @@ Later in this chapter, in Section \ref{sec:mabmcts} UCB1 is discussed in the con
 \newpage
 \section{Pure Exploration in Multi-Armed Bandits}
 \label{sec:pureexplmab}
-Non-exploiting selection policies have been proposed to decrease simple regret at high rates. Given that UCB has an optimal rate of cumulative regret convergence, and the conflicting limits on the bounds on the regret types shown by~\citebay{Bubeck11Pure}, algorithms that have a higher rate of exploration than UCB will have better bounds on simple regret. 
+Non-exploiting selection policies have been proposed to decrease simple regret at high rates. Given that UCB1 has an optimal rate of cumulative regret convergence, and the conflicting limits on the bounds on the regret types shown by~\citeay{Bubeck11Pure}, policies that have a higher rate of exploration than UCB1 will have better bounds on simple regret. 
 
-Consider a uniform selection policy that selects each arm $|K|/T$ times. Assuming that there are $h$ best arms, $(|K|-h)/T$ simulations are spent on inferior arms, and $h/T$ on the best ones. In games for instance, there are often only one or two good moves to be identified, and therefore, when using uniform selection, most time is wasted on pulling sub-optimal arms. Therefore, a more efficient policy is required to ensure that inferior arms are not selected as often as arms with a high utility over time. Two algorithms, discussed in this section, have been proposed to solve this problem.
+Consider a uniform selection policy that selects each arm of an MAB $|K|/T$ times. Assuming that there are $h$ best arms, $(|K|-h)/T$ simulations are spent on inferior arms, and $h/T$ on the best ones. In games for instance, there are often only one or two good moves to be identified, and therefore, when using uniform selection, most time is wasted on pulling sub-optimal arms. Therefore, a more efficient policy is required to ensure that inferior arms are not selected as often as arms with a high utility over time. Two algorithms, discussed in this section, have been proposed to solve this problem.
 
 Both algorithms have shown to outperform the other in different problem settings~\citebay{Karnin13SH}. \TODO{be more specific here} Moreover, both have proven theoretical guarantees with regard to the lower bounds, and a near-optimal, exponential rate of decrease on simple regret. Based on this it holds merit to consider these algorithms as candidate substitutes for UCT in MCTS. However, based on the analysis made by~\citebay{Bubeck11Pure} discussed in Section \ref{sec:mabprob}, any method that effectively minimizes simple regret has inferior bounds on its cumulative regret. Therefore, there may be some trade-off between using pure exploration methods and UCT.
 
@@ -261,16 +262,14 @@ Successive Rejects is detailed in Algorithm~\ref{alg:succrej}. Note that, since 
 \newpage
 
 \subsection{Sequential Halving}
-A second algorithm, Sequential Halving~\citebay{Karnin13SH} takes a similar approach. As with Successive Rejects, search time is divided into rounds, and during each round arms are pulled equally often. However, instead of removing a single arm from selection after each round, half the arms are removed each time until a single one remains. The rounds in Sequential Halving are equally distributed such that each round has the same number of trials, but with a lower number of available arms. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
+Sequential Halving~\citebay{Karnin13SH} takes a similar approach as Successive Rejects. As with Successive Rejects, search time is divided into rounds, and during each round arms are sampled uniformly. However, instead of removing a single arm from selection after each round, half the arms are removed each time until a single one remains. The rounds in Sequential Halving are equally distributed such that each round has the same number of trials, but with a lower number of available arms. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
 
 \IncMargin{1em}
 \RestyleAlgo{boxruled}
 \begin{algorithm2e}[ht]
-	\Indm
 	\KwIn{total budget $T$, arms $K$}
 	\KwOut{recommendation $J_T\in K$}
 	\vspace{0.2cm}
-	\Indp
 	$S_0 \gets \{1,\dots,K\}$,
 	$B \gets \ceil{\log_2{|S|}} - 1$														\;
 	\BlankLine
@@ -282,12 +281,12 @@ A second algorithm, Sequential Halving~\citebay{Karnin13SH} takes a similar appr
 		$k\gets k+1$																		\;
 	}
 	\BlankLine
-	\KwRet{the single element of $S_B$}
+	\KwRet{the single element of $S_K$}
   \caption[Sequential Halving]{Sequential Halving~\protect\citebay{Karnin13SH}. \label{alg:seqhalv}}
 \end{algorithm2e}
 \DecMargin{1em}
 
-In Sequential Halving, each round is allocated approximately the same budget. However, after each round the number of arms is halved, resulting in a higher available budget per arm for the next round. This is depicted in Figure \ref{fig:seq-halving}, where a total budget $T = 200$ is allocated to 5 arms, the pulls per arm for each round is shown. At time $T$, after $\ceil{\log_2{5}}=3$ rounds, the single remaining arm is recommended. This arm has been sampled 68 times, which is 11 more than the recommended arm in the same example given for Successive Rejects.
+An example of the budget allocation by Sequential Halving is depicted in Figure \ref{fig:seq-halving}, where a total budget $T = 200$ is allocated to 5 arms, the pulls per arm for each round is shown. At time $T$, after $\ceil{\log_2{5}}=3$ rounds, the single remaining arm is recommended. This arm has been sampled 68 times, which is 11 more than the recommended arm in the same example given for Successive Rejects.
 
 \begin{figure}[ht]
 	\centering
@@ -295,7 +294,9 @@ In Sequential Halving, each round is allocated approximately the same budget. Ho
 	\caption{Sequential Halving example on 5 arms and a total budget of 200.}
 	\label{fig:seq-halving}
 \end{figure}
+
 \newpage
+
 \section{Relation to MCTS}
 \label{sec:mabmcts}
 \subsection{UCT}
@@ -303,7 +304,7 @@ In MCTS, during the selection step, a policy is required to explore the tree to 
 
 \begin{equation}
 \label{eq:uct}
-i^* = argmax_{i \in I(p)}\left\{ v_i + C \sqrt{ \frac{\ln{n_p}}{n_i}}\right\}
+i^* = argmax_{i \in I(p)}\left\{ v_i + C \sqrt{ \frac{\ln{n_p}}{n_i}}\right\},
 \end{equation}
 where $v_i$ is the score of the child $i$ based on the average result of simulations that visited it, $n_p$ and $n_i$ are the visit counts of the current node and its child, respectively. $C$ is the exploration constant to tune. UCT is applied when the visit count of a child node is above a threshold $T$. When a node's visit count is below this threshold, a child is selected at random.
 
@@ -314,7 +315,7 @@ Note that, UCB1 and, consequentially UCT incorporate both exploitation and explo
 
 \item The valuation of any node in the tree is dependent on the values back-propagated. Given that UCT spends the least possible time on suboptimal moves, any values back-propagated are based on increasingly better approximations of simulations performed deeper in the tree. In fact, given infinite time, UCT converges to selecting only moves with the highest average values.
 
-\item The current value of the node can be falsified by searching deeper. In MCTS, each simulation increases the depth of the search, and as such may reveal moves as becoming worse over time due to an unpredicted turn of events. If an expected good move is not reselected often, such ``traps''~\citeaby{Ramanujan2010a} are not revealed.
+\item The current value of the node can be falsified by searching deeper. In MCTS, each simulation increases the depth of the search, and as such may reveal moves as becoming worse over time due to an unpredicted turn of events. If an expected good move is not reselected often, such ``traps''~\citebay{Ramanujan2010a} are not revealed.
 
 \end{enumerate}
 \newpage
@@ -501,7 +502,7 @@ Section \ref{sec:hybmcts} gives an introduction and analysis of H-MCTS. Next, Se
 \section{Hybrid MCTS}
 \label{sec:hybmcts}
 
-Recall that the MAB context in which simple regret minimization is appropriate, only the final recommendation made by an algorithm has effect on the agent's reward. In gameplay this holds for the nodes of the search tree at the first ply. Only after running simulations is a recommendation made which affects the state of the game being played. Nodes deeper in the tree have an implicit effect on this decision. Because the shape of an MCTS tree is directly related to the potential reward of internal nodes, promising nodes are selected more often to grow the tree in their direction. This both enforces the confidence of the reward of promising nodes, but also ensures that their reward can be falsified based on results deeper in the tree.
+Recall that the MAB context, in which simple regret minimization is appropriate, only the final recommendation made by an algorithm has effect on the agent's reward. In gameplay this holds for the nodes of the search tree at the first ply. Only after running simulations is a recommendation made which affects the state of the game being played. Nodes deeper in the tree have an implicit effect on this decision. Because the shape of an MCTS tree is directly related to the potential reward of internal nodes, promising nodes are selected more often to grow the tree in their direction. This both enforces the confidence of the reward of promising nodes, but also ensures that their reward can be falsified based on results deeper in the tree.
 
 \begin{figure}[ht]
 	\centering
