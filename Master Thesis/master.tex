@@ -1,5 +1,5 @@
 \documentclass{kecsmstr}
-\usepackage{graphicx, epstopdf, amsmath, amssymb, color, caption, subcaption, comment, booktabs, mathabx, mathtools, varwidth, setspace, algorithm, fixltx2e}
+\usepackage{graphicx, epstopdf, amsmath, amssymb, color, caption, subcaption, comment, booktabs, mathabx, mathtools, varwidth, setspace, algorithm, fixltx2e, nicefrac}
 \usepackage[algo2e, longend, noline, linesnumbered]{algorithm2e}
 \SetKwIF{If}{ElseIf}{Else}{if}{then}{else if}{else}{endif}
 \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
@@ -269,19 +269,18 @@ Sequential Halving~\citebay{Karnin13SH} takes a similar approach as Successive R
 \begin{algorithm2e}[ht]
 	\KwIn{total budget $T$, arms $K$}
 	\KwOut{recommendation $J_T\in K$}
-	\vspace{0.2cm}
+	\vspace{0.1cm}
 	$S_0 \gets \{1,\dots,K\}$,
 	$B \gets \ceil{\log_2{|S|}} - 1$														\;
 	\BlankLine
 	\For{k=0 \emph{\KwTo} $B$}{
-		sample each arm $i \in S_k$ \newline														
-		$n_k = \displaystyle\floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$	\newline					
-		times 																				\;
-		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the highest empirical average		\;
-		$k\gets k+1$																		\;
+		sample each arm $i \in S_k$, 										
+		$n_k = \displaystyle\floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$
+		times																			\;
+		\vspace{0.1cm}
+		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the highest empirical average		\;																		\;
 	}
-	\BlankLine
-	\KwRet{the single element of $S_K$}
+	\KwRet{the single element of $S_k$}
   \caption[Sequential Halving]{Sequential Halving~\protect\citebay{Karnin13SH}. \label{alg:seqhalv}}
 \end{algorithm2e}
 \DecMargin{1em}
@@ -454,7 +453,7 @@ A recent addition to simple regret in MCTS is Sequential Halving applied to Tree
 			}
 			break if $b_u \geq budget$													\;
 		}
-		$s \gets \ceil{\frac{s}{2}}$, $k \gets k + 1$									\;
+		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$									\;
 		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the empirically best average		\;
 	}
 	\func{update} $p.budgetSpent$ with $b_u$											\;
@@ -513,23 +512,23 @@ Recall that the MAB context, in which simple regret minimization is appropriate,
 
 Treating a game tree as a recursive multi-armed bandit thus reveals different objectives for the distinct plies of the tree. At the root, simple regret should be as low as possible, since the recommendation of the algorithm is based on the first ply of the tree. Further down, we want to both sample efficiently, avoiding time wasted on bad options, and back-propagate correct values from leafs to their ancestors. Where the former can be achieved by using selection policies such as Successive Rejects or Sequential Halving, the latter, as discussed in Section \ref{sec:mabmcts} of Chapter \ref{chap:mab} is inherently performed by UCT. Intuitively, this leads to the belief that we should only minimize simple regret at the root, and use UCT throughout of the tree. However, considering that at any ply, based on the MinMax principle, we want to find the \emph{best reply} to the action of the parent. It may also be beneficial to ensure a low simple regret on that particular move. Because this intrinsically leads to an improved evaluation of the parent.
 
-Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combines simple and cumulative regret minimization in a tunable algorithm. Based on the results in~\citebay{Bubeck11Pure}, which show that given a low sampling budget, UCB empirically realizes lower simple regret. The proposed technique switches from UCT to Sequential Halving whenever the computational budget is above the budget limit $B$. Consequently, the search tree is composed of a \emph{simple regret tree} at the root, and \emph{UCT trees} rooted at the leafs of the simple regret tree. As shown in Figure~\ref{fig:h-mcts_trees}, initially the simple regret tree is shallow because the computational budget per node is small. Later, when the budget per node increases due to nodes being removed from selection as per Sequential Halving, the simple regret tree grows deeper. Note that, since the root's children are sorted in ascending order, the right part of the simple regret and UCT tree is always the deepest, since it its root is selected the most.
+Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combines simple and cumulative regret minimization in a tunable algorithm. Based on the results in~\citebay{Bubeck11Pure}, which show that given a low sampling budget, UCB empirically realizes lower simple regret. The proposed technique switches from UCT to Sequential Halving whenever the computational budget is above the budget limit $B$. Consequently, the search tree is composed of a \emph{simple regret tree} at the root, and \emph{UCT trees} rooted at the leafs of the simple regret tree. As shown in Figure~\ref{fig:h-mcts_trees}, initially the simple regret tree is shallow because the computational budget per node is small. Later, when the budget per node increases due to nodes being removed from selection as per Sequential Halving, the simple regret tree grows deeper. Note that, since the root's children are sorted in descending order, the right part of the simple regret and UCT tree is always the deepest, since it its root is selected the most.
 \newpage
 \IncMargin{1em}
 \RestyleAlgo{boxruled}
 \begin{algorithm2e}[t]
-\setstretch{1.10}
+\setstretch{1.05}
 	\KwIn{node $p$, allocated budget $budget$}
-	\KwOut{tuple containing the number of play-outs, $p1$ and $p2$ wins, budget spent}
+	\KwOut{tuple $t_s$: number of play-outs played, $p1$ and $p2$ wins, budget spent}
 	\vspace{0.1cm}
 	\func{h-mcts}(node $p$, $budget$):													\;
 	\Indp
 	\lIf{isLeaf($p$)}{$S\gets$ \func{expand}($p$)}					
-	$t_s \gets \tuple{0,0,0,0}$		
+	$t_s \gets \tuple{0,0,0,0}$															\;
 	\If{isTerminal($p$)}{																	\label{h-mcts:terminal}
 		\func{update} $t_s$, with $budget$ wins and $budget$ visits										\;
 		\KwRet{$t_s$}																	\;
-	}													\;
+	}
 	$s \gets |S|$																		\;
 	$b \gets \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{s}}}}\right)}$ \; \label{h-mcts:budgetlimit}
 	\If{$p$ is not root \textbf{and} $b < B $}{
@@ -550,15 +549,14 @@ Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combin
 					\tcp{Spend any left-over budget on the empirically best node}
 					$b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$					\;
 				}
-				$b_i \gets \min{b_i, budget - b_u}$									\;
+				$b_i \gets \min{(b_i, budget - b_u)}$									\;
 				$\tuple{v, w_1, w_2, b_{u, n_i}}_i \gets$ \func{h-mcts}($p$, $b_i$)		\;
 				\func{update} $p, b_u,$ and $t_s$ with $\tuple{v, w_1, w_2, b_{u, n_i}}_i$		\;
 			}
 			break if $b_u \geq budget$												\;
 		}
-		$s \gets \ceil{\frac{s}{2}}$												\;
-		$S_{k+1} \gets$ the $s$ arms from $S_k$ with the empirically best average	\;	\label{h-mcts:sort}
-		$k \gets k + 1$																\;
+		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
+		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the empirically best average	\;	\label{h-mcts:sort}
 		$b \gets b + \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{s}}}}\right)}$ \;	
 	}
 	\func{update} $p.budgetSpent$ with $b_u$										\;
