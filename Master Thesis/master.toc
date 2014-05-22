@@ -27,13 +27,13 @@
 \contentsline {section}{\numberline {4.1}Introduction}{16}
 \contentsline {section}{\numberline {4.2}Hybrid MCTS}{17}
 \contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{19}
-\contentsline {section}{\numberline {4.4}History Heuristics for Hybrid MCTS}{19}
-\contentsline {chapter}{\numberline {5}Experiments and Results}{20}
-\contentsline {section}{\numberline {5.1}Experimental Setup}{20}
-\contentsline {section}{\numberline {5.2}Results}{20}
-\contentsline {chapter}{\numberline {6}Conclusion}{21}
-\contentsline {chapter}{References}{22}
+\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{21}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{23}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{23}
+\contentsline {section}{\numberline {5.2}Results}{23}
+\contentsline {chapter}{\numberline {6}Conclusion}{24}
+\contentsline {chapter}{References}{25}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{24}
-\contentsline {chapter}{\numberline {B}Detailed results}{25}
-\contentsline {chapter}{Samenvatting}{26}
+\contentsline {chapter}{\numberline {A}Algorithms}{27}
+\contentsline {chapter}{\numberline {B}Detailed results}{28}
+\contentsline {chapter}{Samenvatting}{29}

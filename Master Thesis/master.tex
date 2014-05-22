@@ -7,16 +7,6 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DontPrintSemicolon
 \newcommand{\bE}{\mathbb{E}}
-\newcommand{\bI}{\mathbb{I}}
-\newcommand{\cA}{\mathcal{A}}
-\newcommand{\cC}{\mathcal{C}}
-\newcommand{\cD}{\mathcal{D}}
-\newcommand{\cI}{\mathcal{I}}
-\newcommand{\cN}{\mathcal{N}}
-\newcommand{\cO}{\mathcal{O}}
-\newcommand{\cS}{\mathcal{S}}
-\newcommand{\cT}{\mathcal{T}}
-\newcommand{\cZ}{\mathcal{Z}}
 \newcommand{\eg}{{\it e.g.,}~}
 \newcommand{\ie}{{\it i.e.,}~}
 \newcommand{\cf}{{cf.}~}
@@ -68,7 +58,7 @@ Special thanks goes to both Dr. Mark Winands and Dr. Marc Lanctot for providing 
 Maastricht, May 2014
 \emptypage
 
-\chapterx{Summary} \emptypage
+\chapterx{Summary} Regret minimization is key to both the Multi-Armed Bandit problem and Monte-Carlo Tree Search (MCTS). Recently, simple regret, \ie the regret of not recommending the best action, has been proposed as an alternative to cumulative regret, \ie regret accumulated over time. Each type of regret is appropriate in different contexts. Although the majority of MCTS research applies the UCT selection policy for minimizing cumulative regret in the tree, in this paper, a new MCTS variant named Hybrid MCTS (H-MCTS) is proposed, which minimizes both types of regret. H-MCTS uses a recursive version of Sequential Halving, named SHOT, to minimize simple regret near the root, and UCT when descending further down the tree. We discuss the theoretical foundation for this new search technique, and show the performance of H-MCTS in six distinct two-player games: Amazons, Ataxx, Breakthrough, NoGo, and Pentalath. \emptypage
 
 \tableofcontents  \emptypage 
 \listofalgorithms \emptypage
@@ -117,10 +107,10 @@ The driving force behind MCTS is the notion of regret minimization. Algorithms u
 
 Recently, \emph{simple regret} has been proposed as a new criterion for assessing the performance of both MAB~\citebay{audibert2010best,Bubeck11Pure} and MCTS~\citebay{tolpin2012mcts,Feldman12BRUE} algorithms. Simple regret is defined as the expected error between an algorithm's recommendation, and the optimal decision. A naturally fitting quantity to optimize in the MCTS setting, since all simulations executed by MCTS are for the mere purpose of learning good moves. However, the final move chosen after all simulations are performed, \ie the \emph{recommendation}, is the one that has real consequence. Therefore, the choice of this move should have as low as possible simple regret. Moreover, once MCTS finds a good move with high certainty, the utility of re-selecting that move diminishes over time. When a promising node, or group of nodes is visited too often, at a certain point insufficient simulation time remains to determine whether there exists a viable alternative. Rather it may be favourable to explore other options sooner, even if a single move is identified as the best. At the same time, MCTS should not `waste' its time one moves that are expected to be bad.
 
-This is the driving idea behind full exploration algorithms such as Successive Rejects~\citebay{audibert2010best} and Sequential Halving~\citebay{Karnin13SH}. Contrary to UCB, these algorithms have no specific exploitation phase, they divide their time uniformly between a continuously reduced set of options. The final recommendation is the single arm that remains after all trials are finished.
+This is the driving idea behind pure exploration algorithms such as Successive Rejects~\citebay{audibert2010best} and Sequential Halving~\citebay{Karnin13SH}. Contrary to UCB, these algorithms have no specific exploitation phase, they divide their time uniformly between a continuously reduced set of options. The final recommendation is the single arm that remains after all trials are finished.
 \newpage
 \section{Problem Statement and Research Questions}
-When MCTS is applied to games it is only the final recommendation, \ie the actual move played, that has an impact. To this end, we want the probability of selecting a suboptimal move, \ie the simple regret, to be as low as possible. Based on this assumption, simple regret minimization can be a better way to determine a move's utility. As such, a method that minimizes both types of regret in their appropriate settings can improve the overall performance of MCTS. Simple regret optimization (full exploration) has practical problems, especially at low search times. Whereas techniques based on cumulative regret perform particularly well under such limited circumstances. Given that current search techniques are either designed to minimize one type of regret, or fall short in improving performance in games. The problem statement of this thesis is:
+When MCTS is applied to games it is only the final recommendation, \ie the actual move played, that has an impact. To this end, we want the probability of selecting a suboptimal move, \ie the simple regret, to be as low as possible. Based on this assumption, simple regret minimization can be a better way to determine a move's utility. As such, a method that minimizes both types of regret in their appropriate settings can improve the overall performance of MCTS. Simple regret optimization (pure exploration) has practical problems, especially at low search times. Whereas techniques based on cumulative regret perform particularly well under such limited circumstances. Given that current search techniques are either designed to minimize one type of regret, or fall short in improving performance in games. The problem statement of this thesis is:
 \newline \newline
 \emph{How can a Monte-Carlo Tree Search variant be constructed that minimizes both simple and cumulative regret?}
 \newline \newline
@@ -133,13 +123,14 @@ The following four research questions arise from this problem statement:
 \NoIndent{To answer these questions, an investigation into state-of-the-art multi-armed bandit algorithms is required. Additionally, some MCTS variants already minimize simple regret, but have not shown general improvement in games. However, these algorithms may still prove a useful baseline.
 Next, our initial assumption regarding simple regret minimization in games ought to be verified:}
 
-\item{\emph{Will using simple regret minimizing, full exploration selection policies in MCTS improve performance in two-player games?}}
+\item{\emph{Will using simple regret minimizing, pure exploration selection policies in MCTS improve performance in two-player games?}}
 \newline
-\NoIndent{This question is answered by performing experiments in four different two-player games: Amazons, Breakthrough, Chinese Checkers and Pentalath. This also leads to the question whether the current foundation of MCTS research is still appropriate in the context of simple regret minimization:}
-\item{\emph{Can well-known MCTS enhancements such as MCTS-Solver, Transposition Tables, Progressive History and MAST be used (more) effectively in the new search technique?}}
-\end{enumerate}
+\NoIndent{This question is answered by performing experiments in four different two-player games: Amazons, Breakthrough, Chinese Checkers and Pentalath. The last research question relates to an existing MCTS enhancement:}
 
-\noindent This question is crucial for the adoption of a new search technique, because much research has been done on MCTS with UCT as its selection policy~\citebay{browne2012survey}.
+\item{\emph{How can the MCTS-Solver by~\citeay{Winands2008}, be adapted to work with the new MCTS technique?}}
+\newline
+\NoIndent{This will be answered by adapting and implementing the solver in the new algorithm, and by experimentation, to determine whether it improves results.}
+\end{enumerate}
 
 \section{Thesis Outline}
 
@@ -152,18 +143,18 @@ Next, \textbf{Chapter \ref{chap:hybmcts}} goes into detail on Hybrid MCTS. Based
 % --------------------------------------------------------------------------------------
 \chapter{Regret And Multi-Armed Bandits}
 \label{chap:mab}
-\begin{chaptercontents} The foundation of regret minimization for Monte-Carlo Tree Search (MCTS) is given. Given that MCTS is a recursive multi-armed bandit algorithm, regret minimization is discussed in this context. Moreover the link between simple and cumulative regret is detailed and recent discoveries discussed.
+\begin{chaptercontents} The foundation of regret minimization for Monte-Carlo Tree Search (MCTS) is given. Given that MCTS is a recursive Multi-Armed Bandit algorithm, regret minimization is discussed in this context first. Two algorithms designed to minimize simple regret in Multi-Armed Bandits are outlined. Moreover, the link between simple and cumulative regret is detailed and recent findings are discussed. 
 \end{chaptercontents}
 
 \section{Introduction}
-The multi-armed bandit (MAB) problem is defined as a stochastic decision making problem~\citebay{auer2002using}. An agent is faced with several options, each with their own reward distribution. Based on empirical experimentation an agent must decide to select the option with the best reward distribution. Generally the problem is described as choosing between the most rewarding arm of a multi-armed slot machine found in casino's. The agent can explore by pulling an arm and observing the resulting reward. The reward is drawn from either a fixed or changing probability distribution. Each pull and the returned reward constitutes a trial. 
+The Multi-Armed Bandit (MAB) problem is defined as a stochastic decision making problem~\citebay{auer2002using}. An agent is faced with several options, each with their own reward distribution. Based on sampling the search space an agent is to select the option with the best reward distribution. Generally the problem is described as choosing between the most rewarding arm of a multi-armed slot machine found in casino's. The agent can explore by pulling an arm and observing the resulting reward. The reward is drawn from either a fixed or changing probability distribution. Each pull and the returned reward constitutes a sample.
 
 In the classic MAB setting, the goal is to maximize the cumulative sum of rewards, \ie winning the most money in the slot machine example. Since the agent does not know the distribution of the arms beforehand, he has to \emph{explore} the possible choices, and when a rewarding arm is found, \emph{exploit} this option to gain a high total reward. Generally, after a certain limit, \eg a time-span or number of trials, the agent must return a recommendation to determine the best arm.
 
 The performance of the agent can be evaluated by observing the difference in the rewards obtained over time and the theoretical reward obtained by pulling only the true best arm, called \emph{cumulative regret}. Or, in the case of \emph{simple regret}, observing the difference between the recommended arm and the true best arm, after the forecaster makes its final recommendation.
 \vspace{2 mm}
 
-In this chapter the different facets of MAB are discussed and related to MCTS. In Section \ref{sec:mabprob} a formal definition of the two types of regret, and their interrelation is given. Next, Section \ref{sec:ucb} discusses the well-known UCB1 selection policy and its relation to MCTS. This is followed by a review of two recently introduced selection policies for MAB aimed at minimizing simple regret, in Section \ref{sec:pureexplmab}.
+In this chapter the different facets of the MAB problem are discussed and related to MCTS. In Section \ref{sec:mabprob} a formal definition of the two types of regret, and their interrelation is given. Next, Section \ref{sec:ucb} discusses the well-known UCB1 selection policy and its relation to MCTS. This is followed by a review of two recently introduced selection policies for MAB aimed at minimizing simple regret, in Section \ref{sec:pureexplmab}.
 
 \section{Regret and The Multi-Armed Bandit Problem}
 \label{sec:mabprob}
@@ -182,7 +173,7 @@ r_n = \mu^* - \mu_{J(n)},
 \end{equation}
 \ie the regret of not having recommended the best action.
 
-In their analysis of the links between simple and cumulative regret~\citebay{Bubeck11Pure} found that upper bounds on $R_n$ lead to lower bounds on $r_n$, and that the smaller the upper bound on $R_n$, the higher the lower the lower bound on $r_n$, regardless of the recommendation policy, \ie the smaller the cumulative regret, the larger the simple regret. As such, no policy can give an optimal guarantee on both simple and cumulative regret at the same time. In the case of a multi-armed bandit the strategy used depends on the context of the problem.
+Given these definitions, the performance of a selection technique can be described as the expected cumulative $\bE R_n$, or simple $\bE r_n$ regret over different experiments. In their analysis of the links between simple and cumulative regret~\citebay{Bubeck11Pure} found that upper bounds on $\bE R_n$ lead to lower bounds on $\bE r_n$, and that the smaller the upper bound on $\bE R_n$, the higher the lower the lower bound on $\bE r_n$, regardless of the recommendation policy, \ie the smaller the cumulative regret, the larger the simple regret. As such, no policy can give an optimal guarantee on both simple and cumulative regret at the same time. In the case of a multi-armed bandit the strategy used depends on the context of the problem.
 
 \section{UCB}
 \label{sec:ucb}
@@ -254,7 +245,7 @@ Successive Rejects is detailed in Algorithm~\ref{alg:succrej}. Note that, since 
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.5\textwidth]{img/succ_rej.png}
+	\includegraphics[width=.45\textwidth]{img/succ_rej.png}
 	\caption{Successive Rejects example on 5 arms and a total budget of 200.}
 	\label{fig:succ-rej}
 \end{figure}
@@ -265,8 +256,8 @@ Successive Rejects is detailed in Algorithm~\ref{alg:succrej}. Note that, since 
 Sequential Halving~\citebay{Karnin13SH} takes a similar approach as Successive Rejects. As with Successive Rejects, search time is divided into rounds, and during each round arms are sampled uniformly. However, instead of removing a single arm from selection after each round, half the arms are removed each time until a single one remains. The rounds in Sequential Halving are equally distributed such that each round has the same number of trials, but with a lower number of available arms. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
 
 \IncMargin{1em}
-\RestyleAlgo{boxruled}
 \begin{algorithm2e}[ht]
+\setstretch{1.1}
 	\KwIn{total budget $T$, arms $K$}
 	\KwOut{recommendation $J_T\in K$}
 	\vspace{0.1cm}
@@ -275,10 +266,10 @@ Sequential Halving~\citebay{Karnin13SH} takes a similar approach as Successive R
 	\BlankLine
 	\For{k=0 \emph{\KwTo} $B$}{
 		sample each arm $i \in S_k$, 										
-		$n_k = \displaystyle\floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$
-		times																			\;
+		$n_k = \floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$
+		times 																				\;
 		\vspace{0.1cm}
-		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the highest empirical average		\;																		\;
+		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the best average			\;
 	}
 	\KwRet{the single element of $S_k$}
   \caption[Sequential Halving]{Sequential Halving~\protect\citebay{Karnin13SH}. \label{alg:seqhalv}}
@@ -289,7 +280,7 @@ An example of the budget allocation by Sequential Halving is depicted in Figure 
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.5\textwidth]{img/seq_halv.png}
+	\includegraphics[width=.55\textwidth]{img/seq_halv.png}
 	\caption{Sequential Halving example on 5 arms and a total budget of 200.}
 	\label{fig:seq-halving}
 \end{figure}
@@ -438,7 +429,7 @@ A recent addition to simple regret in MCTS is Sequential Halving applied to Tree
 	}
 	$s \gets |S|$, $b_u, b \gets 0$, $S_0 \gets S$ 										\;
 	\While{s $>$ 1 \textbf{and} $b_u < budget$} {											\label{shot:cycle}
-	$b \gets b + \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{s}}}}\right)}$ \;	\label{shot:budgeting}
+	$b \gets b + \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;	\label{shot:budgeting}
 		\For{i=0 \emph{\KwTo} s}{															\label{shot:round}
 			$n_i \gets$ node $n$ at rank $i$ of $S_k$									\;
 			$b_i \gets b - n_i.visits$													\;  \label{shot:topoff}
@@ -448,7 +439,7 @@ A recent addition to simple regret in MCTS is Sequential Halving applied to Tree
 					$b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$				\;
 				}
 				$b_i \gets \min{(b_i, budget - b_u)}$										\;
-				$\tuple{v, w_1, w_2, b_{u, n_i}}_i \gets$ \func{shot}($p$, $b_i$)			\;
+				$\tuple{v, w_1, w_2, b_{u, n_i}}_i \gets$ \func{shot}($n_i$, $b_i$)			\;
 				\func{update} $p, b_u,$ and $t_s$ with $\tuple{v, w_1, w_2, b_{u, n_i}}_i$	\;
 			}
 			break if $b_u \geq budget$													\;
@@ -496,7 +487,7 @@ In contrast, pure exploration algorithms, designed to minimize simple regret in 
 Inspired by the analysis and discussions in Chapters \ref{chap:mab} and \ref{chap:mctssr}, a new MCTS variant is proposed named Hybrid MCTS (H-MCTS). H-MCTS initializes with an explorative depth-limited search, applying a specific simple regret minimizing policy. After reaching a node where computational budget per node is smaller than a set limit, the algorithm switches to the UCT selection policy. 
 \vspace{2 mm}
 
-Section \ref{sec:hybmcts} gives an introduction and analysis of H-MCTS. Next, Section \ref{sec:hybmctssolver} details the implementation of MCTS-Solver~\citeaby{Winands2008}, designed to solve positions within the tree, for H-MCTS. Lastly, Section \ref{sec:proghist} details the implementation of two types of history heuristics for the new technique.
+Section \ref{sec:hybmcts} gives an introduction and analysis of H-MCTS. Next, Section \ref{sec:hybmctssolver} details the implementation of MCTS-Solver~\citeaby{Winands2008}, designed to solve positions within the tree, for H-MCTS. Finally, in Section \ref{sec:ulb_h-mcts}, an enhancement for SHOT and H-MCTS is introduced that reduces the number of poor nodes selected based on their upper bounds overlapping with their best sibling's lower bound.
 \newpage
 \section{Hybrid MCTS}
 \label{sec:hybmcts}
@@ -512,52 +503,44 @@ Recall that the MAB context, in which simple regret minimization is appropriate,
 
 Treating a game tree as a recursive multi-armed bandit thus reveals different objectives for the distinct plies of the tree. At the root, simple regret should be as low as possible, since the recommendation of the algorithm is based on the first ply of the tree. Further down, we want to both sample efficiently, avoiding time wasted on bad options, and back-propagate correct values from leafs to their ancestors. Where the former can be achieved by using selection policies such as Successive Rejects or Sequential Halving, the latter, as discussed in Section \ref{sec:mabmcts} of Chapter \ref{chap:mab} is inherently performed by UCT. Intuitively, this leads to the belief that we should only minimize simple regret at the root, and use UCT throughout of the tree. However, considering that at any ply, based on the MinMax principle, we want to find the \emph{best reply} to the action of the parent. It may also be beneficial to ensure a low simple regret on that particular move. Because this intrinsically leads to an improved evaluation of the parent.
 
-Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combines simple and cumulative regret minimization in a tunable algorithm. Based on the results in~\citebay{Bubeck11Pure}, which show that given a low sampling budget, UCB empirically realizes lower simple regret. The proposed technique switches from UCT to Sequential Halving whenever the computational budget is above the budget limit $B$. Consequently, the search tree is composed of a \emph{simple regret tree} at the root, and \emph{UCT trees} rooted at the leafs of the simple regret tree. As shown in Figure~\ref{fig:h-mcts_trees}, initially the simple regret tree is shallow because the computational budget per node is small. Later, when the budget per node increases due to nodes being removed from selection as per Sequential Halving, the simple regret tree grows deeper. Note that, since the root's children are sorted in descending order, the right part of the simple regret and UCT tree is always the deepest, since it its root is selected the most.
+Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combines simple and cumulative regret minimization in a tunable algorithm. Based on the results in~\citebay{Bubeck11Pure}, which show that given a low sampling budget, UCB empirically realizes lower simple regret. The proposed technique switches from UCT to Sequential Halving whenever the computational budget is above the budget limit $B$. Consequently, the search tree is composed of a \emph{simple regret tree} at the root, and \emph{UCT trees} rooted at the leafs of the simple regret tree. As shown in Figure~\ref{fig:h-mcts_trees}, initially the simple regret tree is shallow because the computational budget per node is small. Later, when the budget per node increases due to nodes being removed from selection as per Sequential Halving, the simple regret tree grows deeper. Note that, since the root's children are sorted in descending order, the left part of the simple regret and UCT tree is always the deepest, since it its root is selected the most.
 \newpage
 \IncMargin{1em}
-\RestyleAlgo{boxruled}
-\begin{algorithm2e}[t]
-\setstretch{1.05}
+\begin{algorithm2e}
+\setstretch{1.1}
 	\KwIn{node $p$, allocated budget $budget$}
-	\KwOut{tuple $t_s$: number of play-outs played, $p1$ and $p2$ wins, budget spent}
+	\KwOut{$t_s$: number of play-outs, $p1$ and $p2$ wins}
 	\vspace{0.1cm}
-	\func{h-mcts}(node $p$, $budget$):													\;
+	\func{h-mcts}(node $p$, $budget$):												\;
 	\Indp
 	\lIf{isLeaf($p$)}{$S\gets$ \func{expand}($p$)}					
-	$t_s \gets \tuple{0,0,0,0}$															\;
-	\If{isTerminal($p$)}{																	\label{h-mcts:terminal}
-		\func{update} $t_s$, with $budget$ wins and $budget$ visits										\;
-		\KwRet{$t_s$}																	\;
+	$t_s \gets \tuple{0,0,0}$														\;		
+	\If{isTerminal($p$)}{															\label{h-mcts:terminal}
+		\func{update} $t_s$, with $budget$ wins 									\;
+		 \KwRet{$t_s$}
 	}
-	$s \gets |S|$																		\;
-	$b \gets \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{s}}}}\right)}$ \; \label{h-mcts:budgetlimit}
+	$b \gets \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \; \label{h-mcts:budgetlimit}
 	\If{$p$ is not root \textbf{and} $b < B $}{
 		\For{i=0 \emph{\KwTo} budget}{
-			$\tuple{v, w_1, w_2, b_{u, p}}_i \gets$ \func{uct}($p$)						\;
-			\func{update} $t_s$ with $\tuple{v, w_1,w_2, b_{u, p}}_i$					\;
+			$\tuple{v, w_1, w_2}_i \gets$ \func{uct}($p$)							\;
+			\func{update} $p, t_s$ with $\tuple{v, w_1,w_2}_i$							\;
 		}
 		\KwRet{$t_s$}
 	}
-	$b_u, k \gets 0$																	\;
-	$S_0 \gets S$																	\;
-	\Repeat{s $=$ 1 \textbf{or} $b_u >= budget$} {										\label{h-mcts:shot}
+	$b_u, k \gets 0$\; $S_0 \gets S$\; $s \gets |S_0|$								\;
+	\Repeat{$b_u \geq budget$} {															\label{h-mcts:shot}
 		\For{i=0 \emph{\KwTo} s}{
-			$n_i \gets$ node $n$ at rank $i$ of $S_k$								\;
-			$b_i \gets b - n_i.visits$												\;
-			\If{$b_i > 0$} {
-				\If{$p$ is root \textbf{and} $i = 0$ \textbf{and} $s = 2$} {
-					\tcp{Spend any left-over budget on the empirically best node}
-					$b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$					\;
-				}
-				$b_i \gets \min{(b_i, budget - b_u)}$									\;
-				$\tuple{v, w_1, w_2, b_{u, n_i}}_i \gets$ \func{h-mcts}($p$, $b_i$)		\;
-				\func{update} $p, b_u,$ and $t_s$ with $\tuple{v, w_1, w_2, b_{u, n_i}}_i$		\;
+			$n_i \gets$ node $n$ at rank $i$ of $S_k$								\;			
+			\If{$b > n_i.visits$} {
+				$b_i \gets \min{(b - n_i.visits, budget - b_u)}$					\;
+				$\tuple{v, w_1, w_2}_i \gets$ \func{h-mcts}($n_i$, $b_i$)			\;
+				\func{update} $p, b_u$, and $t_s$ with $\tuple{v, w_1, w_2}_i$		\;
 			}
 			break if $b_u \geq budget$												\;
 		}
 		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
-		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the empirically best average	\;	\label{h-mcts:sort}
-		$b \gets b + \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{s}}}}\right)}$ \;	
+		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the best average				\;	\label{h-mcts:sort}
+		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;	
 	}
 	\func{update} $p.budgetSpent$ with $b_u$										\;
 	\Indm
@@ -566,17 +549,160 @@ Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combin
 \end{algorithm2e}
 \DecMargin{1em}
 
-H-MCTS is outlined in Algorithm~\ref{alg:h-mcts}. Similar to UCT and SHOT on line~\ref{h-mcts:terminal} terminal conditions are handled. Followed by the main feature of the algorithm on line~\ref{h-mcts:budgetlimit} where the initial simulation budget $b$ for each child of the current node is computed. Based on $b$, a decision is made whether to progress into the UCT tree if $b<B$ or, if $b >= B$ to continue with SHOT. Note that, the $b<B$ check is overridden at the root, since only one cycle is initiated there, and because at the root simple regret minimization is always favoured over cumulative regret minimization. From line~\ref{h-mcts:shot} the algorithm is similar to the Sequential Halving potion of SHOT, discussed in Chapter~\ref{chap:mctssr} Section~\ref{sec:SHOT}. As in SHOT, because multiple play-outs are back-propagated in a single descent from root to leaf, the algorithm returns a tuple $t_s$, which contains: 1) the budget used $b_u$, 2) the number of wins per player $w_1$ and $w_2$, and 3) the number of visits $v$. UCT also maintains this tuple such that is can return the same $t_s$ to the simple regret tree. However, in the case of UCT all values in $t_s$ are at most 1. For the UCT tree, any implementation can be used, as long as it is adapted to return $t_s$ and update the $budgetSpent$ value alongside the usual node's visit count. Because any UCT node in the tree can be ``converted'' to a simple regret node at any time, when $b>B$ on line~\ref{h-mcts:budgetlimit}.
+H-MCTS is outlined in Algorithm~\ref{alg:h-mcts}. Similar to UCT and SHOT, on line~\ref{h-mcts:terminal} terminal conditions are handled. Followed by the main feature of the algorithm on line~\ref{h-mcts:budgetlimit} where the initial simulation budget $b$ for each child of the current node is computed. Based on $b$, a decision is made whether to progress into the UCT tree if $b<B$ or, if $b \geq B$ to continue with SHOT. Note that, the $b<B$ check is overridden at the root, since only one cycle is initiated there, and because at the root simple regret minimization is always favoured over cumulative regret minimization. From line~\ref{h-mcts:shot} the algorithm is similar to the Sequential Halving potion of SHOT, discussed in Chapter~\ref{chap:mctssr} Section~\ref{sec:SHOT}. As in SHOT, because multiple play-outs are back-propagated in a single descent from root to leaf, the algorithm returns a tuple $t_s$, which contains: 1) he number of visits $v$, and 2) the number of wins per player $w_1$ and $w_2$. UCT also maintains this tuple such that is can return the same $t_s$ to the simple regret tree. However, in the case of UCT all values returned in $t_s$ are at most 1. For the UCT tree, any implementation can be used, as long as it is adapted to return $t_s$ and update the $budgetSpent$ value alongside the usual node's visit count. Because any UCT node in the tree can be ``converted'' to a simple regret node at any time, when $b>B$ on line~\ref{h-mcts:budgetlimit}. 
 
-H-MCTS shares its disadvantage of not being able to return a recommendation at any-time with SHOT. It must know its exact computational budget beforehand. However, it does makes use of the fact that UCT is any-time. Suppose a node was selected and expanded by H-MCTS, then at each time in the simple regret tree, nodes will have an appropriate value based on the results back-propagated by UCT. Thus, when SHOT finishes a round by sorting the nodes by their accumulated values on line~\ref{h-mcts:sort}, UCT's any-time property ensures nodes have a representative value.
+Some changes are made in H-MCTS with respect to SHOT. The cycle at line~\ref{h-mcts:shot} repeats until no more budget remains instead of repeating until a single arm remains. Because it is possible, due to rounding errors, that not all allocated budget is spent during a cycle, it is not unlikely to have `residual' rounds, in which the single best child is the only one remaining. Sampling this arm more frequently is never a problem, since at each node we are most interested in finding the best reply, and updating the parent's value accordingly.
+
+As with MCTS, H-MCTS can be separated in four discrete steps
+\begin{enumerate}
+\item \textbf{Budgeting}: A budget is determined for each child. Based on the budget, we enter the UCT tree, or remain in the simple regret tree. If we enter the UCT tree, the four basic MCTS steps apply.
+\item \textbf{Selection}: In the simple regret tree, nodes are sampled based on Sequential Halving. Each node is assigned a budget, to be spent in the UCT tree.
+\item \textbf{Removal}: Based on the results obtained from UCT, children are removed from selection. A new Sequential Halving round starts with half of the best children from the previous round.
+\item \textbf{Back-propagation}: Results are accumulated, and back-propagated. Since H-MCTS is performed depth-first, the final result is only available after all budget is spent.
+\end{enumerate}
+Note that, in this case Sequential Halving is presented as the simple regret algorithm. However, it is certainly possible to replace it with any other algorithm such as Successive Rejects, or any other form of sequential reduction.
+
+H-MCTS shares its disadvantage of not being able to return a recommendation at any-time with SHOT. It must know its exact computational budget beforehand. However, it does make use of the fact that UCT is any-time. Suppose a node was selected and expanded by H-MCTS, then at each time in the simple regret tree, nodes will have an appropriate value based on the results back-propagated by UCT. Thus, when SHOT finishes a round by sorting the nodes by their accumulated values on line~\ref{h-mcts:sort}, UCT's any-time property ensures nodes have a representative value.
 
 To a lesser extent, H-MCTS also shares the speed benefit of SHOT. However, because a large part of the search tree is composed of the UCT tree, based on the budget limit $B$ H-MCTS will still spend more time in the tree than SHOT overall.
 
 \section{Hybrid MCTS-Solver}
 \label{sec:hybmctssolver}
 
-\section{History Heuristics for Hybrid MCTS}
-\label{sec:proghist}
+In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven wins or losses in the simple regret tree. Although we can employ the MCTS-Solver proposed by~\citeay{Winands2008} in the UCT tree, this solver needs to be adapted to be able to solve nodes in the SHOT portion of the algorithm. The main issue here is that when a solved node is encountered, Sequential Halving must be interrupted. This leads to three different possibles cases in which this interruption is to be encountered and properly handled. Note that it is assumed that values are according to negamax, such that at each node, children's rewards are stored with respect to the player to move.
+\begin{enumerate}
+\item A solved win is encountered, in this case, we immediately want to remember this node and back-propagate to the parent. Any residual budget remains unspent.
+\item A solved loss is encountered, but not all siblings lead to a loss. According to~\citeay{Winands2008} it is appropriate in this case to count the visit as a loss. However, since there still exist nodes that do not lead to a loss, we must make sure the solved node is not reselected. If it is reselected, a potentially high budget may be spent on the node, which results in an under evaluation of the parent.
+\item A solved loss is encountered, and all siblings lead lead to a loss. In this case the parent is a win and we should back-propagate immediately. Any residual budget remains unspent.
+\end{enumerate}
+
+\IncMargin{1em}
+\begin{algorithm2e}
+\setstretch{1.0}
+	\KwIn{node $p$, allocated budget $budget$}
+	\KwOut{$t_s$: number of play-outs, $p1$ and $p2$ wins, solved player}
+	\vspace{0.1cm}
+	\func{h-mcts-solver}(node $p$, $budget$):										\;
+	\Indp
+	\lIf{isLeaf($p$)}{$C, S\gets$ \func{expand}($p$)}								\label{hs:children}
+	$t_s \gets \tuple{0,0,0,0}$														\;		
+	$b \gets \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \; 
+	\If{$p$ is not root \textbf{and} $b < B $}{
+		\For{i=0 \emph{\KwTo} budget}{
+			$\tuple{v, w_1, w_2, s}_i \gets$ \func{uct-solver}($p$)						\;
+			\func{update} $p, t_s$ with $\tuple{v, w_1,w_2, s}_i$							\;
+		}
+		\KwRet{$t_s$}
+	}
+	$b_u, k \gets 0$, $S_0 \gets S$, $s \gets |S_0|$\;
+	\Repeat{$b_u \geq budget$} {
+		$b_r \gets 0$																\; \label{hs:resid}
+		\For{i=0 \emph{\KwTo} $\min{(s,|S_k|)}$}{
+			$n_i \gets$ node $n$ at rank $i$ of $S_k$								\;
+			\If{$n_i$ is not solved} {			
+				\If{$b > n_i.visits$} {
+					$b_i \gets \min{(b - n_i.visits, budget - b_u)}$					\;
+					$\tuple{v, w_1, w_2, s}_i \gets$ \func{h-mcts-solver}($n_i$, $b_i$)	\;
+					\func{update} $p, b_u$, and $t_s$ with $\tuple{v, w_1, w_2, s}_i$		\;
+				}
+			}
+			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in S: (n$ is a loss$))$}{
+				set the solved player in $t_s$									\; \label{hs:solved}
+				\func{update} $p.budgetSpent$ with $b_u$						\;
+				\KwRet{$t_s$}													\;
+			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in S: (n$ is not a loss$))$}{
+				remove $n_i$ from $S$											\; \label{hs:remove}			
+				$b_r \gets b_i - t_s\tuple{v}$									\; \label{hs:update_resid}
+				$i \gets i - 1$													\; \label{hs:reselect}
+			}
+			break if $b_u \geq budget$											\;
+		}
+		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$						\;
+		$s \gets \min{(s, |S|)}$												\; \label{hs:size_min}	
+		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the best average			\;		
+		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
+		$b \gets b + \nicefrac{b_r}{s}$														\; \label{hs:incr_budget_resid}
+	}
+	\func{update} $p.budgetSpent$ with $b_u$										\;
+	\Indm
+	\KwRet{$t_s$}
+  \caption{Hybrid Monte-Carlo Tree Search Solver (H-MCTS-Solver). \label{alg:h-mcts-solver}}
+\end{algorithm2e}
+\DecMargin{1em}
+
+H-MCTS Solver is outlined in Algorithm~\ref{alg:h-mcts-solver}. The general procedure when a solved node is encountered is straightforward in the case of a solved win, and when all children are solved losses. The $budgetSpent$ is updated and the function immediately returns. The tuple $t_s$ now also contains a `solved' field, which holds the index of the player for which the node is solved. In this case the \func{update} function updates the node accordingly by setting the $isSolved$ flag. On the other hand, when an isolated proven loss is encountered, \ie not all siblings are losses, then we should not sample that node again, since it would under-evaluate the parent. This possibly leaves a residual budget $b_r$ declared on line~\ref{hs:resid}, which is maintained per round. When an isolated proven loss is found, the residual budget is updated on line~\ref{hs:update_resid} such that it can be spent in the next round with a reduced set of nodes, line~\ref{hs:incr_budget_resid}. Moreover, since the isolated loss is removed from $S$, it is possible that $s > |S|$, this is restored on line~\ref{hs:size_min}, after reducing the original size of $s$. This ensures that previously removed nodes that were not proven losses can be returned to selection. Such a node is immediately sampled again whenever a node is removed from $S$ on line~\ref{hs:reselect}. Note also that on line~\ref{hs:children}, a second set $C$ contains all children. Because it is possible to remove all nodes from $S$ in case of a proven loss, $C$ is never altered and can be used to give a recommendation at the root in this case.
+
+\section{Upper and Lower Bounds for H-MCTS}
+\label{sec:ulb_h-mcts}
+A disadvantage of Sequential Halving when it is applied to game trees, is that nodes which can never improve on the current best node are potentially sampled frequently. Although this is theoretically sound in providing lower guarantees on simple regret, practically it often means that nodes are sampled when it is clearly futile to do so. Consider a set of 5 nodes $S_1$, in which there exists one node with a true mean $\mu^*$ of $0.7$, all other nodes have means of $-0.5$. Only a few samples are required to find out which node is the best reply. However, as was shown in the example in Figure~\ref{fig:seq-halving}, the second-best node will be sampled as often as the best one, and in effect the parent's value is underestimated. 
+
+To counter this problem we can compare a child's upper confidence bound to the best node's lower confidence bound. In this pessimistic scheme it is assumed that a node can still improve its value such that it becomes better than the current best node if their upper and lower confidence bounds overlap. Recall from Chapter~\ref{chap:mab}, that the upper confidence bound represents the highest value a node can achieve with immense probability. This approach can be inversed to get the lowest value a node can achieve,
+\begin{equation}
+ n_i.value - C \times \displaystyle\sqrt{\frac{\ln{p.visits}}{n_i.visits}}.
+\end{equation}
+Because a sorted list of children is maintained in the simple regret tree, the best child's lower confidence bound can be compared to the current node's upper confidence bound at any time. Moreover, when selecting a node for recursion, only if the current node's upper confidence bound overlaps with the best node's lower confidence bound, can we assume that it is still possible for this node to improve upon the current best node's score. As such we can skip any node with a non-overlapping bound with the best node. This potentially saves a substantial budget which would otherwise have been spent sampling children with no potential to improve the current estimate of the parent's value.
+
+\IncMargin{1em}
+\begin{algorithm2e}
+\setstretch{1.0}
+	\KwIn{node $p$, allocated budget $budget$}
+	\KwOut{$t_s$: number of play-outs, $p1$ and $p2$ wins, solved player}
+	\vspace{0.1cm}
+	\func{h-mcts-solver}(node $p$, $budget$):										\;
+	\Indp
+	\lIf{isLeaf($p$)}{$C, S\gets$ \func{expand}($p$)}					
+	$t_s \gets \tuple{0,0,0,0}$														\;		
+	$b \gets \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \; 
+	\If{$p$ is not root \textbf{and} $b < B $}{
+		\For{i=0 \emph{\KwTo} budget}{
+			$\tuple{v, w_1, w_2, s}_i \gets$ \func{uct-solver}($p$)						\;
+			\func{update} $p, t_s$ with $\tuple{v, w_1,w_2, s}_i$							\;
+		}
+		\KwRet{$t_s$}
+	}
+	$b_u, k \gets 0$, $S_0 \gets S$, $s \gets |S_0|$\;
+	\Repeat{$b_u \geq budget$} {
+		$b_r \gets 0$																\;
+		\For{i=0 \emph{\KwTo} $\min{(s,|S_k|)}$}{
+			$n_i \gets$ node $n$ at rank $i$ of $S_k$								\;
+			\If{$n_i$ is not solved} {			
+				\If{$b > n_i.visits$} {
+					$b_i \gets \min{(b - n_i.visits, budget - b_u)}$					\;
+					
+					\If {$n_i.value + C \times \sqrt{\frac{\ln{p.visits}}{n_i.visits}} < l_b$} { \label{ublb:upper_bound}
+						$b_r \gets b_r + b_i$ \;									
+						\textbf{continue}	\;	\label{ublb:skip}
+					}
+					$\tuple{v, w_1, w_2, s}_i \gets$ \func{h-mcts-solver}($n_i$, $b_i$)	\;
+					\func{update} $p, b_u$, and $t_s$ with $\tuple{v, w_1, w_2, s}_i$		\;
+					\lIf{$i = 0$} {$l_b \gets n_i.value - C \times \sqrt{\frac{\ln{p.visits}}{n_i.visits}}$} \label{ublb:lower_bound}
+				}
+			}
+			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in S: (n$ is a loss$))$}{
+				set the solved player in $t_s$									\;
+				\func{update} $p.budgetSpent$ with $b_u$						\;
+				\KwRet{$t_s$}													\;
+			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in S: (n$ is not a loss$))$}{
+				remove $n_i$ from $S$											\;				
+				$b_r \gets b_i - t_s\tuple{v}$									\;
+				$i \gets i - 1$													\;
+			}
+			break if $b_u \geq budget$												\;
+		}
+		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
+		$s \gets \min{(s, |S|)}$													\;
+		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the best average				\;	
+		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
+		$b \gets b + \nicefrac{b_r}{s}$\;	\label{ublb:reallo}
+	}
+	\func{update} $p.budgetSpent$ with $b_u$										\;
+	\Indm
+	\KwRet{$t_s$}
+  \caption{Hybrid Monte-Carlo Tree Search Solver with Overlapping Bounds. \label{alg:h-mcts-ublb}}
+\end{algorithm2e}
+\DecMargin{1em}
+
+The overlapping bounds enhancement for H-MCTS is detailed in Algorithm~\ref{alg:h-mcts-ublb}, in which it is combined with the solver discussed in the previous subsection. On line~\ref{ublb:lower_bound} the lower confidence bound of the current best node is determined. Note that, this is performed in each round, right after the best node of the previous round is sampled. This ensures that we have the best approximate value for the current lower bound. All other children's upper confidence bounds are then compared to the current best lower bound on line~\ref{ublb:upper_bound}. If the bounds do not overlap, the node is skipped, line~\ref{ublb:skip}. Similar to the solver, the unspent budget is reserved in $b_r$, it is reallocated on line~\ref{ublb:reallo} to be spent in the next round.
 
 % -------------------------------------------------------------------------------
 % ------------------- ::::::: Experiments and Results ::::::: -------------------
@@ -584,9 +710,24 @@ To a lesser extent, H-MCTS also shares the speed benefit of SHOT. However, becau
 \chapter{Experiments and Results}
 \label{chap:experiments}
 \begin{chaptercontents}
-The $\mctssr$ algorithm is thoroughly evaluated in the following two-player games: Amazons, Breakthrough, Chinese Checkers and Pentalath.
+H-MCTS is thoroughly evaluated in the following two-player games: Amazons, Breakthrough, Chinese Checkers and Pentalath.
 \end{chaptercontents}
+
 \section{Experimental Setup}
+\label{sec:ex_setup}
+In this chapter we show the results of the experiments performed on six two-player games. H-MCTS and the games were implemented in two different engines. Amazons, Breakthrough, NoGo and Pentalath are implemented in a \emph{Java} based engine, including the solver, and overlapping bounds enhancements. Ataxx and AtariGo are built in a \emph{c} based engine, in which only H-MCTS was implemented.
+\begin{itemize}
+\item \emph{Amazons} is played on a 10$\times$10 chessboard. Players have four Amazons that move as queens in chess. Moves consist of two parts, movement, and shooting an arrow to block a square on the board. The last player to move wins the game.
+\item \emph{Ataxx} is similar to Reversi. Played on a square board, players start with two stones each placed in an opposite corner. Captures are performed by moving a piece on the board. The game ends when all squares are filled, or when a player has no remaining stones. The player with the most stones wins. Our experiments are performed on a 7$\times$7 board.
+\item \emph{AtariGo}, or first-capture go, is a variant of Go where the first player to capture any stones wins. Our experiments are performed on a 9$\times$9 board.
+\item \emph{Breakthrough} is played on an 8$\times$8 board. Players start with 16 pawns. The goal is to move one of them to the opponent's side.
+\item \emph{NoGo} is a combinatorial game based on Go. Captures are forbidden and the first player unable to play due to this rule, loses. Our experiments are performed on a 9$\times$9 board.
+\item \emph{Pentalath} is a connection game played on a hexagonal board. The goal is to place 5 pieces in a row. Pieces can be captured by fully surrounding an opponent's set of pieces.
+\end{itemize}
+
+Appropriate play-out policies are used to select moves to make during play-out for both Amazons, and Breakthrough. The policies select over a non-uniform move distribution based on the properties of the moves. In Breakthrough decisive moves are always played when available. MCTS with these play-out policies enabled wins between 70\%-80\% of games against MCTS with random play-outs. All other games use a uniform random selection policy during the play-outs. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was optimized for each game and was not re-optimized for H-MCTS. As such, in each experiment both UCT and H-MCTS use the same $C$ constant, optimized for the game played.
+
+Because H-MCTS can not be terminated any-time we present only results for a fixed number of simulations.
 
 \section{Results}
 
