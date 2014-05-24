@@ -30,7 +30,7 @@ Mark~H.M.~Winands\inst{1} \and Marc~Lanctot\inst{1}}
 \maketitle
 
 % lanctot-edit: minor grammar + rephrasings of abstract
-\begin{abstract} Regret minimization is key to both the Multi-Armed Bandit problem and Monte-Carlo Tree Search (MCTS). Recently, simple regret, \ie the regret of not recommending the best action, has been proposed as an alternative to cumulative regret, \ie regret accumulated over time. Each type of regret is appropriate in different contexts. Although the majority of MCTS research applies the UCT selection policy for minimizing cumulative regret in the tree, this paper introduces a new MCTS variant, Hybrid MCTS (H-MCTS), which minimizes both types of regret at different parts of the tree. H-MCTS uses SHOT, a recursive version of Sequential Halving,  to minimize simple regret near the root, and UCT when descending further down the tree. We discuss the theoretical foundation for this new search technique, and show the performance of H-MCTS in six distinct two-player games: Amazons, AtariGo, Ataxx, Breakthrough, NoGo, and Pentalath.
+\begin{abstract} Regret minimization is key to both the Multi-Armed Bandit problem and Monte-Carlo Tree Search (MCTS). Recently, simple regret, \ie the regret of not recommending the best action, has been proposed as an alternative to cumulative regret, \ie regret accumulated over time. Each type of regret is appropriate in different contexts. Although the majority of MCTS research applies the UCT selection policy for minimizing cumulative regret in the tree, this paper introduces a new MCTS variant, Hybrid MCTS (H-MCTS), which minimizes both types of regret in different parts of the tree. H-MCTS uses SHOT, a recursive version of Sequential Halving, to minimize simple regret near the root, and UCT when descending further down the tree. We discuss the theoretical foundation for this new search technique, and show the performance of H-MCTS in six distinct two-player games: Amazons, AtariGo, Ataxx, Breakthrough, NoGo, and Pentalath.
 
 \end{abstract}
 
@@ -61,7 +61,7 @@ In MCTS, a tree is built incrementally over time, which maintains statistics at 
 When using a bandit-based method to select moves, such as in UCT, MCTS resembles a recursive MAB.
 The basic version of MCTS consists of four steps, which are performed iteratively until a computational threshold is reached, \ie a set number of simulations, an upper limit on memory usage, or a time constraint. 
 
-Each MCTS simulation consist of two main steps, 1) the \emph{selection} step, where moves are selected and played inside the tree according to the selection policy until a leaf is \emph{expanded}, and 2) the \emph{play-out}, in which moves are played according to a simulation policy, outside the tree. At the end of each play-out a terminal state is reached and the result is \emph{backpropagated} along the tree from the expanded leaf to the root.
+Each MCTS simulation consist of two main steps, 1) the \emph{selection} step, where moves are selected and played inside the tree according to the selection policy until a leaf is \emph{expanded}, and 2) the \emph{play-out}, in which moves are played according to a simulation policy, outside the tree. At the end of each play-out a terminal state is reached and the result is \emph{back-propagated} along the tree from the expanded leaf to the root.
 
 \subsection{UCT}
 \label{subsec:uct}
@@ -102,7 +102,7 @@ In this section we discuss regret in both the MAB, and MCTS context. The differe
 Suppose a trial is set-up such that a forecaster (a player, or agent) has $i \in [[K]] = \{1, 2, \cdots, K \}$ actions, which can be repeatedly sampled over $n \in \{ 1, 2, \cdots, T \}$ trials. 
 %lanctot-edit:
 %Each arm has an expected reward $\mu_i$, and there exists a single optimal arm with expected reward $\mu^*$. 
-Each arm has a mean reward $\mu_i$, and there exists a single optimal arm with mean reward $\mu^*$. 
+Each arm has a mean reward $\mu_i$, and there exists an optimal mean reward $\mu^*$. 
 Suppose further that the forecaster employs a selection policy $I(n)$ that outputs some $a$ to be sampled at time $n$, and a recommendation policy $J(n)$ that selects the best arm at $T$.
 
 \emph{Cumulative regret} is defined as the regret of having not sampled the best single action in hindsight, 
@@ -120,8 +120,7 @@ r_n = \mu^* - \mu_{J(n)},
 
 %lanctot-edit:
 %Given these definitions, the performance of a selection technique can be described as the expected cumulative $\bE R_n$, or simple $\bE r_n$ regret over different
-Given these definitions, a performance metric for a selection technique can be described as the expected cumulative $\bE R_n$, or simple regret $\bE r_n$ over different
-experiments. In their analysis of the links between simple and cumulative regret, Bubeck~\emph{et al.}~\cite{Bubeck11Pure} found that upper bounds on $\bE R_n$ lead to lower bounds on $\bE r_n$, and that the smaller the upper bound on $\bE R_n$, the higher the lower the lower bound on $\bE r_n$, regardless of the recommendation policy. \ie the smaller the cumulative regret, the larger the simple regret. As such, no policy can give an optimal guarantee on both simple and cumulative regret at the same time. In the case of MAB, the strategy used depends on the context of the problem.
+Given these definitions, a performance metric for a selection technique can be described as the expected cumulative $\bE R_n$, or simple regret $\bE r_n$ over different experiments. In their analysis of the links between simple and cumulative regret, Bubeck~\emph{et al.}~\cite{Bubeck11Pure} found that upper bounds on $\bE R_n$ lead to lower bounds on $\bE r_n$, and that the smaller the upper bound on $\bE R_n$, the higher the lower the lower bound on $\bE r_n$, regardless of the recommendation policy. \ie the smaller the cumulative regret, the larger the simple regret. As such, no policy can give an optimal guarantee on both simple and cumulative regret at the same time. In the case of MAB, the strategy used depends on the context of the problem.
 
 \subsection{Regret in MCTS}
 \label{subsec:reg_mcts}
@@ -136,12 +135,8 @@ Based on the analysis in Subsection~\ref{subsec:uct}, the minimization of cumula
 
 \end{enumerate}
 
-In most MCTS literature, UCT is used as selection policy~(\cf~\cite{browne2012survey}), suggesting that the first context applies. However, the second context is a more natural fit when MCTS is used to play games, because the behavior of the agent in the domain is based solely on its recommendations. Nevertheless, simple regret minimization cannot replace UCT in this case without consideration. Unlike in an MAB, sampling does have an immediate impact on performance in MCTS
-% lanctot-edit:
-because reward distributions are non-stationary. 
-Spending more time on suboptimal moves when descending the tree decreases the amount of time available to explore nodes expected to have high utility. Moreover, since all values are back-propagated, we risk under-evaluating ancestors based on sampling nodes that are known to be bad. This trade-off was also shown in~\cite{tolpin2012mcts} where the authors use a measure based on the Value of Information (VOI) to determine whether to exploit an expected good move, or continue exploring others. 
-% lanctot-edit:
-This trade-off is also described as a ``separation of exploratory concerns'' in BRUE~\cite{Feldman12BRUE}.
+In most MCTS literature, UCT is used as selection policy~(\cf~\cite{browne2012survey}), suggesting that the first context applies. However, the second context is a more natural fit when MCTS is used to play games, because the behavior of the agent in the domain is based solely on its recommendations. Nevertheless, simple regret minimization cannot replace UCT in this case without consideration. Unlike in an MAB, sampling does have an immediate impact on performance in MCTS because reward distributions are non-stationary. 
+Spending more time on suboptimal moves when descending the tree decreases the amount of time available to explore nodes expected to have high utility. Moreover, since all values are back-propagated, we risk under-evaluating ancestors based on sampling nodes that are known to be bad. This trade-off was also shown in~\cite{tolpin2012mcts} where the authors use a measure based on the Value of Information (VOI) to determine whether to exploit an expected good move, or continue exploring others. This trade-off is also described as a ``separation of exploratory concerns'' in BRUE~\cite{Feldman12BRUE}.
 
 \section{Regret Minimization}
 \label{sec:reg_min}
@@ -235,13 +230,10 @@ Recall that in the MAB context, in which simple regret minimization is appropria
 	\label{fig:h-mcts_trees}
 \end{figure}
 
-Treating a game tree as a recursive MAB thus reveals different objectives for the distinct plies of the tree. At the root, simple regret should be as low as possible, since the recommendation of the algorithm is based on the first ply of the tree. On deeper plies, we want to both sample efficiently, avoiding time wasted on bad options, and back-propagate correct values from leafs to their ancestors. Where the former can be achieved by using selection policies such as Successive Rejects or Sequential Halving, the latter, as discussed in Section~\ref{sec:mcts} is inherently performed by UCT. Intuitively, this leads to the belief that we should only minimize simple regret at the root, and use UCT throughout of the tree, 
-%lanctot-edit: added this
-as suggested by \cite{tolpin2012mcts}.
+Treating a game tree as a recursive MAB thus reveals different objectives for the distinct plies of the tree. At the root, simple regret should be as low as possible, since the recommendation of the algorithm is based on the first ply of the tree. On deeper plies, we want to both sample efficiently, avoiding time wasted on bad options, and back-propagate correct values from leafs to their ancestors. Where the former can be achieved by using selection policies such as Successive Rejects or Sequential Halving, the latter, as discussed in Section~\ref{sec:mcts} is inherently performed by UCT. Intuitively, this leads to the belief that we should only minimize simple regret at the root, and use UCT throughout of the tree, as suggested by \cite{tolpin2012mcts}.
 % lanctot-edit: In the next line: I think I see the argument, but I only buy it if max-backprop was used for the SR portion. So I changed "leads" to "could ... lead"
 %However, considering that at any ply, based on the MinMax principle, we want to find the \emph{best reply} to the action of the parent. It may also be beneficial to ensure a low simple regret on that particular move. Because this intrinsically leads to an improved evaluation of the parent.
 However, considering that at any node, based on the MinMax principle, we want to find the \emph{best reply} to the action of the parent. It may also be beneficial to ensure a low simple regret on that particular move because this could intrinsically lead to an improved evaluation of the parent.
-
 
 Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combines simple and cumulative regret minimization in a tunable algorithm. The rationale is based on the results in~\cite{Bubeck11Pure}, which show that given a low sampling budget, UCB empirically realizes lower simple regret. 
 % lanctot-edit: not sure why you wrote the opposite way?
@@ -335,6 +327,7 @@ Because H-MCTS cannot be terminated any-time we present only results for a fixed
 \label{subsec:results}
 
 For each result, the winning percentage is reported for the player with the enhancement enabled, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. The tables show the results with respect to the first algorithm mentioned in the captions.
+
 \begin{table}[ht]
 \centering
 \tabcolsep=0.3cm
@@ -357,6 +350,7 @@ Pentalath &\multicolumn{1}{l|}{30} 		  			& 46.7 $\pm$ 3.1				& 50.1 $\pm$ 3.2 	
 \vspace{4mm}
 {\caption{H-MCTS vs. UCT with random play-outs, 1,000 games} \label{tab:uct_hmcts}}
 \end{table}
+
 Table~\ref{tab:uct_hmcts} shows results of the matches played by H-MCTS against a standard UCT player. H-MCTS performs best in Amazons, Ataxx, and AtariGo. For Amazons this is in part due to the high branching factor. Since UCT cannot explore and exploit all options in time, Sequential Halving ensures that only a limited subset of the large action-space is under consideration. For the other games we see no significant improvement over UCT. This may be due to the fact that these games have quite narrow winning-lines, and a more exploiting algorithm applies better by identifying and exploiting them fast. However, it is also possible that H-MCTS requires separate tuning of its UCT $C$ constant in these games. This optimization was performed for Ataxx and AtariGo, which resulted in winning rates for H-MCTS of {\bf{57.6\%}} $\pm$ 3.1, and {\bf{58.1\%}} $\pm$ 3.1 in Ataxx, and {\bf{61.7}} $\pm$ 3.0, and {\bf{66.6}} $\pm$ 3.0 in AtariGo, for 10,000 and 25,000 play-outs respectively. Showing that we have evidence from one of the games that performance can be improved by separately tuning the C constant in H-MCTS
 
 \begin{table}[ht]
@@ -420,13 +414,13 @@ As a benchmark, SHOT played 1,000 matches against UCT per game in Table~\ref{tab
 \multicolumn{2}{c|}{} \\ [-3mm]
 \multicolumn{2}{c|}{} & \multicolumn{2}{c}{\textbf{Heuristic play-outs (no solver)}} \\ [1mm]
 \multicolumn{2}{c|}{} \\ [-4mm]
-Breakthrough (h) 8$\times$8 &\multicolumn{1}{l|}{70}	& 50.4 $\pm$ 3.1				& {\bf{55.2}} $\pm$ 3.1 	\\ [.5mm]
+Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& 50.4 $\pm$ 3.1				& {\bf{55.2}} $\pm$ 3.1 	\\ [.5mm]
 \multicolumn{2}{c|}{} \\ [-3mm]
 \multicolumn{2}{c|}{} & \multicolumn{2}{c}{\textbf{H-MCTS Solver}} 					\\ [1mm]
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-4mm]
 Amazons &\multicolumn{1}{l|}{50}			    	& {\bf{65.2}} $\pm$ 3.0 		& {\bf{64.0}} $\pm$ 3.0 	\\ [.5mm] 
-Breakthrough (h) 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{56.7}} $\pm$ 3.1		& {\bf{61.3}} $\pm$ 3.0 	\\ [.5mm]
+Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{56.7}} $\pm$ 3.1		& {\bf{61.3}} $\pm$ 3.0 	\\ [.5mm]
 NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 50.5 $\pm$ 3.1			& 50.6 $\pm$ 3.1 			\\ [.5mm] 
 Pentalath &\multicolumn{1}{l|}{70} 		  			& 46.7 $\pm$ 3.1			& 52.3 $\pm$ 3.1 			\\ [.5mm] 
 \hline
@@ -438,9 +432,9 @@ Pentalath &\multicolumn{1}{l|}{70} 		  			& 46.7 $\pm$ 3.1			& 52.3 $\pm$ 3.1 		
 {\caption{H-MCTS vs. UCT with heuristic play-outs, with/without solver, 1,000 games} \label{tab:uct_hmcts-s-h}}
 \end{table}
 
-In Table~\ref{tab:uct_hmcts-s-h}, play-out policies are used to select moves for Breakthrough for all results. The policies select over a non-uniform move distribution based on the properties of the moves, and decisive moves are always played when available. UCT with these play-out policies enabled wins approximately 78\% of games against UCT with random play-outs. H-MCTS benefits more from the informed play-outs than UCT in Breakthrough. The second part of Table~\ref{tab:uct_hmcts-s-h} shows results for matches played between the H-MCTS-Solver and the MCTS-Solver. In which we see a significant boost in performance for Breakthrough, proportional to the allocated budget. Overall, the results show some improvement over Table~\ref{tab:uct_hmcts} in Pentalath and NoGo with 25,000 play-outs, although the difference is not sufficient to conclude that the Solver performs better in H-MCTS than in UCT in these games.
+In Table~\ref{tab:uct_hmcts-s-h}, play-out policies are used to select moves for Breakthrough. The policies select over a non-uniform move distribution based on the properties of the moves, and decisive moves are always played when available. UCT with these play-out policies enabled wins approximately 78\% of games against UCT with random play-outs. H-MCTS benefits more from the informed play-outs than UCT in Breakthrough. The second part of Table~\ref{tab:uct_hmcts-s-h} shows results for matches played between the H-MCTS-Solver and the MCTS-Solver. Breakthrough employs the heuristic play-out policy, for which we see a significant boost in performance, proportional to the allocated budget. Overall, the results show some improvement over Table~\ref{tab:uct_hmcts} in Pentalath and NoGo with 25,000 play-outs, although the difference is not sufficient to conclude that the Solver performs better in H-MCTS than in UCT in these games with the same $C$ constant.
 
-\section{Conclusion}
+\section{Conclusion and Future Research}
 \label{sec:concl}
 In this paper an MCTS technique is presented based on the results of research in regret theory. The conclusions of the research performed in \cite{Bubeck11Pure} were interpreted into the form of a Hybrid MCTS technique (H-MCTS). Based on minimizing simple regret near the root, where the overall budget is high, and cumulative regret deeper in the tree~\cite{tolpin2012mcts}. However, based on available budget H-MCTS' simple regret tree can expand deeper to provide both better bounds on simple regret on the best-replies of rooted subtrees. The simple regret tree is traversed in a similar manner as SHOT~\cite{Cazenave14SHOT}.
 
