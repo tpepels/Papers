@@ -129,8 +129,6 @@
 \@writefile{toc}{\contentsline {section}{\numberline {1.5}Thesis Outline}{4}}
 \citation{auer2002using}
 \citation{auer2002using}
-\citation{Bubeck11Pure}
-\citation{Bubeck11Pure}
 \@writefile{toc}{\contentsline {chapter}{\numberline {2}Regret And Multi-Armed Bandits}{5}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
@@ -139,8 +137,8 @@
 \@writefile{alg}{\addvspace {10\p@ }}
 \@writefile{toc}{\contentsline {section}{\numberline {2.1}Introduction}{5}}
 \citepageref{auer2002using}{5}
-\@writefile{toc}{\contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{5}}
-\newlabel{sec:mabprob}{{2.2}{5}}
+\citation{Bubeck11Pure}
+\citation{Bubeck11Pure}
 \citation{Bubeck11Pure}
 \citation{Bubeck11Pure}
 \citation{auer2002using}
@@ -151,6 +149,8 @@
 \citation{lai1985asymptotically}
 \citation{Bubeck11Pure}
 \citation{Bubeck11Pure}
+\@writefile{toc}{\contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{6}}
+\newlabel{sec:mabprob}{{2.2}{6}}
 \citepageref{Bubeck11Pure}{6}
 \citepageref{Bubeck11Pure}{6}
 \@writefile{toc}{\contentsline {section}{\numberline {2.3}UCB}{6}}
@@ -317,53 +317,59 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Example progression of H-MCTS. In the top part of the tree (SR), simple regret is minimized, in the lower part UCT minimizes cumulative regret. The rounds represent the Sequential Halving round at the root.\relax }}{17}}
 \newlabel{fig:h-mcts_trees}{{4.1}{17}}
 \citepageref{Bubeck11Pure}{17}
-\newlabel{alg:h-mcts}{{6}{18}}
-\newlabel{h-mcts:terminal}{{4}{18}}
-\newlabel{h-mcts:budgetlimit}{{8}{18}}
-\newlabel{h-mcts:shot}{{19}{18}}
-\newlabel{h-mcts:sort}{{30}{18}}
-\@writefile{loa}{\contentsline {algocf}{\numberline {6}{\ignorespaces Hybrid Monte-Carlo Tree Search (H-MCTS). \relax }}{18}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Example rounds of H-MCTS with a budget limit $B = 150$. During the first round SHOT is used only at the root R. In round 2, the budget per node is higher, and SHOT is used recursively at nodes A and B.\relax }}{18}}
+\newlabel{fig:h-mcts_rounds}{{4.2}{18}}
+\newlabel{alg:h-mcts}{{6}{19}}
+\newlabel{h-mcts:terminal}{{4}{19}}
+\newlabel{h-mcts:budgetlimit}{{8}{19}}
+\newlabel{h-mcts:shot}{{19}{19}}
+\newlabel{h-mcts:sort}{{30}{19}}
+\@writefile{loa}{\contentsline {algocf}{\numberline {6}{\ignorespaces Hybrid Monte-Carlo Tree Search (H-MCTS). \relax }}{19}}
 \citation{Winands2008}
 \citation{Winands2008}
 \citation{Winands2008}
 \citation{Winands2008}
-\@writefile{toc}{\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{19}}
-\newlabel{sec:hybmctssolver}{{4.3}{19}}
-\citepageref{Winands2008}{19}
-\citepageref{Winands2008}{19}
-\newlabel{alg:h-mcts-solver}{{7}{20}}
-\newlabel{hs:children}{{2}{20}}
-\newlabel{hs:resid}{{14}{20}}
-\newlabel{hs:solved}{{25}{20}}
-\newlabel{hs:remove}{{29}{20}}
-\newlabel{hs:update_resid}{{30}{20}}
-\newlabel{hs:reselect}{{31}{20}}
-\newlabel{hs:size_min}{{36}{20}}
-\newlabel{hs:incr_budget_resid}{{39}{20}}
-\@writefile{loa}{\contentsline {algocf}{\numberline {7}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver (H-MCTS-Solver). \relax }}{20}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{21}}
-\newlabel{sec:ulb_h-mcts}{{4.4}{21}}
-\newlabel{alg:h-mcts-ublb}{{8}{22}}
-\newlabel{ublb:upper_bound}{{20}{22}}
-\newlabel{ublb:skip}{{22}{22}}
-\newlabel{ublb:lower_bound}{{26}{22}}
-\newlabel{ublb:reallo}{{44}{22}}
-\@writefile{loa}{\contentsline {algocf}{\numberline {8}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver with Overlapping Bounds. \relax }}{22}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {5}Experiments and Results}{23}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{20}}
+\newlabel{sec:hybmctssolver}{{4.3}{20}}
+\citepageref{Winands2008}{20}
+\citepageref{Winands2008}{20}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.3}{\ignorespaces H-MCTS Solver removing a proven loss from selection. In the second round, node B is determined to be a proven loss, node C is returned to selection to fill the opened position.\relax }}{20}}
+\newlabel{fig:h-mcts_solver}{{4.3}{20}}
+\newlabel{alg:h-mcts-solver}{{7}{21}}
+\newlabel{hs:children}{{2}{21}}
+\newlabel{hs:resid}{{14}{21}}
+\newlabel{hs:solved}{{25}{21}}
+\newlabel{hs:remove}{{29}{21}}
+\newlabel{hs:update_resid}{{30}{21}}
+\newlabel{hs:size_min}{{35}{21}}
+\newlabel{hs:sort}{{36}{21}}
+\newlabel{hs:incr_budget_resid}{{38}{21}}
+\@writefile{loa}{\contentsline {algocf}{\numberline {7}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver (H-MCTS-Solver). \relax }}{21}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{23}}
+\newlabel{sec:ulb_h-mcts}{{4.4}{23}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.4}{\ignorespaces Example upper/lower bound Sequential Halving. Node A is the current empirical best, with a lower confidence bound of $0.1$. Only nodes B and C have upper confidence bounds that overlap with this lower bound. D and E are not sampled this round.\relax }}{23}}
+\newlabel{fig:ublb}{{4.4}{23}}
+\newlabel{alg:h-mcts-ublb}{{8}{24}}
+\newlabel{ublb:upper_bound}{{20}{24}}
+\newlabel{ublb:skip}{{22}{24}}
+\newlabel{ublb:lower_bound}{{26}{24}}
+\newlabel{ublb:reallo}{{43}{24}}
+\@writefile{loa}{\contentsline {algocf}{\numberline {8}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver with Overlapping Bounds. \relax }}{24}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}Experiments and Results}{25}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{chap:experiments}{{5}{23}}
+\newlabel{chap:experiments}{{5}{25}}
 \@writefile{alg}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {5.1}Experimental Setup}{23}}
-\newlabel{sec:ex_setup}{{5.1}{23}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.2}Results}{23}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}Experimental Setup}{25}}
+\newlabel{sec:ex_setup}{{5.1}{25}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}Results}{25}}
 \bibdata{thesis}
-\@writefile{toc}{\contentsline {chapter}{\numberline {6}Conclusion}{24}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}Conclusion}{26}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{chap:conclusion}{{6}{24}}
+\newlabel{chap:conclusion}{{6}{26}}
 \ikatbibcite{allis1994proof}{Allis{{\em \unhbox \voidb@x \penalty \@M \ et\unhbox \voidb@x \penalty \@M \ al.}}}{1994}{Allis, Van\unhbox \voidb@x \penalty \@M \ der Meulen, and Van Den\unhbox \voidb@x \penalty \@M \ Herik} 
 \ikatbibcite{arneson2010monte}{Arneson{{\em \unhbox \voidb@x \penalty \@M \ et\unhbox \voidb@x \penalty \@M \ al.}}}{2010}{Arneson, Hayward, and Henderson} 
 \ikatbibcite{audibert2010best}{Audibert{{\em \unhbox \voidb@x \penalty \@M \ et\unhbox \voidb@x \penalty \@M \ al.}}}{2010}{Audibert, Bubeck, and Munos} 
@@ -382,7 +388,7 @@
 \ikatbibcite{gelly2007}{Gelly and Silver}{2007}{Gelly and Silver} 
 \ikatbibcite{Karnin13SH}{Karnin{{\em \unhbox \voidb@x \penalty \@M \ et\unhbox \voidb@x \penalty \@M \ al.}}}{2013}{Karnin, Koren, and Somekh} 
 \ikatbibcite{knuth1976analysis}{Knuth and Moore}{1975}{Knuth and Moore} 
-\@writefile{toc}{\contentsline {chapter}{References}{25}}
+\@writefile{toc}{\contentsline {chapter}{References}{27}}
 \ikatbibcite{kocsis2006bandit}{Kocsis and Szepesv\unhbox \voidb@x \bgroup \let \unhbox \voidb@x \setbox \@tempboxa \hbox {a\global \mathchardef \accent@spacefactor \spacefactor }\accent 19 a\egroup \spacefactor \accent@spacefactor ri}{2006}{Kocsis and Szepesv\unhbox \voidb@x \bgroup \let \unhbox \voidb@x \setbox \@tempboxa \hbox {a\global \mathchardef \accent@spacefactor \spacefactor }\accent 19 a\egroup \spacefactor \accent@spacefactor ri} 
 \ikatbibcite{lai1985asymptotically}{Lai and Robbins}{1985}{Lai and Robbins} 
 \ikatbibcite{marsland1983relative}{Marsland}{1983}{Marsland} 
@@ -397,12 +403,12 @@
 \ikatbibcite{Winands2008}{Winands{{\em \unhbox \voidb@x \penalty \@M \ et\unhbox \voidb@x \penalty \@M \ al.}}}{2008}{Winands, Bj\unhbox \voidb@x \bgroup \accent 127o\penalty \@M \hskip \z@skip \egroup rnsson, and Saito} 
 \ikatbibcite{Winands2010b}{Winands{{\em \unhbox \voidb@x \penalty \@M \ et\unhbox \voidb@x \penalty \@M \ al.}}}{2010}{Winands, Bj\unhbox \voidb@x \bgroup \accent 127o\penalty \@M \hskip \z@skip \egroup rnsson, and Saito} 
 \@writefile{toc}{\contentsline {chapter}{Appendices}{}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {A}Algorithms}{27}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {A}Algorithms}{29}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {chapter}{\numberline {B}Detailed results}{28}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {B}Detailed results}{30}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {chapter}{Samenvatting}{29}}
+\@writefile{toc}{\contentsline {chapter}{Samenvatting}{31}}

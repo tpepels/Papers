@@ -283,7 +283,7 @@ Consequently, the search tree is composed of a \emph{simple regret tree} at the 
 			break if $b_u \geq budget$												\;
 		}
 		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
-		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the highest average				\;	\label{h-mcts:sort}
+		$S_{k} \gets$ $S_{k-1}$ sorted in descending order							\;	\label{h-mcts:sort}
 		\lIf{$s = 1$} {$b \gets b + (budget - b_u)$}
 		\lElse{
 		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$
@@ -296,15 +296,15 @@ Consequently, the search tree is composed of a \emph{simple regret tree} at the 
 \end{algorithm2e}
 \DecMargin{1em}
 
-H-MCTS is outlined in Algorithm~\ref{alg:h-mcts}. Similar to UCT and SHOT, on line~\ref{h-mcts:terminal} terminal conditions are handled. Followed by the main feature of the algorithm on line~\ref{h-mcts:budgetlimit} where the initial simulation budget $b$ for each child of the current node is computed. Based on $b$, a decision is made whether to progress into the UCT tree if $b<B$ or, if $b \geq B$ to continue with SHOT. Note that, the $b<B$ check is overridden at the root, since only one cycle is initiated there, and because at the root simple regret minimization is always favored over cumulative regret minimization. From line~\ref{h-mcts:shot} the algorithm is similar to the Sequential Halving portion of SHOT. As in SHOT, because multiple play-outs are back-propagated in a single descent from root to leaf, the algorithm returns a tuple $t_s$, which contains: 1) the budget used $b_u$, 2) the number of wins per player $w_1$ and $w_2$, and 3) the number of visits $v$. UCT also maintains this tuple such that it can return the same $t_s$ to the simple regret tree. However, in traditional UCT, all values in $t_s$ are at most 1. For the UCT tree, any implementation can be used, as long as it is adapted to return $t_s$ and update the $budgetSpent$ value alongside the usual node's visit count. Because any UCT node in the tree can be ``converted'' to a simple regret node at any time, when $b>B$ on line~\ref{h-mcts:budgetlimit}. Whenever a UCT node is included in the simple regret tree, all its values are maintained. As such Sequential Halving has an initial estimate of the values of the nodes. Based on the budgeting method of SHOT~\cite{Cazenave14SHOT}, budget is reallocated such that it adheres to Sequential Halving's allocation. Note that, H-MCTS' implementation details differ from SHOT mainly in the manner that repeating cycles are performed. Since the Sequential Halving loop on line~\ref{h-mcts:shot} runs until all budget is spent, it is possible that an extra round is performed with a single arm remaining to spend any left-over budget due to rounding errors. Based on initial experiments, this implementation does not result in different results.
+H-MCTS is outlined in Algorithm~\ref{alg:h-mcts}. Similar to UCT and SHOT, on line~\ref{h-mcts:terminal} terminal conditions are handled. Followed by the main feature of the algorithm on line~\ref{h-mcts:budgetlimit} where the initial simulation budget $b$ for each child of the current node is computed. Based on $b$, a decision is made whether to progress into the UCT tree if $b<B$ or, if $b \geq B$ to continue with SHOT. Note that, the $b<B$ check is overridden at the root, since only one cycle is initiated there, and because at the root simple regret minimization is always favored over cumulative regret minimization. From line~\ref{h-mcts:shot} the algorithm is similar to the Sequential Halving portion of SHOT. As in SHOT, because multiple play-outs are back-propagated in a single descent from root to leaf, the algorithm returns a tuple $t_s$, which contains: 1) the budget used $b_u$, 2) the number of wins per player $w_1$ and $w_2$, and 3) the number of visits $v$. UCT also maintains this tuple such that it can return the same $t_s$ to the simple regret tree. However, in traditional UCT, all values in $t_s$ are at most 1. For the UCT tree, any implementation can be used, as long as it is adapted to return $t_s$ and update the $budgetSpent$ value alongside the usual node's visit count. Because any UCT node in the tree can be ``converted'' to a simple regret node at any time, when $b>B$ on line~\ref{h-mcts:budgetlimit}. Whenever a UCT node is included in the simple regret tree, all its values are maintained. As such, Sequential Halving has an initial estimate of the values of the nodes. Based on the budgeting method of SHOT~\cite{Cazenave14SHOT}, budget is reallocated such that it adheres to Sequential Halving's allocation. Note that, H-MCTS' implementation details differ from SHOT mainly in the manner that repeating cycles are performed. Since the Sequential Halving loop on line~\ref{h-mcts:shot} runs until all budget is spent, it is possible that an extra round is performed with a single arm remaining to spend any left-over budget due to rounding errors. Based on initial experiments, this implementation does not result in different results.
 
 In the scheme presented, a limit on the available budget determines whether to continue in the simple regret tree. However, other methods, such as a fixed depth limit for the simple regret tree, or a time-partitioned method, can certainly be viable. Though, based on the simple regret theory, pure exploration methods  only provide empirically better simple regret than UCT, given a sufficiently large budget. Given a low budget, UCT with a properly tuned constant should be preferred~\cite{Bubeck11Pure}.
 
 As with MCTS, H-MCTS can be separated in four discrete steps.
 \begin{enumerate}
 \item \textbf{Budgeting}: A budget is determined for each child. Based on the budget, we enter the UCT tree, or remain in the simple regret tree. If we enter the UCT tree, the four basic MCTS steps apply.
-\item \textbf{Selection}: In the simple regret tree, nodes are sampled based on Sequential Halving. Each node is assigned a budget, to be spent in the UCT tree in which play-outs are initiated.
-\item \textbf{Removal}: Based on the results obtained from UCT, children are removed from selection. A new Sequential Halving round starts with half of the best children from the previous round. If the budget is spent, the currently accumulated results are back-propagated.
+\item \textbf{Selection}: In the simple regret tree, nodes are sampled based on Sequential Halving. Nodes in the simple regret tree are assigned a budget, to be spent in their rooted UCT tree, in which play-outs are initiated.
+\item \textbf{Removal}: Based on the results obtained, children are removed from selection. A new Sequential Halving round starts with half of the best children from the previous round. If the budget is spent, the currently accumulated results are back-propagated.
 \item \textbf{Back-propagation}: Since H-MCTS is performed depth-first, the final result is only available after all budget is spent. This results in simultaneous back-propagation of numerous results in the simple regret tree.
 \end{enumerate}
 Note that, in this case Sequential Halving is presented as the simple regret algorithm. However, it is certainly possible to replace it with any other algorithm such as Successive Rejects, or any other form of sequential reduction.
@@ -320,8 +320,8 @@ In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven 
 In this section we show the results of the experiments performed on six two-player games. H-MCTS and the games were implemented in two different engines. Amazons, Breakthrough, NoGo and Pentalath are implemented in a Java based engine. Ataxx and AtariGo are implemented in a \emph{C++} based engine.
 \begin{itemize}
 \item \emph{Amazons} is played on a 10$\times$10 chessboard. Players each have four Amazons that move as queens in chess. Moves consist of two parts, movement, and shooting an arrow to block a square on the board. The last player to move wins the game.
-\item \emph{Ataxx} is a game similar to Reversi. Played on a square board, players start with two stones each placed in an opposite corner. Captures are performed by moving a stone alongside an opponent's on the board. In the variant used in this paper, jumps are not allowed. The game ends when all squares are filled, or when a player has no remaining stones. The player with the most stones wins.  The experiments are performed on a 7$\times$7 board.
 \item \emph{AtariGo}, or first-capture Go, is a variant of Go where the first player to capture any stones wins. The experiments are performed on a 9$\times$9 board.
+\item \emph{Ataxx} is a game similar to Reversi. Played on a square board, players start with two stones each placed in an opposite corner. Captures are performed by moving a stone alongside an opponent's on the board. In the variant used in this paper, jumps are not allowed. The game ends when all squares are filled, or when a player has no remaining stones. The player with the most stones wins.  The experiments are performed on a 7$\times$7 board.
 \item \emph{Breakthrough} is played on an 8$\times$8 board. Players start with 16 pawns. The goal is to move one of them to the opponent's side.
 \item \emph{NoGo} is a combinatorial game based on Go. Captures are forbidden and the first player unable to play due to this rule, loses. The experiments are performed on a 9$\times$9 board.
 \item \emph{Pentalath} is a connection game played on a hexagonal board. The goal is to place 5 pieces in a row. Pieces can be captured by fully surrounding an opponent's set of pieces.
@@ -333,11 +333,12 @@ Because H-MCTS cannot be terminated any-time we present only results for a fixed
 
 \subsection{Results}
 \label{subsec:results}
-For each result, the winning percentage is reported for the player with the enhancement enabled, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias.
 
+For each result, the winning percentage is reported for the player with the enhancement enabled, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. The tables show the results with respect to the first algorithm mentioned in the captions.
 \begin{table}[ht]
 \centering
 \tabcolsep=0.3cm
+\scalebox{1.0}{
 \begin{tabular}{rlll}
 \hline
 \multicolumn{2}{c|}{} & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -345,22 +346,23 @@ For each result, the winning percentage is reported for the player with the enha
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-3mm]
 Amazons &\multicolumn{1}{l|}{50}			    	& {\bf{65.2}} $\pm$ 3.0 		& {\bf{62.0}} $\pm$ 3.0 		\\ [.5mm] 
+AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& 50 $\pm$ 3.0 					& {\bf{57.5}} $\pm$ 3.1 		\\ [.5mm] 
 Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& {\bf{54.5}} $\pm$ 3.1			& {\bf{56.0}} $\pm$ 3.1 		\\ [.5mm] 
-AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& {\bf{61.7}} $\pm$ 3.0 		& {\bf{66.6}} $\pm$ 3.0 		\\ [.5mm] 
-Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{53.2}} $\pm$ 3.1	& 50.4 $\pm$ 3.1 	\\ [.5mm] 
-NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 52.4 $\pm$ 3.1	& 48.8 $\pm$ 3.1 	\\ [.5mm] 
-Pentalath &\multicolumn{1}{l|}{30} 		  			& 46.7 $\pm$ 3.1	& 50.1 $\pm$ 3.2 	\\ [.5mm] 
+Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{53.2}} $\pm$ 3.1			& 50.4 $\pm$ 3.1 			\\ [.5mm] 
+NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 52.4 $\pm$ 3.1				& 48.8 $\pm$ 3.1 			\\ [.5mm] 
+Pentalath &\multicolumn{1}{l|}{30} 		  			& 46.7 $\pm$ 3.1				& 50.1 $\pm$ 3.2 			\\ [.5mm] 
 \hline
 \end{tabular}
+}
 \vspace{4mm}
 {\caption{H-MCTS vs. UCT with random play-outs, 1,000 games} \label{tab:uct_hmcts}}
 \end{table}
-
-Table~\ref{tab:uct_hmcts} shows results of the matches played by H-MCTS against a standard UCT player. H-MCTS performs best in Amazons, Ataxx, and AtariGo. For Amazons this is in part due to the high branching factor. Since UCT cannot explore and exploit all options in time, Sequential Halving ensures that only a limited subset of the large action-space is under consideration. For the other games we see no significant improvement over UCT. This may be due to the fact that these games have quite narrow winning-lines, and a more exploiting algorithm applies better by identifying and exploiting them fast. However, it is also possible that H-MCTS requires separate tuning of its UCT $C$ constant for these games. This separate optimization was performed for Ataxx, which resulted in a winning rates for H-MCTS of 57.6\% $\pm$ 3.1, and 58.1\% $\pm$ 3.1 for 10,000 and 25,000 play-outs respectively.
+Table~\ref{tab:uct_hmcts} shows results of the matches played by H-MCTS against a standard UCT player. H-MCTS performs best in Amazons, Ataxx, and AtariGo. For Amazons this is in part due to the high branching factor. Since UCT cannot explore and exploit all options in time, Sequential Halving ensures that only a limited subset of the large action-space is under consideration. For the other games we see no significant improvement over UCT. This may be due to the fact that these games have quite narrow winning-lines, and a more exploiting algorithm applies better by identifying and exploiting them fast. However, it is also possible that H-MCTS requires separate tuning of its UCT $C$ constant in these games. This optimization was performed for Ataxx and AtariGo, which resulted in winning rates for H-MCTS of {\bf{57.6\%}} $\pm$ 3.1, and {\bf{58.1\%}} $\pm$ 3.1 in Ataxx, and {\bf{61.7}} $\pm$ 3.0, and {\bf{66.6}} $\pm$ 3.0 in AtariGo, for 10,000 and 25,000 play-outs respectively. Showing that we have evidence from one of the games that performance can be improved by separately tuning the C constant in H-MCTS
 
 \begin{table}[ht]
 \centering
 \tabcolsep=0.3cm
+\scalebox{1.0}{
 \begin{tabular}{rlll}
 \hline
 \multicolumn{2}{c|}{} & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -368,13 +370,14 @@ Table~\ref{tab:uct_hmcts} shows results of the matches played by H-MCTS against 
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-3mm]
 Amazons &\multicolumn{1}{l|}{50}			    	& 51.2 $\pm$ 3.1 			& {\bf{55.4}} $\pm$ 3.1 	\\ [.5mm] 
-Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& {\bf{54.5}} $\pm$ 3.1		& {\bf{61.2}} $\pm$ 3.0 	 \\ [.5mm] 
 AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& 51.4 $\pm$ 3.1 			& {\bf{57.5}} $\pm$ 3.1		\\ [.5mm] 
+Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& {\bf{54.5}} $\pm$ 3.1		& {\bf{61.2}} $\pm$ 3.0 	\\ [.5mm] 
 Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{68.4}} $\pm$ 2.9  	& {\bf{84.0}} $\pm$ 2.3 	\\ [.5mm] 
 NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& {\bf{56.3}} $\pm$ 3.1 	& {\bf{55.5}} $\pm$ 3.1 	\\ [.5mm] 
 Pentalath &\multicolumn{1}{l|}{30} 		  			& {\bf{62.1}} $\pm$ 3.0		& {\bf{78.3}} $\pm$ 2.6  	\\ [.5mm] 
 \hline
 \end{tabular}
+}
 \vspace{3mm}
 {\caption{H-MCTS vs. SHOT with random play-outs, 1,000 games} \label{tab:shot_hmcts}}
 \end{table}
@@ -382,6 +385,7 @@ Pentalath &\multicolumn{1}{l|}{30} 		  			& {\bf{62.1}} $\pm$ 3.0		& {\bf{78.3}}
 \begin{table}[ht]
 \centering
 \tabcolsep=0.45cm
+\scalebox{1.0}{
 \begin{tabular}{r|ll}
 \hline
  & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -389,23 +393,25 @@ Pentalath &\multicolumn{1}{l|}{30} 		  			& {\bf{62.1}} $\pm$ 3.0		& {\bf{78.3}}
 \cline{1-3}
 \multicolumn{1}{c|}{} & \multicolumn{2}{c}{} \\ [-3mm]
 Amazons 			    	& {\bf{60.2}} $\pm$ 3 	& {\bf{55.2}} $\pm$ 3.1 	\\ [.5mm] 
-Ataxx 7$\times$7  			& 0.00 $\pm$ 0.0		& 0.00 $\pm$ 0.0 	\\ [.5mm] 
-AtariGo 9$\times$9  		& 0.00 $\pm$ 0.0 		& 0.00 $\pm$ 0.0 	\\ [.5mm] 
-Breakthrough 8$\times$8 	& 31.2 $\pm$ 3.1		& 16.4 $\pm$ 2.3 	\\ [.5mm] 
-NoGo 9$\times$9  			& 44.7 $\pm$ 3.1 		& 41.4 $\pm$ 3.1 	\\ [.5mm] 
-Pentalath 		  			& 33.7 $\pm$ 3 			& 22.8 $\pm$ 2.6 	\\ [.5mm] 
+AtariGo 9$\times$9  		& {\bf{53.8}} $\pm$ 3.1 & {\bf{55.7}} $\pm$ 3.1 	\\ [.5mm] 
+Ataxx 7$\times$7  			& 46.7 $\pm$ 3.1		& 40.8 $\pm$ 3.1 			\\ [.5mm] 
+Breakthrough 8$\times$8 	& 31.2 $\pm$ 3.1		& 16.4 $\pm$ 2.3 			\\ [.5mm] 
+NoGo 9$\times$9  			& 44.7 $\pm$ 3.1 		& 41.4 $\pm$ 3.1 			\\ [.5mm] 
+Pentalath 		  			& 33.7 $\pm$ 3 			& 22.8 $\pm$ 2.6 			\\ [.5mm] 
 \hline
 \end{tabular}
+}
 \vspace{4mm}
 {\caption{SHOT vs. UCT with random play-outs, 1,000 games} \label{tab:uct_shot}}
 \end{table}
 
-To compare the effect of the hybrid method effectively, we show the results of matches played by H-MCTS against SHOT in Table~\ref{tab:shot_hmcts}. Here, H-MCTS shows significant improvement in 10 of the 12 cases. Note that in this case we make no use of the speed benefits of either technique. However, it gives evidence for the claim that H-MCTS makes good use of UCT's any-time property to provide lower simple regret near the root. And that values back-propagated by UCT may be more effective than those back-propagated by using Sequential Halving throughout the tree. 
-As a benchmark, SHOT played 1,000 matches against UCT per game in Table~\ref{tab:uct_shot}. Interestingly, SHOT performs best against H-MCTS and UCT in the games with the highest branching factors, Amazons, AtariGo and NoGo. This reinforces the evidence that Sequential Halving is best applied in games with high branching factors.
+To compare the effect of the hybrid method effectively, we show the results of matches played by H-MCTS against SHOT in Table~\ref{tab:shot_hmcts}. Here, H-MCTS shows significant improvement in 10 of the 12 cases. Note that, we make no use of the speed benefits of either technique in these experiments. This gives evidence for the claim that H-MCTS makes use of UCT's any-time property to provide good utility estimates in the simple regret tree, values back-propagated by UCT may be more effective than those back-propagated by using Sequential Halving throughout the tree. 
+As a benchmark, SHOT played 1,000 matches against UCT per game in Table~\ref{tab:uct_shot}. Interestingly, SHOT performs best against H-MCTS and UCT in the games with the highest branching factors, Amazons, AtariGo and to a lesser extent, NoGo. This reinforces the evidence that Sequential Halving is best applied in games with high branching factors. In the games with narrow winning-lines such as Breakthrough and Pentalath, SHOT's performance declines against UCT.
 
 \begin{table}[ht]
 \centering
 \tabcolsep=0.3cm
+\scalebox{1.0}{
 \begin{tabular}{rlcc}
 \hline
 \multicolumn{2}{c|}{} & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -414,25 +420,25 @@ As a benchmark, SHOT played 1,000 matches against UCT per game in Table~\ref{tab
 \multicolumn{2}{c|}{} \\ [-3mm]
 \multicolumn{2}{c|}{} & \multicolumn{2}{c}{\textbf{Heuristic play-outs (no solver)}} \\ [1mm]
 \multicolumn{2}{c|}{} \\ [-4mm]
-Amazons &\multicolumn{1}{l|}{50}			    	& {\bf{65.2}} $\pm$ 3.0 		& {\bf{64.0}} $\pm$ 3.0 		\\ [.5mm] 
-Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& 50.4 $\pm$ 3.1				& {\bf{55.2}} $\pm$ 3.1 	\\ [.5mm]
+Breakthrough (h) 8$\times$8 &\multicolumn{1}{l|}{70}	& 50.4 $\pm$ 3.1				& {\bf{55.2}} $\pm$ 3.1 	\\ [.5mm]
 \multicolumn{2}{c|}{} \\ [-3mm]
-\multicolumn{2}{c|}{} & \multicolumn{2}{c}{\textbf{H-MCTS Solver}} \\ [1mm]
+\multicolumn{2}{c|}{} & \multicolumn{2}{c}{\textbf{H-MCTS Solver}} 					\\ [1mm]
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-4mm]
-Amazons &\multicolumn{1}{l|}{50}			    	& {\bf{64.0}} $\pm$ 3.0 	& {\bf{62.3}} $\pm$ 3.0 	\\ [.5mm] 
-Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{56.7}} $\pm$ 3.1		& {\bf{61.3}} $\pm$ 3.0 	\\ [.5mm]
-NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 48.7 $\pm$ 3.1			& 49.9 $\pm$ 3.1 	\\ [.5mm] 
-Pentalath &\multicolumn{1}{l|}{30} 		  			& 45.1 $\pm$ 3.1			& 48.4 $\pm$ 3.1 	\\ [.5mm] 
+Amazons &\multicolumn{1}{l|}{50}			    	& {\bf{65.2}} $\pm$ 3.0 		& {\bf{64.0}} $\pm$ 3.0 	\\ [.5mm] 
+Breakthrough (h) 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{56.7}} $\pm$ 3.1		& {\bf{61.3}} $\pm$ 3.0 	\\ [.5mm]
+NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 50.5 $\pm$ 3.1			& 50.6 $\pm$ 3.1 			\\ [.5mm] 
+Pentalath &\multicolumn{1}{l|}{70} 		  			& 46.7 $\pm$ 3.1			& 52.3 $\pm$ 3.1 			\\ [.5mm] 
 \hline
 \end{tabular}
+}
 \vspace{4mm}
 %lanctot-edit
 %{\caption{H-MCTS vs. UCT with heuristic play-outs and solver, 1,000 games} \label{tab:uct_hmcts-s-h}}
 {\caption{H-MCTS vs. UCT with heuristic play-outs, with/without solver, 1,000 games} \label{tab:uct_hmcts-s-h}}
 \end{table}
 
-In Table~\ref{tab:uct_hmcts-s-h}, play-out policies are used to select moves for Amazons and Breakthrough for all results. The policies select over a non-uniform move distribution based on the properties of the moves. In Breakthrough decisive moves are always played when available. UCT with these play-out policies enabled wins between 70\%-80\% of games against UCT with random play-outs. In Breakthrough, the play-out policy delivers gives a higher performance boost in H-MCTS than in UCT. For Amazons, the results are similar to those in Table~\ref{tab:uct_hmcts}.
+In Table~\ref{tab:uct_hmcts-s-h}, play-out policies are used to select moves for Breakthrough for all results. The policies select over a non-uniform move distribution based on the properties of the moves, and decisive moves are always played when available. UCT with these play-out policies enabled wins approximately 78\% of games against UCT with random play-outs. H-MCTS benefits more from the informed play-outs than UCT in Breakthrough. The second part of Table~\ref{tab:uct_hmcts-s-h} shows results for matches played between the H-MCTS-Solver and the MCTS-Solver. In which we see a significant boost in performance for Breakthrough, proportional to the allocated budget. Overall, the results show some improvement over Table~\ref{tab:uct_hmcts} in Pentalath and NoGo with 25,000 play-outs, although the difference is not sufficient to conclude that the Solver performs better in H-MCTS than in UCT in these games.
 
 \section{Conclusion}
 \label{sec:concl}

@@ -155,7 +155,7 @@ The performance of the agent can be evaluated by observing the difference in the
 \vspace{2 mm}
 
 In this chapter the different facets of the MAB problem are discussed and related to MCTS. In Section \ref{sec:mabprob} a formal definition of the two types of regret, and their interrelation is given. Next, Section \ref{sec:ucb} discusses the well-known UCB1 selection policy and its relation to MCTS. This is followed by a review of two recently introduced selection policies for MAB aimed at minimizing simple regret, in Section \ref{sec:pureexplmab}.
-
+\newpage
 \section{Regret and The Multi-Armed Bandit Problem}
 \label{sec:mabprob}
 Suppose a trial is set-up such that a forecaster (a player, or agent) has $i \in [[K]] = \{ 1, 2, \cdots , K \}$ actions which can be repeatedly sampled over $n \in \{ 1, 2, \cdots, T \}$ trials. Each arm has an expected reward $\mu_i$, and there exists a single optimal arm with expected reward $\mu^*$.Suppose further that the forecaster employs a selection policy $I(n)$ which outputs some $a$ to be sampled at time $n$, and a recommendation policy $J(n)$ which selects the best arm at $T$.
@@ -211,7 +211,7 @@ Non-exploiting selection policies have been proposed to decrease simple regret a
 
 Consider a uniform selection policy that selects each arm of an MAB $|K|/T$ times. Assuming that there are $h$ best arms, $(|K|-h)/T$ simulations are spent on inferior arms, and $h/T$ on the best ones. In games for instance, there are often only one or two good moves to be identified, and therefore, when using uniform selection, most time is wasted on pulling sub-optimal arms. Therefore, a more efficient policy is required to ensure that inferior arms are not selected as often as arms with a high utility over time. Two algorithms, discussed in this section, have been proposed to solve this problem.
 
-Both algorithms have shown to outperform the other in different problem settings~\citebay{Karnin13SH}. \TODO{be more specific here} Moreover, both have proven theoretical guarantees with regard to the lower bounds, and a near-optimal, exponential rate of decrease on simple regret. Based on this it holds merit to consider these algorithms as candidate substitutes for UCT in MCTS. However, based on the analysis made by~\citebay{Bubeck11Pure} discussed in Section \ref{sec:mabprob}, any method that effectively minimizes simple regret has inferior bounds on its cumulative regret. Therefore, there may be some trade-off between using pure exploration methods and UCT.
+Both algorithms have shown to outperform the other in different problem settings~\citebay{Karnin13SH}. Sequential Halving gives better results when there are multiple groups of suboptimal arms, or when the arm's rewards form an arithmetic or geometric series. Successive Rejects performs best when there is a single group of suboptimal arms, or when selecting over a small subset of arms. Both methods have proven theoretical guarantees with regard to the simple regret bounds, and a near-optimal, exponential rate of decrease on simple regret. Based on this it holds merit to consider these algorithms as candidate substitutes for UCT in MCTS. However, based on the analysis made by~\citebay{Bubeck11Pure} discussed in Section \ref{sec:mabprob}, any method that effectively minimizes simple regret has inferior bounds on its cumulative regret. Therefore, there may be some trade-off between using pure exploration methods and UCT.
 
 \subsection{Successive Rejects}
 \IncMargin{1em}
@@ -239,13 +239,13 @@ Both algorithms have shown to outperform the other in different problem settings
 \end{algorithm2e}
 \DecMargin{1em}
 
-Successive Rejects~\citebay{audibert2010best} works by successively removing the single worst arm from the selection. The algorithm computes a budget for each round $n_k$, during the round, each arm is selected an equal number of times. After each round, the empirically worst arm is removed from the selection and a new round started. The lengths of the rounds are computed in such a manner that a specific lower bound on simple regret is guaranteed. \TODO{Should I give the exact bounds on the simple regret here?}. 
+Successive Rejects~\citebay{audibert2010best} works by successively removing the single worst arm from the selection. The algorithm computes a budget for each round $n_k$, during the round, each arm is selected an equal number of times. After each round, the empirically worst arm is removed from the selection and a new round started. The lengths of the rounds are computed in such a manner that a specific lower bound on simple regret is guaranteed.
 
 Successive Rejects is detailed in Algorithm~\ref{alg:succrej}. Note that, since $n_0 = 0$ the algorithm starts with a relatively long initial round. Followed by the shortest round, due to the subtraction on line \ref{succrej:subtr}. However, the length of the rounds increases when more arms are removed. An example run is depicted in figure \ref{fig:succ-rej}, where a total budget $T = 200$ is allocated to 5 arms, the number of pulls per arm for each round is shown. For the first round the trials per arm are $\ceil{\frac{60}{107} \frac{200-5}{5+1-1}} - 0 = 22$ subsequently, for the second round $\ceil{\frac{60}{107} \frac{200-5}{5+1-2}} - 22 = 6$ and so on. Finally, the recommended arm will been sampled a total of 57 times.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.45\textwidth]{img/succ_rej.png}
+	\includegraphics[width=.6\textwidth]{img/succ_rej.png}
 	\caption{Successive Rejects example on 5 arms and a total budget of 200.}
 	\label{fig:succ-rej}
 \end{figure}
@@ -253,7 +253,7 @@ Successive Rejects is detailed in Algorithm~\ref{alg:succrej}. Note that, since 
 \newpage
 
 \subsection{Sequential Halving}
-Sequential Halving~\citebay{Karnin13SH} takes a similar approach as Successive Rejects. As with Successive Rejects, search time is divided into rounds, and during each round arms are sampled uniformly. However, instead of removing a single arm from selection after each round, half the arms are removed each time until a single one remains. The rounds in Sequential Halving are equally distributed such that each round has the same number of trials, but with a lower number of available arms. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
+Sequential Halving~\citebay{Karnin13SH} takes a similar approach as Successive Rejects. As with Successive Rejects, search time is divided into rounds, and during each round arms are sampled uniformly. However, instead of removing a single arm from selection after each round, half the arms are removed each time until a single one remains. The rounds in Sequential Halving are equally distributed such that constitute the same number of trials, but with a decreased subset of arms to select. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
 
 \IncMargin{1em}
 \begin{algorithm2e}[ht]
@@ -276,11 +276,11 @@ Sequential Halving~\citebay{Karnin13SH} takes a similar approach as Successive R
 \end{algorithm2e}
 \DecMargin{1em}
 
-An example of the budget allocation by Sequential Halving is depicted in Figure \ref{fig:seq-halving}, where a total budget $T = 200$ is allocated to 5 arms, the pulls per arm for each round is shown. At time $T$, after $\ceil{\log_2{5}}=3$ rounds, the single remaining arm is recommended. This arm has been sampled 68 times, which is 11 more than the recommended arm in the same example given for Successive Rejects.
+An example of the budget allocation by Sequential Halving is depicted in Figure \ref{fig:seq-halving}, where a total budget $T = 200$ is allocated to $5$ arms, the allocated budget per arm for each round is shown. At time $T$, after $\ceil{\log_2{5}}=3$ rounds, the single remaining arm is recommended. This arm has been sampled $68$ times, which is $11$ more than the recommended arm in the same example given for Successive Rejects.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=.55\textwidth]{img/seq_halv.png}
+	\includegraphics[width=.6\textwidth]{img/seq_halving.png}
 	\caption{Sequential Halving example on 5 arms and a total budget of 200.}
 	\label{fig:seq-halving}
 \end{figure}
@@ -445,7 +445,7 @@ A recent addition to simple regret in MCTS is Sequential Halving applied to Tree
 			break if $b_u \geq budget$													\;
 		}
 		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$									\;
-		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the empirically best average		\;
+		$S_{k} \gets$ $S_{k-1}$ sorted in descending order						\;
 	}
 	\func{update} $p.budgetSpent$ with $b_u$											\;
 	\Indm
@@ -503,7 +503,14 @@ Recall that the MAB context, in which simple regret minimization is appropriate,
 
 Treating a game tree as a recursive multi-armed bandit thus reveals different objectives for the distinct plies of the tree. At the root, simple regret should be as low as possible, since the recommendation of the algorithm is based on the first ply of the tree. Further down, we want to both sample efficiently, avoiding time wasted on bad options, and back-propagate correct values from leafs to their ancestors. Where the former can be achieved by using selection policies such as Successive Rejects or Sequential Halving, the latter, as discussed in Section \ref{sec:mabmcts} of Chapter \ref{chap:mab} is inherently performed by UCT. Intuitively, this leads to the belief that we should only minimize simple regret at the root, and use UCT throughout of the tree. However, considering that at any ply, based on the MinMax principle, we want to find the \emph{best reply} to the action of the parent. It may also be beneficial to ensure a low simple regret on that particular move. Because this intrinsically leads to an improved evaluation of the parent.
 
-Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combines simple and cumulative regret minimization in a tunable algorithm. Based on the results in~\citebay{Bubeck11Pure}, which show that given a low sampling budget, UCB empirically realizes lower simple regret. The proposed technique switches from UCT to Sequential Halving whenever the computational budget is above the budget limit $B$. Consequently, the search tree is composed of a \emph{simple regret tree} at the root, and \emph{UCT trees} rooted at the leafs of the simple regret tree. As shown in Figure~\ref{fig:h-mcts_trees}, initially the simple regret tree is shallow because the computational budget per node is small. Later, when the budget per node increases due to nodes being removed from selection as per Sequential Halving, the simple regret tree grows deeper. Note that, since the root's children are sorted in descending order, the left part of the simple regret and UCT tree is always the deepest, since it its root is selected the most.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.8\textwidth]{img/H-MCTS_Rounds.png}
+	\caption{Example rounds of H-MCTS with a budget limit $B = 150$. During the first round SHOT is used only at the root R. In round 2, the budget per node is higher, and SHOT is used recursively at nodes A and B.}
+	\label{fig:h-mcts_rounds}
+\end{figure}
+
+Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combines simple and cumulative regret minimization in a tunable algorithm. Based on the results in~\citebay{Bubeck11Pure}, which show that given a low sampling budget, UCB empirically realizes lower simple regret. The proposed technique switches from UCT to Sequential Halving whenever the computational budget is above the budget limit $B$. Consequently, the search tree is composed of a \emph{simple regret tree} at the root, and \emph{UCT trees} rooted at the leafs of the simple regret tree. As shown in Figure~\ref{fig:h-mcts_trees}, initially the simple regret tree is shallow because the computational budget per node is small. Later, when the budget per node increases due to nodes being removed from selection as per Sequential Halving, the simple regret tree grows deeper. Note that, since the root's children are sorted in descending order, the left part of the simple regret and UCT tree is always the deepest, since it its root is selected the most. Figure~\ref{fig:h-mcts_rounds}
 \newpage
 \IncMargin{1em}
 \begin{algorithm2e}
@@ -539,7 +546,7 @@ Using a selection policy based on both SHOT and UCT, Hybrid MCTS (H-MCTS) combin
 			break if $b_u \geq budget$												\;
 		}
 		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
-		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the best average				\;	\label{h-mcts:sort}
+		$S_{k} \gets$ $S_{k-1}$ sorted in descending order						\;	\label{h-mcts:sort}
 		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;	
 	}
 	\func{update} $p.budgetSpent$ with $b_u$										\;
@@ -569,12 +576,20 @@ To a lesser extent, H-MCTS also shares the speed benefit of SHOT. However, becau
 \section{Hybrid MCTS-Solver}
 \label{sec:hybmctssolver}
 
-In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven wins or losses in the simple regret tree. Although we can employ the MCTS-Solver proposed by~\citeay{Winands2008} in the UCT tree, this solver needs to be adapted to be able to solve nodes in the SHOT portion of the algorithm. The main issue here is that when a solved node is encountered, Sequential Halving must be interrupted. This leads to three different possibles cases in which this interruption is to be encountered and properly handled. Note that it is assumed that values are according to negamax, such that at each node, children's rewards are stored with respect to the player to move.
+In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven wins or losses in the simple regret tree. Although we can employ the MCTS-Solver proposed by~\citeay{Winands2008} in the UCT tree, the technique requires adaptation to Sequential Halving to be able to solve nodes in the SHOT portion of the algorithm. The main issue here is that when a solved child is encountered, the current round is interrupted to determine whether the node itself is solved as well. This leads to three different possibles cases in which this interruption is to be encountered and properly handled. Note that it is assumed that values are according to negamax, such that at each node, children's rewards are stored with respect to the player to move.
 \begin{enumerate}
 \item A solved win is encountered, in this case, we immediately want to remember this node and back-propagate to the parent. Any residual budget remains unspent.
 \item A solved loss is encountered, but not all siblings lead to a loss. According to~\citeay{Winands2008} it is appropriate in this case to count the visit as a loss. However, since there still exist nodes that do not lead to a loss, we must make sure the solved node is not reselected. If it is reselected, a potentially high budget may be spent on the node, which results in an under evaluation of the parent.
 \item A solved loss is encountered, and all siblings lead lead to a loss. In this case the parent is a win and we should back-propagate immediately. Any residual budget remains unspent.
 \end{enumerate}
+\begin{figure}[b]
+	\centering
+	\includegraphics[width=.6\textwidth]{img/solver.png}
+	\caption{H-MCTS Solver removing a proven loss from selection. In the second round, node B is determined to be a proven loss, node C is returned to selection to fill the opened position.}
+	\label{fig:h-mcts_solver}
+\end{figure}
+
+When running Sequential Halving, the first and last cases can be handled similar to the MCTS-Solver. The second case however, potentially leaves the current budget partially unspent. Since some children have been identified as a loss, while viable options still remain, the proven losses should be removed from selection. Moreover, any budget left unspent due to this should be `brought over' to the next round, which starts with a reduced set of nodes. Note also that, when a proven loss is discarded from selection during a round, all children following this node move one position left, possibly returning an unsolved node to the current selection.
 
 \IncMargin{1em}
 \begin{algorithm2e}
@@ -606,22 +621,21 @@ In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven 
 					\func{update} $p, b_u$, and $t_s$ with $\tuple{v, w_1, w_2, s}_i$		\;
 				}
 			}
-			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in S: (n$ is a loss$))$}{
+			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in C: (n$ is a loss$))$}{
 				set the solved player in $t_s$									\; \label{hs:solved}
 				\func{update} $p.budgetSpent$ with $b_u$						\;
 				\KwRet{$t_s$}													\;
-			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in S: (n$ is not a loss$))$}{
+			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in C: (n$ is not a loss$))$}{
 				remove $n_i$ from $S$											\; \label{hs:remove}			
-				$b_r \gets b_i - t_s\tuple{v}$									\; \label{hs:update_resid}
-				$i \gets i - 1$													\; \label{hs:reselect}
+				$b_r \gets b_i - t_s\tuple{v}$									\; \label{hs:update_resid}				
 			}
 			break if $b_u \geq budget$											\;
 		}
 		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$						\;
 		$s \gets \min{(s, |S|)}$												\; \label{hs:size_min}	
-		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the best average			\;		
+		$S_{k} \gets$ $S_{k-1}$ sorted in descending order						\; \label{hs:sort}	
 		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
-		$b \gets b + \nicefrac{b_r}{s}$														\; \label{hs:incr_budget_resid}
+		$b \gets b + \ceil{\nicefrac{b_r}{s}}$														\; \label{hs:incr_budget_resid}
 	}
 	\func{update} $p.budgetSpent$ with $b_u$										\;
 	\Indm
@@ -630,17 +644,24 @@ In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven 
 \end{algorithm2e}
 \DecMargin{1em}
 
-H-MCTS Solver is outlined in Algorithm~\ref{alg:h-mcts-solver}. The general procedure when a solved node is encountered is straightforward in the case of a solved win, and when all children are solved losses. The $budgetSpent$ is updated and the function immediately returns. The tuple $t_s$ now also contains a `solved' field, which holds the index of the player for which the node is solved. In this case the \func{update} function updates the node accordingly by setting the $isSolved$ flag. On the other hand, when an isolated proven loss is encountered, \ie not all siblings are losses, then we should not sample that node again, since it would under-evaluate the parent. This possibly leaves a residual budget $b_r$ declared on line~\ref{hs:resid}, which is maintained per round. When an isolated proven loss is found, the residual budget is updated on line~\ref{hs:update_resid} such that it can be spent in the next round with a reduced set of nodes, line~\ref{hs:incr_budget_resid}. Moreover, since the isolated loss is removed from $S$, it is possible that $s > |S|$, this is restored on line~\ref{hs:size_min}, after reducing the original size of $s$. This ensures that previously removed nodes that were not proven losses can be returned to selection. Such a node is immediately sampled again whenever a node is removed from $S$ on line~\ref{hs:reselect}. Note also that on line~\ref{hs:children}, a second set $C$ contains all children. Because it is possible to remove all nodes from $S$ in case of a proven loss, $C$ is never altered and can be used to give a recommendation at the root in this case.
-
+H-MCTS Solver is outlined in Algorithm~\ref{alg:h-mcts-solver}. The general procedure when a solved node is encountered is straightforward in the case of a solved win, and when all children are solved losses. The $budgetSpent$ is updated and the function immediately returns. The tuple $t_s$ now also contains a `solved' field, which holds the index of the player for which the node is solved. In this case the \func{update} function updates the node accordingly by setting the $isSolved$ flag. On the other hand, when an isolated proven loss is encountered, \ie not all siblings are losses, then we should not sample that node again, since it would under-evaluate the parent. This possibly leaves a residual budget $b_r$ declared on line~\ref{hs:resid}, which is maintained per round. When an isolated proven loss is found, the residual budget is updated on line~\ref{hs:update_resid} such that it can be spent in the next round with a reduced set of nodes, line~\ref{hs:incr_budget_resid}. Moreover, since the isolated loss is removed from $S$, it is possible that $s > |S|$, this is restored on line~\ref{hs:size_min}, after reducing the original size of $s$. This ensures that previously removed nodes that were not proven losses can be returned to selection. On line~\ref{hs:sort} the set of children from the previous round $S_{k-1}$ is sorted, as such $|S_k| = |S|$ for each round. Therefore, when a solved loss is removed from selection, another child can take its place. Note also that on line~\ref{hs:children}, a second set $C$ contains all children. Because it is possible to remove all nodes from $S$ in case of a proven loss, $C$ is never altered and can be used to give a recommendation at the root in this case.
+\newpage
 \section{Upper and Lower Bounds for H-MCTS}
 \label{sec:ulb_h-mcts}
 A disadvantage of Sequential Halving when it is applied to game trees, is that nodes which can never improve on the current best node are potentially sampled frequently. Although this is theoretically sound in providing lower guarantees on simple regret, practically it often means that nodes are sampled when it is clearly futile to do so. Consider a set of 5 nodes $S_1$, in which there exists one node with a true mean $\mu^*$ of $0.7$, all other nodes have means of $-0.5$. Only a few samples are required to find out which node is the best reply. However, as was shown in the example in Figure~\ref{fig:seq-halving}, the second-best node will be sampled as often as the best one, and in effect the parent's value is underestimated. 
 
-To counter this problem we can compare a child's upper confidence bound to the best node's lower confidence bound. In this pessimistic scheme it is assumed that a node can still improve its value such that it becomes better than the current best node if their upper and lower confidence bounds overlap. Recall from Chapter~\ref{chap:mab}, that the upper confidence bound represents the highest value a node can achieve with immense probability. This approach can be inversed to get the lowest value a node can achieve,
+To counter this problem we can compare a child's upper confidence bound to the best node's lower confidence bound. In this pessimistic scheme it is assumed that a node can still improve its value such that it becomes better than the current best node if their upper and lower confidence bounds overlap. Recall from Chapter~\ref{chap:mab}, that the upper confidence bound represents the highest value a node can achieve with immense probability. This approach can be inversed to get the lowest value a node can get,
 \begin{equation}
  n_i.value - C \times \displaystyle\sqrt{\frac{\ln{p.visits}}{n_i.visits}}.
 \end{equation}
-Because a sorted list of children is maintained in the simple regret tree, the best child's lower confidence bound can be compared to the current node's upper confidence bound at any time. Moreover, when selecting a node for recursion, only if the current node's upper confidence bound overlaps with the best node's lower confidence bound, can we assume that it is still possible for this node to improve upon the current best node's score. As such we can skip any node with a non-overlapping bound with the best node. This potentially saves a substantial budget which would otherwise have been spent sampling children with no potential to improve the current estimate of the parent's value.
+Because a sorted list of children is maintained in the simple regret tree, the best child's lower confidence bound can be compared to the current node's upper confidence bound at any time. Moreover, when selecting a node for recursion, only if the current node's upper confidence bound overlaps with the best node's lower confidence bound, can we assume that it is still possible for this node to improve upon the current best node's score. As such we can skip any node with a non-overlapping bound with the best node. This potentially saves a substantial budget which would otherwise have been spent sampling children with no potential to improve the current estimate of the parent's value. An example of this enhancement is depicted in Figure \ref{fig:ublb}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.7\textwidth]{img/ublb.png}
+	\caption{Example upper/lower bound Sequential Halving. Node A is the current empirical best, with a lower confidence bound of $0.1$. Only nodes B and C have upper confidence bounds that overlap with this lower bound. D and E are not sampled this round.}
+	\label{fig:ublb}
+\end{figure}
 
 \IncMargin{1em}
 \begin{algorithm2e}
@@ -678,22 +699,21 @@ Because a sorted list of children is maintained in the simple regret tree, the b
 					\lIf{$i = 0$} {$l_b \gets n_i.value - C \times \sqrt{\frac{\ln{p.visits}}{n_i.visits}}$} \label{ublb:lower_bound}
 				}
 			}
-			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in S: (n$ is a loss$))$}{
+			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in C: (n$ is a loss$))$}{
 				set the solved player in $t_s$									\;
 				\func{update} $p.budgetSpent$ with $b_u$						\;
 				\KwRet{$t_s$}													\;
-			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in S: (n$ is not a loss$))$}{
+			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in C: (n$ is not a loss$))$}{
 				remove $n_i$ from $S$											\;				
-				$b_r \gets b_i - t_s\tuple{v}$									\;
-				$i \gets i - 1$													\;
+				$b_r \gets b_i - t_s\tuple{v}$									\;				
 			}
 			break if $b_u \geq budget$												\;
 		}
 		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
 		$s \gets \min{(s, |S|)}$													\;
-		$S_{k} \gets$ the $s$ arms from $S_{k-1}$ with the best average				\;	
+		$S_{k} \gets$ $S_{k-1}$ sorted in descending order						\;	
 		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
-		$b \gets b + \nicefrac{b_r}{s}$\;	\label{ublb:reallo}
+		$b \gets b + \ceil{\nicefrac{b_r}{s}}$\;	\label{ublb:reallo}
 	}
 	\func{update} $p.budgetSpent$ with $b_u$										\;
 	\Indm

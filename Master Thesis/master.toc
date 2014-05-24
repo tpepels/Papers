@@ -11,7 +11,7 @@
 \contentsline {section}{\numberline {1.5}Thesis Outline}{4}
 \contentsline {chapter}{\numberline {2}Regret And Multi-Armed Bandits}{5}
 \contentsline {section}{\numberline {2.1}Introduction}{5}
-\contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{5}
+\contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{6}
 \contentsline {section}{\numberline {2.3}UCB}{6}
 \contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{7}
 \contentsline {subsection}{\numberline {2.4.1}Successive Rejects}{7}
@@ -26,14 +26,14 @@
 \contentsline {chapter}{\numberline {4}A Hybrid MCTS}{16}
 \contentsline {section}{\numberline {4.1}Introduction}{16}
 \contentsline {section}{\numberline {4.2}Hybrid MCTS}{17}
-\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{19}
-\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{21}
-\contentsline {chapter}{\numberline {5}Experiments and Results}{23}
-\contentsline {section}{\numberline {5.1}Experimental Setup}{23}
-\contentsline {section}{\numberline {5.2}Results}{23}
-\contentsline {chapter}{\numberline {6}Conclusion}{24}
-\contentsline {chapter}{References}{25}
+\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{20}
+\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{23}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{25}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{25}
+\contentsline {section}{\numberline {5.2}Results}{25}
+\contentsline {chapter}{\numberline {6}Conclusion}{26}
+\contentsline {chapter}{References}{27}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{27}
-\contentsline {chapter}{\numberline {B}Detailed results}{28}
-\contentsline {chapter}{Samenvatting}{29}
+\contentsline {chapter}{\numberline {A}Algorithms}{29}
+\contentsline {chapter}{\numberline {B}Detailed results}{30}
+\contentsline {chapter}{Samenvatting}{31}
