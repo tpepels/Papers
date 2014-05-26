@@ -14,26 +14,25 @@
 \contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{6}
 \contentsline {section}{\numberline {2.3}UCB}{6}
 \contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{7}
-\contentsline {subsection}{\numberline {2.4.1}Successive Rejects}{7}
-\contentsline {subsection}{\numberline {2.4.2}Sequential Halving}{8}
-\contentsline {section}{\numberline {2.5}Relation to MCTS}{9}
-\contentsline {subsection}{\numberline {2.5.1}UCT}{9}
+\contentsline {subsection}{\numberline {2.4.1}Successive Rejects}{8}
+\contentsline {subsection}{\numberline {2.4.2}Sequential Halving}{9}
+\contentsline {section}{\numberline {2.5}Relation to MCTS}{10}
+\contentsline {subsection}{\numberline {2.5.1}UCT}{10}
 \contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{10}
-\contentsline {chapter}{\numberline {3}Simple Regret In MCTS}{11}
-\contentsline {section}{\numberline {3.1}Introduction}{11}
-\contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{12}
-\contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{13}
-\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{16}
-\contentsline {section}{\numberline {4.1}Introduction}{16}
-\contentsline {section}{\numberline {4.2}Hybrid MCTS}{17}
-\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{20}
-\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{23}
-\contentsline {chapter}{\numberline {5}Experiments and Results}{25}
-\contentsline {section}{\numberline {5.1}Experimental Setup}{25}
-\contentsline {section}{\numberline {5.2}Results}{25}
-\contentsline {chapter}{\numberline {6}Conclusion}{26}
-\contentsline {chapter}{References}{27}
+\contentsline {chapter}{\numberline {3}Simple Regret In MCTS}{13}
+\contentsline {section}{\numberline {3.1}Introduction}{13}
+\contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{14}
+\contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{15}
+\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{19}
+\contentsline {section}{\numberline {4.1}Introduction}{19}
+\contentsline {section}{\numberline {4.2}Hybrid MCTS}{20}
+\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{24}
+\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{27}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{29}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{29}
+\contentsline {section}{\numberline {5.2}Results}{29}
+\contentsline {chapter}{\numberline {6}Conclusion}{31}
+\contentsline {chapter}{References}{33}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{29}
-\contentsline {chapter}{\numberline {B}Detailed results}{30}
-\contentsline {chapter}{Samenvatting}{31}
+\contentsline {chapter}{\numberline {A}Algorithms}{35}
+\contentsline {chapter}{\numberline {B}Detailed results}{37}

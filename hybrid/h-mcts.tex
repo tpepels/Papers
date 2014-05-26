@@ -6,6 +6,7 @@
 \usepackage[algo2e, noend, noline, linesnumbered]{algorithm2e}
 \SetKwIF{If}{ElseIf}{Else}{if}{then}{else if}{else}{endif}
 \RestyleAlgo{boxruled}
+\setlength{\textfloatsep}{.5cm}
 \newcommand{\func}[1]{{\sc #1}}
 \newcommand{\tuple}[1]{\ensuremath{\left \langle #1 \right \rangle }}
 \DontPrintSemicolon
@@ -263,7 +264,7 @@ Consequently, the search tree is composed of a \emph{simple regret tree} at the 
 		}
 		\KwRet{$t_s$}
 	}
-	$b_u, k \gets 0$\; $S_0 \gets S$\; $s \gets |S_0|$								\;
+	$b_u, k \gets 0$\; $S_0 \gets S$\; $s \gets |S|$								\;
 	\Repeat{$b_u \geq budget$} {															\label{h-mcts:shot}
 		\For{i=0 \emph{\KwTo} s}{
 			$n_i \gets$ node $n$ at rank $i$ of $S_k$								\;			
@@ -288,7 +289,9 @@ Consequently, the search tree is composed of a \emph{simple regret tree} at the 
 \end{algorithm2e}
 \DecMargin{1em}
 
-H-MCTS is outlined in Algorithm~\ref{alg:h-mcts}. Similar to UCT and SHOT, on line~\ref{h-mcts:terminal} terminal conditions are handled. Followed by the main feature of the algorithm on line~\ref{h-mcts:budgetlimit} where the initial simulation budget $b$ for each child of the current node is computed. Based on $b$, a decision is made whether to progress into the UCT tree if $b<B$ or, if $b \geq B$ to continue with SHOT. Note that, the $b<B$ check is overridden at the root, since only one cycle is initiated there, and because at the root simple regret minimization is always favored over cumulative regret minimization. From line~\ref{h-mcts:shot} the algorithm is similar to the Sequential Halving portion of SHOT. As in SHOT, because multiple play-outs are back-propagated in a single descent from root to leaf, the algorithm returns a tuple $t_s$, which contains: 1) the budget used $b_u$, 2) the number of wins per player $w_1$ and $w_2$, and 3) the number of visits $v$. UCT also maintains this tuple such that it can return the same $t_s$ to the simple regret tree. However, in traditional UCT, all values in $t_s$ are at most 1. For the UCT tree, any implementation can be used, as long as it is adapted to return $t_s$ and update the $budgetSpent$ value alongside the usual node's visit count. Because any UCT node in the tree can be ``converted'' to a simple regret node at any time, when $b>B$ on line~\ref{h-mcts:budgetlimit}. Whenever a UCT node is included in the simple regret tree, all its values are maintained. As such, Sequential Halving has an initial estimate of the values of the nodes. Based on the budgeting method of SHOT~\cite{Cazenave14SHOT}, budget is reallocated such that it adheres to Sequential Halving's allocation. Note that, H-MCTS' implementation details differ from SHOT mainly in the manner that repeating cycles are performed. Since the Sequential Halving loop on line~\ref{h-mcts:shot} runs until all budget is spent, it is possible that an extra round is performed with a single arm remaining to spend any left-over budget due to rounding errors. Based on initial experiments, this implementation does not result in different results.
+H-MCTS is outlined in Algorithm~\ref{alg:h-mcts}. Similar to UCT and SHOT, on line~\ref{h-mcts:terminal} terminal conditions are handled. Followed by the main feature of the algorithm on line~\ref{h-mcts:budgetlimit} where the initial simulation budget $b$ for each child of the current node is computed. Based on $b$, a decision is made whether to progress into the UCT tree if $b<B$ or, if $b \geq B$ to continue with SHOT. Note that, the $b<B$ check is overridden at the root, since only one cycle is initiated there, and because at the root simple regret minimization is always favored over cumulative regret minimization. From line~\ref{h-mcts:shot} the algorithm is similar to the Sequential Halving portion of SHOT. As in SHOT, because multiple play-outs are back-propagated in a single descent from root to leaf, the algorithm returns a tuple $t_s$, which contains: 1) the budget used $b_u$, 2) the number of wins per player $w_1$ and $w_2$, and 3) the number of visits $v$. UCT also maintains this tuple such that it can return the same $t_s$ to the simple regret tree. However, in traditional UCT, all values in $t_s$ are at most 1. For the UCT tree, any implementation can be used, as long as it is adapted to return $t_s$ and update the $budgetSpent$ value alongside the usual node's visit count. Because any UCT node in the tree can be ``converted'' to a simple regret node at any time, when $b>B$ on line~\ref{h-mcts:budgetlimit}. 
+
+Whenever a UCT node is included in the simple regret tree, all its values are maintained. As such, Sequential Halving has an initial estimate of the values of the nodes. Based on the budgeting method of SHOT~\cite{Cazenave14SHOT}, budget is reallocated such that it adheres to Sequential Halving's allocation. Note that, H-MCTS' implementation details differ from SHOT mainly in the manner that repeating cycles are performed. Since the Sequential Halving loop on line~\ref{h-mcts:shot} runs until all budget is spent, it is possible that an extra round is performed with a single arm remaining to spend any left-over budget due to rounding errors. Based on initial experiments, this implementation does not result in different results.
 
 In the scheme presented, a limit on the available budget determines whether to continue in the simple regret tree. However, other methods, such as a fixed depth limit for the simple regret tree, or a time-partitioned method, can certainly be viable. Though, based on the simple regret theory, pure exploration methods  only provide empirically better simple regret than UCT, given a sufficiently large budget. Given a low budget, UCT with a properly tuned constant should be preferred~\cite{Bubeck11Pure}.
 
@@ -319,10 +322,10 @@ In this section we show the results of the experiments performed on six two-play
 \item \emph{Pentalath} is a connection game played on a hexagonal board. The goal is to place 5 pieces in a row. Pieces can be captured by fully surrounding an opponent's set of pieces.
 \end{itemize}
 
-All other games use a uniform random selection policy during the play-outs, unless otherwise stated. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was optimized for each game and was not re-optimized for H-MCTS. As such, in each experiment both UCT and H-MCTS use the same $C$ constant, optimized for the game played.
+All other games use a uniform random selection policy during the play-outs, unless otherwise stated. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was optimized for each game and was not re-optimized for H-MCTS. As such, in each experiment, both UCT and H-MCTS use the same $C$ constant, optimized for the game played. The budget limit $B$ which determines the switching point between the simple and UCT trees, was optimized for each game independently using a range between $10$ and $90$, and interval $20$.
 
 Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of both 10,000 and 25,000 play-outs.
-
+\newpage
 \subsection{Results}
 \label{subsec:results}
 
@@ -331,7 +334,7 @@ For each result, the winning percentage is reported for the player with the enha
 \begin{table}[ht]
 \centering
 \tabcolsep=0.3cm
-\scalebox{1.0}{
+\scalebox{0.91}{
 \begin{tabular}{rlll}
 \hline
 \multicolumn{2}{c|}{} & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -339,15 +342,15 @@ For each result, the winning percentage is reported for the player with the enha
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-3mm]
 Amazons &\multicolumn{1}{l|}{50}			    	& {\bf{65.2}} $\pm$ 3.0 		& {\bf{62.0}} $\pm$ 3.0 		\\ [.5mm] 
-AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& 50 $\pm$ 3.0 					& {\bf{57.5}} $\pm$ 3.1 		\\ [.5mm] 
+AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& 50.0 $\pm$ 3.0 					& {\bf{57.5}} $\pm$ 3.1 	\\ [.5mm] 
 Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& {\bf{54.5}} $\pm$ 3.1			& {\bf{56.0}} $\pm$ 3.1 		\\ [.5mm] 
-Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{53.2}} $\pm$ 3.1			& 50.4 $\pm$ 3.1 			\\ [.5mm] 
-NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 52.4 $\pm$ 3.1				& 48.8 $\pm$ 3.1 			\\ [.5mm] 
-Pentalath &\multicolumn{1}{l|}{30} 		  			& 46.7 $\pm$ 3.1				& 50.1 $\pm$ 3.2 			\\ [.5mm] 
+Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{53.2}} $\pm$ 3.1			& 50.4 $\pm$ 3.1 				\\ [.5mm] 
+NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 52.4 $\pm$ 3.1				& 48.8 $\pm$ 3.1 				\\ [.5mm] 
+Pentalath &\multicolumn{1}{l|}{30} 		  			& 46.7 $\pm$ 3.1				& 50.1 $\pm$ 3.2 				\\ [.5mm] 
 \hline
 \end{tabular}
 }
-\vspace{4mm}
+\vspace{3mm}
 {\caption{H-MCTS vs. UCT with random play-outs, 1,000 games} \label{tab:uct_hmcts}}
 \end{table}
 
@@ -356,7 +359,7 @@ Table~\ref{tab:uct_hmcts} shows results of the matches played by H-MCTS against 
 \begin{table}[ht]
 \centering
 \tabcolsep=0.3cm
-\scalebox{1.0}{
+\scalebox{0.91}{
 \begin{tabular}{rlll}
 \hline
 \multicolumn{2}{c|}{} & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -375,11 +378,10 @@ Pentalath &\multicolumn{1}{l|}{30} 		  			& {\bf{62.1}} $\pm$ 3.0		& {\bf{78.3}}
 \vspace{3mm}
 {\caption{H-MCTS vs. SHOT with random play-outs, 1,000 games} \label{tab:shot_hmcts}}
 \end{table}
-
 \begin{table}[ht]
 \centering
 \tabcolsep=0.45cm
-\scalebox{1.0}{
+\scalebox{0.91}{
 \begin{tabular}{r|ll}
 \hline
  & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -395,17 +397,16 @@ Pentalath 		  			& 33.7 $\pm$ 3 			& 22.8 $\pm$ 2.6 			\\ [.5mm]
 \hline
 \end{tabular}
 }
-\vspace{4mm}
+\vspace{3mm}
 {\caption{SHOT vs. UCT with random play-outs, 1,000 games} \label{tab:uct_shot}}
 \end{table}
 
-To compare the effect of the hybrid method effectively, we show the results of matches played by H-MCTS against SHOT in Table~\ref{tab:shot_hmcts}. Here, H-MCTS shows significant improvement in 10 of the 12 cases. Note that, we make no use of the speed benefits of either technique in these experiments. This gives evidence for the claim that H-MCTS makes use of UCT's any-time property to provide good utility estimates in the simple regret tree, values back-propagated by UCT may be more effective than those back-propagated by using Sequential Halving throughout the tree. 
-As a benchmark, SHOT played 1,000 matches against UCT per game in Table~\ref{tab:uct_shot}. Interestingly, SHOT performs best against H-MCTS and UCT in the games with the highest branching factors, Amazons, AtariGo and to a lesser extent, NoGo. This reinforces the evidence that Sequential Halving is best applied in games with high branching factors. In the games with narrow winning-lines such as Breakthrough and Pentalath, SHOT's performance declines against UCT.
-
+To compare the effect of the hybrid method effectively, we show the results of matches played by H-MCTS against SHOT in Table~\ref{tab:shot_hmcts}. H-MCTS shows significant improvement in 10 of the 12 cases. Note that, we make no use of the speed benefits of either technique in these experiments. This gives evidence for the claim that H-MCTS makes use of UCT's any-time property to provide good utility estimates in the simple regret tree, values back-propagated by UCT may be more effective than those back-propagated by using Sequential Halving throughout the tree. 
+As a benchmark, SHOT played 1,000 matches against UCT per game in Table~\ref{tab:uct_shot}. SHOT performs best against H-MCTS and UCT in the games with the highest branching factors, Amazons, AtariGo and to a lesser extent, NoGo. This reinforces the evidence that Sequential Halving is best applied in games with high branching factors. In the games with narrow winning-lines such as Breakthrough and Pentalath, SHOT's performance declines against UCT.
 \begin{table}[ht]
 \centering
 \tabcolsep=0.3cm
-\scalebox{1.0}{
+\scalebox{0.9}{
 \begin{tabular}{rlcc}
 \hline
 \multicolumn{2}{c|}{} & \multicolumn{1}{c}{\textbf{10,000}} & \multicolumn{1}{c}{\textbf{25,000}} \\ 
@@ -414,8 +415,8 @@ As a benchmark, SHOT played 1,000 matches against UCT per game in Table~\ref{tab
 \multicolumn{2}{c|}{} \\ [-3mm]
 \multicolumn{2}{c|}{} & \multicolumn{2}{c}{\textbf{Heuristic play-outs (no solver)}} \\ [1mm]
 \multicolumn{2}{c|}{} \\ [-4mm]
-Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& 50.4 $\pm$ 3.1				& {\bf{55.2}} $\pm$ 3.1 	\\ [.5mm]
-\multicolumn{2}{c|}{} \\ [-3mm]
+Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& 50.4 $\pm$ 3.1				& {\bf{56.6}} $\pm$ 3.1 	\\ [.5mm]
+\multicolumn{2}{c|}{} \\ [-4mm]
 \multicolumn{2}{c|}{} & \multicolumn{2}{c}{\textbf{H-MCTS Solver}} 					\\ [1mm]
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-4mm]
@@ -426,7 +427,7 @@ Pentalath &\multicolumn{1}{l|}{70} 		  			& 46.7 $\pm$ 3.1			& 52.3 $\pm$ 3.1 		
 \hline
 \end{tabular}
 }
-\vspace{4mm}
+\vspace{3mm}
 %lanctot-edit
 %{\caption{H-MCTS vs. UCT with heuristic play-outs and solver, 1,000 games} \label{tab:uct_hmcts-s-h}}
 {\caption{H-MCTS vs. UCT with heuristic play-outs, with/without solver, 1,000 games} \label{tab:uct_hmcts-s-h}}
@@ -444,7 +445,7 @@ In an upcoming master's thesis, two enhancements for H-MCTS will be proposed. Fi
 
 %lanctot-edit: This point is not just about theory. There are theoretical bounds on simple regret and measurable/observed simple regret (also called average error in the BRUE paper or simply just Regret in the MCMS paper) in practice. These are two separate things; we showed neither. I think you should show the latter in your thesis. 
 %Note that, although the hybrid technique is founded on theoretical work in both the MAB context, and MCTS, we have not shown that it provides better bounds on simple regret compared to UCT. This is work for future research. In order to show that H-MCTS provides a better bound on simple regret, the technique should be validated in smaller, proven games for which the game-theoretic value of each action is known.
-Note that, although the hybrid technique is founded on theoretical work in both the MAB context, and MCTS, we have not shown that it provides better bounds on simple regret compared to UCT. This is work for future research. In order to show that H-MCTS exhibits lower simple regret in practice, the technique should be validated in smaller, proven games for which the game-theoretic value of each action is known.
+Note that, although the hybrid technique is founded on theoretical work in both the MAB context, and MCTS, we have not shown that it provides better bounds on simple regret compared to UCT. This is work for future research. In order to show that H-MCTS exhibits lower simple regret in practice, the technique should be validated in smaller, proven games for which the game-theoretic value of each action is known. Moreover, investigation is required regarding the effects of the budget limit $B$ in relation to the total allocated number of play-outs, and the interrelation between H-MCTS' $B$, and UCT's $C$ constant. In the experiments presented in this paper, both were fixed per game, rather than per experiment. Finally, the speed benefits of H-MCTS, combined with parallelization of the algorithm is open to investigation. H-MCTS can be parallelized efficiently by dividing budgets in the simple regret tree over multiple threads~\cite{Cazenave14SHOT}.
 
 \subsection*{Acknowledgments} 
 This work is partially funded by The Netherlands Scientific Research (NWO) in the framework of the project Go4Nature, grant number 612.000.938.

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.8.29)  23 MAY 2014 22:43
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.8.29)  26 MAY 2014 17:07
 entering extended mode
 **D:/Dropbox/Workspaces/GitHub/Papers/Master*Thesis/master.tex
 ("D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/master.tex"
@@ -931,154 +931,151 @@ Overfull \hbox (0.79999pt too wide) detected at line 201
 |[]|
  []
 
-[6]
+[6] [7]
 Overfull \hbox (0.79999pt too wide) detected at line 239
 |[]|
  []
 
-<img/succ_rej.png, id=74, 1132.93852pt x 796.38705pt>
+<img/succ_rej.png, id=77, 1132.93852pt x 796.38705pt>
 File: img/succ_rej.png Graphic file (type png)
  <use img/succ_rej.png>
 Package pdftex.def Info: img/succ_rej.png used on input line 248.
 (pdftex.def)             Requested size: 273.14923pt x 192.01173pt.
 
-[7]
+[8 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/succ_rej.png>]
 Overfull \hbox (0.79999pt too wide) detected at line 276
 |[]|
  []
 
-<img/seq_halving.png, id=79, 1133.64706pt x 590.205pt>
+<img/seq_halving.png, id=82, 1133.64706pt x 590.205pt>
 File: img/seq_halving.png Graphic file (type png)
 
 <use img/seq_halving.png>
 Package pdftex.def Info: img/seq_halving.png used on input line 283.
 (pdftex.def)             Requested size: 273.14923pt x 142.21045pt.
- [8 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/succ_rej.png>] [9 <D
-:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/seq_halving.png>] [10]
-Chapter 3.
-[11
+ [9 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/seq_halving.png>] [1
+0] [11] [12
 
 ]
+Chapter 3.
+[13]
 Overfull \hbox (0.79999pt too wide) detected at line 393
 |[]|
  []
 
-[12]
-Overfull \hbox (0.79999pt too wide) detected at line 454
-|[]|
- []
-
-[13] <img/shot_topoffs.png, id=104, 551.05875pt x 772.38562pt>
+[14] <img/shot_topoffs.png, id=105, 551.05875pt x 772.38562pt>
 File: img/shot_topoffs.png Graphic file (type png)
 
 <use img/shot_topoffs.png>
-Package pdftex.def Info: img/shot_topoffs.png used on input line 463.
-(pdftex.def)             Requested size: 227.62206pt x 319.04906pt.
- [14 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/shot_topoffs.png>] 
-[15]
-Chapter 4.
-[16
+Package pdftex.def Info: img/shot_topoffs.png used on input line 410.
+(pdftex.def)             Requested size: 182.09486pt x 255.22983pt.
+ [15 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/shot_topoffs.png>]
+Overfull \hbox (0.79999pt too wide) detected at line 469
+|[]|
+ []
 
-] <img/H-MCTS.png, id=117, 950.92105pt x 581.48822pt>
+[16] [17] [18
+
+]
+Chapter 4.
+[19] <img/H-MCTS.png, id=126, 950.92105pt x 581.48822pt>
 File: img/H-MCTS.png Graphic file (type png)
  <use img/H-MCTS.png>
-Package pdftex.def Info: img/H-MCTS.png used on input line 499.
+Package pdftex.def Info: img/H-MCTS.png used on input line 504.
 (pdftex.def)             Requested size: 364.19667pt x 222.70688pt.
 
-<img/H-MCTS_Rounds.png, id=118, 2268.71118pt x 1052.87471pt>
+<img/H-MCTS_Rounds.png, id=127, 2268.71118pt x 1052.87471pt>
 File: img/H-MCTS_Rounds.png Graphic file (type png)
 
 <use img/H-MCTS_Rounds.png>
-Package pdftex.def Info: img/H-MCTS_Rounds.png used on input line 508.
+Package pdftex.def Info: img/H-MCTS_Rounds.png used on input line 513.
 (pdftex.def)             Requested size: 364.19667pt x 169.00961pt.
- [17 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/H-MCTS.png>]
-Overfull \hbox (0.79999pt too wide) detected at line 556
+ [20 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/H-MCTS.png>]
+Overfull \hbox (0.79999pt too wide) detected at line 564
 |[]|
  []
 
-[18 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/H-MCTS_Rounds.png>]
-[19] <img/solver.png, id=129, 1701.88765pt x 1027.36765pt>
+[21 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/H-MCTS_Rounds.png>]
+[22] [23] <img/solver.png, id=142, 1701.88765pt x 1027.36765pt>
 File: img/solver.png Graphic file (type png)
 
 <use img/solver.png>
-Package pdftex.def Info: img/solver.png used on input line 587.
+Package pdftex.def Info: img/solver.png used on input line 597.
 (pdftex.def)             Requested size: 273.14923pt x 164.88382pt.
 
-Overfull \hbox (0.79999pt too wide) detected at line 644
+Overfull \hbox (0.79999pt too wide) detected at line 657
 |[]|
  []
 
-[20 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/solver.png>]
-[21] [22] <img/ublb.png, id=140, 1274.64441pt x 399.6106pt>
+[24 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/solver.png>]
+[25] [26] <img/ublb.png, id=152, 1274.64441pt x 399.6106pt>
 File: img/ublb.png Graphic file (type png)
  <use img/ublb.png>
-Package pdftex.def Info: img/ublb.png used on input line 661.
+Package pdftex.def Info: img/ublb.png used on input line 674.
 (pdftex.def)             Requested size: 318.66948pt x 99.9024pt.
 
-Overfull \hbox (0.79999pt too wide) detected at line 722
+Overfull \hbox (0.79999pt too wide) detected at line 738
 |[]|
  []
 
-[23 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/ublb.png>] [24]
+[27 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/ublb.png>] [28]
 Chapter 5.
-[25
-
-]
-Chapter 6.
-("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.bbl" [26
-
-] [27
-
-])
-[28]
-Appendix A.
 [29
 
+] [30]
+Chapter 6.
+("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.bbl" [31
 
+] [32
+
+]
+[33]) [34]
+Appendix A.
+[35
+
+
+
+] [36
 
 ]
 Appendix B.
-[30
-
-] [31
-
-] ("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.aux") ) 
+[37] ("D:\Dropbox\Workspaces\GitHub\Papers\Master Thesis\master.aux") ) 
 Here is how much of TeX's memory you used:
- 7676 strings out of 493921
- 112603 string characters out of 3144882
- 219402 words of memory out of 3000000
- 10795 multiletter control sequences out of 15000+200000
+ 7679 strings out of 493921
+ 112647 string characters out of 3144882
+ 219456 words of memory out of 3000000
+ 10798 multiletter control sequences out of 15000+200000
  14251 words of font info for 50 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  42i,24n,45p,1813b,673s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\
-Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\mathb7.pk> <
-C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\mat
-hb10.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\
-dpi600\mathx10.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\publi
-c\mathabx\dpi600\matha7.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljf
-our\public\mathabx\dpi600\matha10.pk><C:/Program Files (x86)/MiKTeX 2.9/fonts/t
-ype1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
-e1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
-/public/amsfonts/cm/cmbx7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
-blic/amsfonts/cm/cmbx9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publi
-c/amsfonts/cm/cmbxti10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publi
-c/amsfonts/cm/cmcsc10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public
-/amsfonts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
-msfonts/cm/cmmi5.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsf
-onts/cm/cmmi7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfont
-s/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/c
-m/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
-mr5.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.
-pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb>
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsl10.pfb><C
-:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/
-Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Pr
-ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt8.pfb><C:/Progr
-am Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on master.pdf (41 pages, 805835 bytes).
+ <C:\Use
+rs\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\mathb7.pk
+> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\
+mathb10.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\matha
+bx\dpi600\mathx10.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\pu
+blic\mathabx\dpi600\matha7.pk> <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\
+ljfour\public\mathabx\dpi600\matha10.pk><C:/Program Files (x86)/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
+type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/ty
+pe1/public/amsfonts/cm/cmbx7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmbx9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmbxti10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmcsc10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pub
+lic/amsfonts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publi
+c/amsfonts/cm/cmmi5.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
+msfonts/cm/cmmi7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsf
+onts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfont
+s/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/c
+m/cmr5.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
+r7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.p
+fb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsl10.pfb
+><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
+C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:
+/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt8.pfb><C:/Pr
+ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on master.pdf (47 pages, 813259 bytes).
 PDF statistics:
- 301 PDF objects out of 1000 (max. 8388607)
+ 321 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
