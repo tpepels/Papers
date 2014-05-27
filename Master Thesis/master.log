@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.8.29)  26 MAY 2014 17:07
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.8.29)  27 MAY 2014 15:42
 entering extended mode
 **D:/Dropbox/Workspaces/GitHub/Papers/Master*Thesis/master.tex
 ("D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/master.tex"
@@ -963,12 +963,12 @@ Overfull \hbox (0.79999pt too wide) detected at line 393
 |[]|
  []
 
-[14] <img/shot_topoffs.png, id=105, 551.05875pt x 772.38562pt>
+[14] <img/shot_topoffs.png, id=105, 551.05875pt x 645.16031pt>
 File: img/shot_topoffs.png Graphic file (type png)
 
 <use img/shot_topoffs.png>
 Package pdftex.def Info: img/shot_topoffs.png used on input line 410.
-(pdftex.def)             Requested size: 182.09486pt x 255.22983pt.
+(pdftex.def)             Requested size: 182.09486pt x 213.18904pt.
  [15 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/shot_topoffs.png>]
 Overfull \hbox (0.79999pt too wide) detected at line 469
 |[]|
@@ -978,43 +978,43 @@ Overfull \hbox (0.79999pt too wide) detected at line 469
 
 ]
 Chapter 4.
-[19] <img/H-MCTS.png, id=126, 950.92105pt x 581.48822pt>
+[19] <img/H-MCTS.png, id=125, 950.92105pt x 581.48822pt>
 File: img/H-MCTS.png Graphic file (type png)
  <use img/H-MCTS.png>
 Package pdftex.def Info: img/H-MCTS.png used on input line 504.
 (pdftex.def)             Requested size: 364.19667pt x 222.70688pt.
 
-<img/H-MCTS_Rounds.png, id=127, 2268.71118pt x 1052.87471pt>
+<img/H-MCTS_Rounds.png, id=126, 2268.71118pt x 1052.87471pt>
 File: img/H-MCTS_Rounds.png Graphic file (type png)
 
 <use img/H-MCTS_Rounds.png>
-Package pdftex.def Info: img/H-MCTS_Rounds.png used on input line 513.
+Package pdftex.def Info: img/H-MCTS_Rounds.png used on input line 514.
 (pdftex.def)             Requested size: 364.19667pt x 169.00961pt.
  [20 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/H-MCTS.png>]
-Overfull \hbox (0.79999pt too wide) detected at line 564
+Overfull \hbox (0.79999pt too wide) detected at line 565
 |[]|
  []
 
 [21 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/H-MCTS_Rounds.png>]
-[22] [23] <img/solver.png, id=142, 1701.88765pt x 1027.36765pt>
+[22] [23] <img/solver.png, id=141, 1701.88765pt x 1027.36765pt>
 File: img/solver.png Graphic file (type png)
 
 <use img/solver.png>
-Package pdftex.def Info: img/solver.png used on input line 597.
+Package pdftex.def Info: img/solver.png used on input line 600.
 (pdftex.def)             Requested size: 273.14923pt x 164.88382pt.
 
-Overfull \hbox (0.79999pt too wide) detected at line 657
+Overfull \hbox (0.79999pt too wide) detected at line 660
 |[]|
  []
 
 [24 <D:/Dropbox/Workspaces/GitHub/Papers/Master Thesis/img/solver.png>]
-[25] [26] <img/ublb.png, id=152, 1274.64441pt x 399.6106pt>
+[25] [26] <img/ublb.png, id=151, 1274.64441pt x 399.6106pt>
 File: img/ublb.png Graphic file (type png)
  <use img/ublb.png>
-Package pdftex.def Info: img/ublb.png used on input line 674.
+Package pdftex.def Info: img/ublb.png used on input line 677.
 (pdftex.def)             Requested size: 318.66948pt x 99.9024pt.
 
-Overfull \hbox (0.79999pt too wide) detected at line 738
+Overfull \hbox (0.79999pt too wide) detected at line 741
 |[]|
  []
 
@@ -1043,11 +1043,11 @@ Appendix B.
 Here is how much of TeX's memory you used:
  7679 strings out of 493921
  112647 string characters out of 3144882
- 219456 words of memory out of 3000000
+ 218456 words of memory out of 3000000
  10798 multiletter control sequences out of 15000+200000
  14251 words of font info for 50 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 42i,24n,45p,1813b,673s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 42i,24n,45p,1800b,673s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Use
 rs\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\mathb7.pk
 > <C:\Users\Tom\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\mathabx\dpi600\
@@ -1073,9 +1073,9 @@ fb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsl10.pfb
 C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:
 /Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt8.pfb><C:/Pr
 ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on master.pdf (47 pages, 813259 bytes).
+Output written on master.pdf (47 pages, 813086 bytes).
 PDF statistics:
- 321 PDF objects out of 1000 (max. 8388607)
+ 320 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

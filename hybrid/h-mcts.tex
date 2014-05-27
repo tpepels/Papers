@@ -275,7 +275,7 @@ Consequently, the search tree is composed of a \emph{simple regret tree} at the 
 			}
 			break if $b_u \geq budget$												\;
 		}
-		$s \gets \ceil{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
+		$s \gets s - \floor{\nicefrac{s}{2}}$, $k \gets k + 1$							\;
 		$S_{k} \gets$ $S_{k-1}$ sorted in descending order							\;	\label{h-mcts:sort}
 		\lIf{$s = 1$} {$b \gets b + (budget - b_u)$}
 		\lElse{
@@ -367,8 +367,8 @@ Table~\ref{tab:uct_hmcts} shows results of the matches played by H-MCTS against 
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-3mm]
 Amazons &\multicolumn{1}{l|}{50}			    	& 51.2 $\pm$ 3.1 			& {\bf{55.4}} $\pm$ 3.1 	\\ [.5mm] 
-AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& 51.4 $\pm$ 3.1 			& {\bf{57.5}} $\pm$ 3.1		\\ [.5mm] 
-Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& {\bf{54.5}} $\pm$ 3.1		& {\bf{61.2}} $\pm$ 3.0 	\\ [.5mm] 
+AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& 50.0 $\pm$ 3.1 			& {\bf{57.5}} $\pm$ 3.1		\\ [.5mm] 
+Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& {\bf{54.5}} $\pm$ 3.1		& {\bf{56.0}} $\pm$ 3.1 	\\ [.5mm] 
 Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{68.4}} $\pm$ 2.9  	& {\bf{84.0}} $\pm$ 2.3 	\\ [.5mm] 
 NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& {\bf{56.3}} $\pm$ 3.1 	& {\bf{55.5}} $\pm$ 3.1 	\\ [.5mm] 
 Pentalath &\multicolumn{1}{l|}{30} 		  			& {\bf{62.1}} $\pm$ 3.0		& {\bf{78.3}} $\pm$ 2.6  	\\ [.5mm] 

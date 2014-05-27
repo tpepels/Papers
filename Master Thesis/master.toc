@@ -30,7 +30,7 @@
 \contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{27}
 \contentsline {chapter}{\numberline {5}Experiments and Results}{29}
 \contentsline {section}{\numberline {5.1}Experimental Setup}{29}
-\contentsline {section}{\numberline {5.2}Results}{29}
+\contentsline {section}{\numberline {5.2}Results}{30}
 \contentsline {chapter}{\numberline {6}Conclusion}{31}
 \contentsline {chapter}{References}{33}
 \contentsline {chapter}{Appendices}{}
