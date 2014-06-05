@@ -36,8 +36,8 @@ Baier, H. and Drake, P.~D. (2010).
 \ikatbibitem{Balla and Fern}{Balla and Fern}{2009}{balla2009uct}{%
 Balla, R.~K. and Fern, A. (2009).
 \newblock {UCT} for tactical assault planning in real-time strategy games.
-\newblock {\sl Proc. of the 21st Int. Joint Conf. on Artif. Intel.(IJCAI)}~(ed.
-  C. Boutilier), pp. 40--45.}
+\newblock {\sl Proc. of the 21st Int. Joint Conf. on Artif. Intel.
+  (IJCAI)}~(ed. C. Boutilier), pp. 40--45.}
 
 \ikatbibitem{Browne{\etalchar{+}}}{Browne{\etalchar{+}}}{2012}{browne2012survey}{%
 Browne, C., Powley, E., Whitehouse, D., Lucas, S.~M., Cowling, P.~I.,
@@ -63,7 +63,7 @@ Campbell, M., Hoane~Jr, A.~J., and Hsu, F. (2002).
 \ikatbibitem{Cazenave}{Cazenave}{2014}{Cazenave14SHOT}{%
 Cazenave, T. (2014).
 \newblock Sequential Halving applied to Trees.
-\newblock Vol. Preprint.}
+\newblock {\sl IEEE Trans. on Comput. Intell. AI in Games}, Vol.~In Press.}
 
 \ikatbibitem{Chaslot{\etalchar{+}}}{Chaslot{\etalchar{+}}}{2008}{chaslot2008progressive}{%
 Chaslot, G.~M.~J-B., Winands, M.~H.~M., Herik, H.~J. van~den, Uiterwijk,
@@ -119,14 +119,22 @@ Knuth, D.~E. and Moore, R.~W. (1975).
   Szepesv\'{a}ri}{2006}{kocsis2006bandit}{%
 Kocsis, L. and Szepesv\'{a}ri, C. (2006).
 \newblock Bandit Based {M}onte-{C}arlo Planning.
-\newblock {\sl Euro. Conf. Mach. Learn.}~(eds. J. F\"{u}rnkranz, T. Scheffer,
-  and M. Spiliopoulou), Vol. 4212 of {\sl Lecture Notes in Artificial
-  Intelligence}, pp. 282--293.}
+\newblock {\sl Euro. Conf. Mach. Learn.}~(eds. J. F\"urnkranz, T. Scheffer, and
+  M. Spiliopoulou), Vol. 4212 of {\sl Lecture Notes in Artificial
+  Intelligence}, pp. 282--293. Springer-Verlag.}
 
 \ikatbibitem{Lai and Robbins}{Lai and Robbins}{1985}{lai1985asymptotically}{%
 Lai, Tze~Leung and Robbins, Herbert (1985).
 \newblock Asymptotically efficient adaptive allocation rules.
 \newblock {\sl Advances in applied mathematics}, Vol.~6, No.~1, pp. 4--22.}
+
+\ikatbibitem{Lee{\etalchar{+}}}{Lee{\etalchar{+}}}{2009}{lee2009computational}{%
+Lee, C., Wang, M., Chaslot, G., Hoock, J., Rimmel, A., Teytaud, F., Tsai, S.,
+  Hsu, S., and Hong, T. (2009).
+\newblock The computational intelligence of {MoGo} revealed in {Taiwan's}
+  computer {Go} tournaments.
+\newblock {\sl Computational Intelligence and AI in Games}, Vol.~1, No.~1, pp.
+  73--89.}
 
 \ikatbibitem{Marsland}{Marsland}{1983}{marsland1983relative}{%
 Marsland, T.~A. (1983).
@@ -158,6 +166,11 @@ Rimmel, A., Teytaud, O., Lee, C., Yen, S., Wang, M., and Tsai, S. (2010).
 \newblock Current frontiers in computer {Go}.
 \newblock {\sl IEEE Trans. Comput. Intell. AI in Games}, Vol.~2, No.~4, pp.
   229--238.}
+
+\ikatbibitem{Robbins}{Robbins}{1952}{Robbins_someaspects}{%
+Robbins, H. (1952).
+\newblock Some Aspects of the Sequential Design of Experiments.
+\newblock {\sl Bulletin of the American Mathematical Society}, pp. 527--535.}
 
 \ikatbibitem{Tak, Winands, and
   Bj\"{o}rnsson}{Tak{\etalchar{+}}}{2012}{Tak2012}{%

@@ -1,0 +1,130 @@
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}
+    [
+        group style=
+            {
+            columns=2,
+            rows=2,
+            xlabels at=edge bottom,
+            ylabels at=edge left,
+            vertical sep= 1.5cm,
+            },
+       	width  = 0.45*\textwidth,
+        major x tick style = transparent,
+        ybar= 2 * \pgflinewidth,
+        % bar width = 10pt,
+        ymajorgrids = true,
+        ylabel = {Win \%},
+        xlabel= {Budget limit $B$},
+        symbolic x coords={10,30,50,70,90,110},
+        xtick = data,
+        ytick={0,20,40,50, 60,80,100},
+        scaled y ticks = false,
+        enlarge x limits = 0.1,
+        ymin=0,
+        ymax=100,
+    ]
+% Amazons ----------------------------------------
+\nextgroupplot[title=Amazons]
+\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10, 66) +- (0,2.94) 
+	(30,66.2) +- (0,2.93)
+	(50,63.9) +- (0,2.98)
+	(70,64.7) +- (0,2.96)
+	(90,64.9) +- (0,2.96)
+	(110,64.3) +- (0,2.97)};
+\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10,62.6) +- (0,3)
+	(30,63.5) +- (0,2.99)
+	(50,61.1) +- (0,3.02)
+	(70,64.7) +- (0,2.96)
+	(90,59.3) +- (0,3.04)
+	(110,60.1)+- (0,3.04)};
+% Breakthrough -------------------------------------
+\nextgroupplot[title=Breakthrough]
+\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10, 39.48) +- (0,3.03) 
+	(30,47.8) +- (0,3.1)
+	(50,50.95) +- (0,3.1)
+	(70,51.6) +- (0,3.1)
+	(90,49.2) +- (0,3.1)
+	(110,49.3) +- (0,3.1)};
+\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10,25.45) +- (0,2.7)
+	(30,40.78) +- (0,3.05)
+	(50,45.35) +- (0,3.09)
+	(70,49.3) +- (0,3.1)
+	(90,50.5) +- (0,3.1)
+	(110,46.1)+- (0,3.09)};
+% Nogo --------------------------------------------
+\nextgroupplot[title=Nogo 9$\times$9]
+\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10, 49.3) +- (0,3.1) 
+	(30,53.3) +- (0,3.09)
+	(50,50.4) +- (0,3.1)
+	(70,53.6) +- (0,3.09)
+	(90,50.0) +- (0,3.1)
+	(110,52.5) +- (0,3.1)};
+\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10,43.6) +- (0,3.07)
+	(30,47) +- (0,3.09)
+	(50,48) +- (0,3.1)
+	(70,48) +- (0,3.1)
+	(90,50.2) +- (0,3.1)
+	(110,50.2)+- (0,3.1)};
+
+% Pentalath --------------------------------------------
+\nextgroupplot[title=Penalath, legend to name=grouplegend2]
+\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10,44.04) +- (0,3.08) 
+	(30,47.75) +- (0,3.1)
+	(50,44.64) +- (0,3.08)
+	(70,44.63) +- (0,3.09)
+	(90,49.2) +- (0,3.1)
+	(110,49.79) +- (0,3.1)};
+	\addlegendentry{10,000 play-outs}
+\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
+            y dir=both, error bar style={black},
+            y explicit]
+	coordinates {
+	(10,44.96) +- (0,3.1)
+	(30,48.24) +- (0,3.1)
+	(50,48.75) +- (0,3.1)
+	(70,51.75) +- (0,3.1)
+	(90,49.6) +- (0,3.1)
+	(110,47.84)+- (0,3.1)};
+	\addlegendentry{25,000 play-outs}
+\end{groupplot}
+
+    \node (legend) at ($(group c1r2.south)!0.5!(group c2r2.south)$)
+      [below, yshift=-2\pgfkeysvalueof{/pgfplots/every axis title shift}]
+      {\ref{grouplegend2}};
+
+\end{tikzpicture}
+     \caption{H-MCTS Solver vs. MCTS-Solver with random play-outs. Win percentages with respect to H-MCTS, error bars represent 95\% c.i..}
+     \label{fig:h-mcts-s_v_mcts-s}
+\end{figure}
+

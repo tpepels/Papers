@@ -9,30 +9,36 @@
 \contentsline {section}{\numberline {1.3}Regret Minimization}{3}
 \contentsline {section}{\numberline {1.4}Problem Statement and Research Questions}{4}
 \contentsline {section}{\numberline {1.5}Thesis Outline}{4}
-\contentsline {chapter}{\numberline {2}Regret And Multi-Armed Bandits}{5}
-\contentsline {section}{\numberline {2.1}Introduction}{5}
-\contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{6}
-\contentsline {section}{\numberline {2.3}UCB}{6}
-\contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{7}
-\contentsline {subsection}{\numberline {2.4.1}Successive Rejects}{8}
-\contentsline {subsection}{\numberline {2.4.2}Sequential Halving}{9}
-\contentsline {section}{\numberline {2.5}Relation to MCTS}{10}
-\contentsline {subsection}{\numberline {2.5.1}UCT}{10}
-\contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{10}
-\contentsline {chapter}{\numberline {3}Simple Regret In MCTS}{13}
-\contentsline {section}{\numberline {3.1}Introduction}{13}
-\contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{14}
-\contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{15}
-\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{19}
-\contentsline {section}{\numberline {4.1}Introduction}{19}
-\contentsline {section}{\numberline {4.2}Hybrid MCTS}{20}
-\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{24}
-\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{27}
-\contentsline {chapter}{\numberline {5}Experiments and Results}{29}
-\contentsline {section}{\numberline {5.1}Experimental Setup}{29}
-\contentsline {section}{\numberline {5.2}Results}{30}
-\contentsline {chapter}{\numberline {6}Conclusion}{31}
-\contentsline {chapter}{References}{33}
+\contentsline {chapter}{\numberline {2}Regret And Multi-Armed Bandits}{7}
+\contentsline {section}{\numberline {2.1}Introduction}{7}
+\contentsline {section}{\numberline {2.2}Regret and The Multi-Armed Bandit Problem}{8}
+\contentsline {section}{\numberline {2.3}UCB}{8}
+\contentsline {section}{\numberline {2.4}Pure Exploration in Multi-Armed Bandits}{9}
+\contentsline {subsection}{\numberline {2.4.1}Successive Rejects}{10}
+\contentsline {subsection}{\numberline {2.4.2}Sequential Halving}{11}
+\contentsline {section}{\numberline {2.5}Relation to MCTS}{12}
+\contentsline {subsection}{\numberline {2.5.1}UCT}{12}
+\contentsline {subsection}{\numberline {2.5.2}Regret in MCTS}{12}
+\contentsline {chapter}{\numberline {3}Simple Regret In MCTS}{15}
+\contentsline {section}{\numberline {3.1}Introduction}{15}
+\contentsline {section}{\numberline {3.2}MCTS Based on Simple Regret}{16}
+\contentsline {section}{\numberline {3.3}Sequential Halving Applied to Trees}{17}
+\contentsline {chapter}{\numberline {4}A Hybrid MCTS}{21}
+\contentsline {section}{\numberline {4.1}Introduction}{21}
+\contentsline {section}{\numberline {4.2}Hybrid MCTS}{22}
+\contentsline {subsection}{\numberline {4.2.1}Budgeting}{25}
+\contentsline {subsection}{\numberline {4.2.2}Selection}{26}
+\contentsline {subsection}{\numberline {4.2.3}Removal}{26}
+\contentsline {subsection}{\numberline {4.2.4}Back-propagation}{26}
+\contentsline {section}{\numberline {4.3}Hybrid MCTS-Solver}{27}
+\contentsline {section}{\numberline {4.4}Upper and Lower Bounds for H-MCTS}{30}
+\contentsline {chapter}{\numberline {5}Experiments and Results}{33}
+\contentsline {section}{\numberline {5.1}Experimental Setup}{33}
+\contentsline {section}{\numberline {5.2}Results}{34}
+\contentsline {subsection}{\numberline {5.2.1}H-MCTS and UCT}{34}
+\contentsline {subsection}{\numberline {5.2.2}H-MCTS and SHOT}{36}
+\contentsline {chapter}{\numberline {6}Conclusion}{37}
+\contentsline {chapter}{References}{39}
 \contentsline {chapter}{Appendices}{}
-\contentsline {chapter}{\numberline {A}Algorithms}{35}
-\contentsline {chapter}{\numberline {B}Detailed results}{37}
+\contentsline {chapter}{\numberline {A}Algorithms}{41}
+\contentsline {chapter}{\numberline {B}Detailed results}{43}
