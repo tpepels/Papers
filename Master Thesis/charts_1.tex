@@ -1,5 +1,6 @@
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
+\captionsetup{justification=centering,margin=1cm}
 \begin{tikzpicture}
 \begin{groupplot}
     [
@@ -11,35 +12,31 @@
             ylabels at=edge left,
             vertical sep= 1.5cm,
             },
-       	width  = 0.43*\textwidth,
+        legend columns=2,
+       	width  = 0.45*\textwidth,
         major x tick style = transparent,
-        ybar= 2 * \pgflinewidth,
+        %ybar= 2 * \pgflinewidth,
         % bar width = 10pt,
         ymajorgrids = true,
         ylabel = {Win \%},
         xlabel= {Budget limit $B$},
         symbolic x coords={10,30,50,70,90,110},
         xtick = data,
-        ytick={0,20,40,50,60,70,80},
+        ytick={0,20,30,40,45,50,55,60,65,70,80},
         scaled y ticks = false,
         enlarge x limits = 0.1,
-        ymin=10,
-        ymax=80,
+        ymin=0, ymax=80
     ]
 % Amazons ----------------------------------------
-\nextgroupplot[title=Amazons]
-\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+\nextgroupplot[title=Amazons, ymin=55, ymax=75, ytick={55,60,62.5,65,67.5,70,75}]
+\addplot[blue!60!white, mark=o, range=50:70]
 	coordinates {(10, 64) +- (0,2.98) 
 	(30,65.2) +- (0,2.95)
 	(50,65.2) +- (0,2.95)
 	(70,63.6) +- (0,2.98)
 	(90,65.9) +- (0,2.94)
 	(110,62.4) +- (0,3.00)};
-\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+\addplot[red!60!white, mark=x]
 	coordinates {(10,63.5) +- (0,2.98)
 	(30,60.9) +- (0,3.02)
 	(50,62.3) +- (0,3.00)
@@ -47,39 +44,31 @@
 	(90,62.6) +- (0,3.00)
 	(110,63.7)+- (0,2.98)};
 % Breakthrough -------------------------------------
-\nextgroupplot[title=Breakthrough]
-\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+\nextgroupplot[title=Breakthrough, ymin=20, ymax=60, ytick={20,40,50,55,60}]
+\addplot[blue!60!white, mark=o]
 	coordinates {(10, 36.8) +- (0,2.99) 
 	(30,49.7) +- (0,3.1)
 	(50,49.1) +- (0,3.1)
 	(70,53.2) +- (0,3.1)
 	(90,51) +- (0,3.1)
 	(110,50.4) +- (0,3.1)};
-\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+\addplot[red!60!white, mark=x]
 	coordinates {(10,24) +- (0,2.65)
 	(30,41.2) +- (0,3.05)
 	(50,46.4) +- (0,3.09)
 	(70,52.7) +- (0,3.09)
 	(90,48.8) +- (0,3.10)
 	(110,48.4)+- (0,3.10)};
-% Nogo --------------------------------------------
-\nextgroupplot[title=Nogo 9$\times$9]
-\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+% NoGo --------------------------------------------
+\nextgroupplot[title=NoGo 9$\times$9, ymin=40, ymax=60, ytick={20,40,45,50,52.5,55,60}]
+\addplot[blue!60!white, mark=o]
 	coordinates {(10, 46.8) +- (0,3.09) 
 	(30,52.4) +- (0,3.1)
 	(50,50.9) +- (0,3.1)
 	(70,50.4) +- (0,3.1)
 	(90,52.1) +- (0,3.1)
 	(110,50.7) +- (0,3.1)};
-\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+\addplot[red!60!white, mark=x]
 	coordinates {(10,45.3) +- (0,3.09)
 	(30,48.4) +- (0,3.1)
 	(50,48.5) +- (0,3.1)
@@ -88,10 +77,8 @@
 	(110,48.8)+- (0,3.1)};
 
 % Pentalath --------------------------------------------
-\nextgroupplot[title=Penalath, legend to name=grouplegend]
-\addplot[blue!30!white, fill=blue!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+\nextgroupplot[title=Penalath, legend to name=grouplegend, ymin=35, ymax=60, ytick={20,35,40,45,50,52.5,55,60}]
+\addplot[blue!60!white, mark=o]
 	coordinates {(10, 45.8) +- (0,3.11) 
 	(30,46.71) +- (0,3.11)
 	(50,45.19) +- (0,3.11)
@@ -99,9 +86,7 @@
 	(90,45.5) +- (0,3.1)
 	(110,49.14) +- (0,3.1)};
 	\addlegendentry{10,000 play-outs}
-\addplot[red!30!white, fill=red!30!white, thick, error bars/.cd,
-            y dir=both, error bar style={black},
-            y explicit]
+\addplot[red!60!white, mark=x]
 	coordinates {(10,40.12) +- (0,3.07)
 	(30,54.69) +- (0,3.12)
 	(50,53.73) +- (0,3.14)
@@ -116,7 +101,7 @@
       {\ref{grouplegend}};
 
 \end{tikzpicture}
-     \caption{H-MCTS vs. UCT with random play-outs. Win percentages with respect to H-MCTS, error bars represent the 95\% confidence interval.}
+     \caption[H-MCTS $B$ values]{H-MCTS vs. UCT, random play-outs. \\ Win percentages with respect to H-MCTS. 1,000 games per data point.}
      \label{fig:h-mcts_v_uct}
 \end{figure}
 

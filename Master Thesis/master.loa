@@ -1,16 +1,15 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {algocf}{\numberline {1}{\ignorespaces Upper Confidence Bounds (UCB1)}}{8}
-\contentsline {algocf}{\numberline {2}{\ignorespaces Successive Rejects}}{10}
-\contentsline {algocf}{\numberline {3}{\ignorespaces Sequential Halving}}{11}
+\contentsline {algocf}{\numberline {1}{\ignorespaces Upper Confidence Bounds (UCB1)}}{7}
+\contentsline {algocf}{\numberline {2}{\ignorespaces Successive Rejects}}{8}
+\contentsline {algocf}{\numberline {3}{\ignorespaces Sequential Halving}}{9}
 \addvspace {10\p@ }
-\contentsline {algocf}{\numberline {4}{\ignorespaces Two-stage Monte-Carlo Tree Search}}{16}
-\contentsline {algocf}{\numberline {5}{\ignorespaces Sequential Halving applied to Trees (SHOT)}}{18}
+\contentsline {algocf}{\numberline {4}{\ignorespaces Two-stage Monte-Carlo Tree Search}}{13}
+\contentsline {algocf}{\numberline {5}{\ignorespaces Sequential Halving applied to Trees (SHOT)}}{15}
 \addvspace {10\p@ }
-\contentsline {algocf}{\numberline {6}{\ignorespaces Hybrid Monte-Carlo Tree Search (H-MCTS). \relax }}{24}
-\contentsline {algocf}{\numberline {7}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver (H-MCTS-Solver). \relax }}{28}
-\contentsline {algocf}{\numberline {8}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver with Overlapping Bounds. \relax }}{31}
-\addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {algocf}{\numberline {6}{\ignorespaces Hybrid Monte-Carlo Tree Search (H-MCTS). \relax }}{20}
+\contentsline {algocf}{\numberline {7}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver (H-MCTS Solver). \relax }}{24}
+\contentsline {algocf}{\numberline {8}{\ignorespaces Hybrid Monte-Carlo Tree Search Solver with Overlapping Bounds. \relax }}{26}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsfinish 

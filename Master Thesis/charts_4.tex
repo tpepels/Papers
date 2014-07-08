@@ -1,0 +1,119 @@
+\begin{figure}[ht]
+\centering
+\captionsetup{justification=centering,margin=1cm}
+\begin{tikzpicture}
+\begin{groupplot}
+    [
+        group style=
+            {
+            columns=2,
+            rows=2,
+            xlabels at=edge bottom,
+            ylabels at=edge left,
+            vertical sep= 1.5cm,
+            },
+        legend columns=2,
+       	width  = 0.45*\textwidth,
+        major x tick style = transparent,
+        %ybar= 2 * \pgflinewidth,
+        % bar width = 10pt,
+        ymajorgrids = true,
+        ylabel = {Win \%},
+        xlabel= {$C$ Constant},
+        symbolic x coords={0.2,0.4,0.5,0.6,0.8,1.0,1.2},
+        xtick = data,
+        ytick={0,20,40,50,60,70,80},
+        scaled y ticks = false,
+        enlarge x limits = 0.1,
+        ymin=20,
+        ymax=80,
+    ]
+% Amazons ----------------------------------------
+\nextgroupplot[title=Amazons, ymin=50, ymax=80, ytick={50,60,65,70,75, 80}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(0.2,64.4) 
+	(0.4,65)
+	(0.5,61.6)
+	(0.6,65.4)
+	(0.8,69.9)
+	(1.0,75.1)};
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(0.2,69.5) 
+	(0.4,60.8)
+	(0.5,62.0)
+	(0.6,62.5)
+	(0.8,68.4)
+	(1.0,71.7)};
+	\node at (axis cs:0.4,65) [pin=above right:{\smaller{$C^*$}}] {};
+% Breakthrough -------------------------------------
+\nextgroupplot[title=Breakthrough, ymin=40, ymax=80, ytick={20,30,35,40,45,50,55,60,75,80}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(0.2,75.5) 
+	(0.4,52.5)
+	(0.5,49.8)
+	(0.6,52.6)
+	(0.8,50.7)
+	(1.0,54.0)};
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(0.2,78.7) 
+	(0.4,57.2)
+	(0.5,50.7)
+	(0.6,47.8)
+	(0.8,44.4)
+	(1.0,45.3)};
+	\node at (axis cs:0.8,50.7) [pin=above:{\smaller{$C^*$}}] {};
+% NoGo --------------------------------------------
+\nextgroupplot[title=NoGo 9$\times$9, ymin=40, ymax=90, ytick={45,50,55,60,70,75,80,90}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(0.2,78.10) 
+	(0.4,54.90)
+	(0.5,52.70)
+	(0.6,52.90)
+	(0.8,52.80)
+	(1.0,57.60)};
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(0.2,85.50) 
+	(0.4,61.70)
+	(0.5,56.10)
+	(0.6,50.40)
+	(0.8,50.70)
+	(1.0,54.0)};
+\node at (axis cs:0.6,52.9) [pin=above right:{\smaller{$C^*$}}] {};
+% Pentalath --------------------------------------------
+\nextgroupplot[title=Penalath, legend to name=grouplegend4, ymin=40, ymax=100, ytick={40,50,55,60, 70, 80,85,100}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(0.2,86.5) 
+	(0.4,66.4)
+	(0.5,61.6)
+	(0.6,53.6)
+	(0.8,50.4)
+	(1.0,48.15)};
+	\addlegendentry{10,000 play-outs}
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(0.2,88.6) 
+	(0.4,68.3)
+	(0.5,62.6)
+	(0.6,61.2)
+	(0.8,55.6)
+	(1.0,54.2)};
+	\addlegendentry{25,000 play-outs}
+	\node at (axis cs:0.8,55.6) [pin=above:{\smaller{$C^*$}}] {};
+\end{groupplot}
+
+    \node (legend) at ($(group c1r2.south)!0.5!(group c2r2.south)$)
+      [below, yshift=-2\pgfkeysvalueof{/pgfplots/every axis title shift}]
+      {\ref{grouplegend4}};
+
+\end{tikzpicture}
+     \caption[H-MCTS and UCT with suboptimal $C$ values]{H-MCTS Solver vs. MCTS-Solver using the same UCT $C$ constant. \\ Win percentages with respect to H-MCTS. 1,000 games per data point.}
+     \label{fig:h-mcts-s_v_mcts-s_uct_subopt_c}
+\end{figure}
+

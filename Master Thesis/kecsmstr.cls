@@ -13,7 +13,6 @@
 \RequirePackage{lettrine}
 \typeout{KECSMSTR class 27/09/2006}
 
-
 \def\@thesisdate{}%
 \def\thesisdate#1{\def\@thesisdate{#1}} 
 
