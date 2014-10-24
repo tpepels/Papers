@@ -288,8 +288,8 @@ For each table, the results are shown with respect to the first algorithm mentio
 \cline{1-4}
 \multicolumn{2}{c|}{} \\ [-3mm]
 Amazons 8$\times$8 &\multicolumn{1}{l|}{50}			& {\bf{65.2}} $\pm$ 3.0 		& {\bf{62.0}} $\pm$ 3.0 		\\ [.5mm] 
-AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& {\bf{57.9}} $\pm$ 3.1 		& {\bf{69.1}} $\pm$ 2.9 		\\ [.5mm] 
-Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& 52.5 $\pm$ 3.1				& {\bf{65.2}} $\pm$ 3.0 		\\ [.5mm] 
+AtariGo 9$\times$9 &\multicolumn{1}{l|}{30} 		& {\bf{60.6}} $\pm$ 3.1 		& {\bf{60.6}} $\pm$ 3.1		\\ [.5mm] 
+Ataxx 7$\times$7 &\multicolumn{1}{l|}{30} 			& 52.4 $\pm$ 3.1				& 47.2 $\pm$ 3.0 		\\ [.5mm] 
 Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{53.2}} $\pm$ 3.1			& 50.4 $\pm$ 3.1 				\\ [.5mm] 
 NoGo 9$\times$9 &\multicolumn{1}{l|}{30} 			& 52.4 $\pm$ 3.1				& 48.8 $\pm$ 3.1 				\\ [.5mm] 
 Pentalath &\multicolumn{1}{l|}{30} 		  			& 46.7 $\pm$ 3.1				& {\bf{54.7}} $\pm$ 3.1			\\ [.5mm] 
@@ -387,7 +387,7 @@ The second part of Table~\ref{tab:uct_hmcts-s-h} shows results for matches playe
 \label{sec:concl}
 In this paper an MCTS technique is presented based on the results of research in regret theory. The conclusions of the research performed in \cite{Bubeck11Pure} were interpreted into the form of a Hybrid MCTS technique (H-MCTS). Based on minimizing simple regret near the root, where the overall budget is high, and cumulative regret deeper in the tree~\cite{tolpin2012mcts}. Depending on the available budget during search H-MCTS' simple regret tree can expand deeper to provide  better bounds on simple regret on the best replies of its rooted subtrees. The simple regret tree is traversed using SHOT~\cite{Cazenave14SHOT}. H-MCTS requires beforehand knowledge of the available play-out budget and therefore cannot be terminated at any time to provide a recommendation. In tournament-play, when search time is strictly limited, an approximation of the number of simulations per second can be used to determine the available play-out budget.
 
-H-MCTS performed better against SHOT given the same allocation of play-outs in 10 out of 12 experiments. Moreover, results show that in different two-player games, H-MCTS performs either better, or on par with UCT. In Amazons, Ataxx, and AtariGo H-MCTS outperforms UCT by up to 69.1\%. In Breakthrough using an informed play-out policy H-MCTS outperformed UCT by up to 64\% using the solver technique.
+H-MCTS performed better against SHOT given the same allocation of play-outs in 10 out of 12 experiments. Moreover, results show that in different two-player games, H-MCTS performs either better, or on par with UCT. In Amazons, AtariGo, and Pentalath H-MCTS outperforms UCT by up to 65.2\%. In Breakthrough using an informed play-out policy H-MCTS outperformed UCT by up to 61.3\% using the solver technique.
 
 Although the hybrid technique is founded on theoretical work in both the MAB context and MCTS, we have not shown that it provides better bounds on simple regret compared to other techniques. This is work for future research. In order to show that H-MCTS exhibits lower simple regret in practice, it should be validated in smaller, proven games for which the game-theoretic value of each action is known. Moreover, investigation is required regarding the effects of the budget limit $B$ in relation to the total allocated number of play-outs, and the interrelation between H-MCTS' $B$, and UCT's $C$ constant. In the experiments presented in this paper, both were fixed per game, rather than per experiment. Finally, the speed benefits of H-MCTS, combined with parallelization is open to investigation. H-MCTS can be parallelized efficiently by dividing budgets in the simple regret tree over multiple threads~\cite{Cazenave14SHOT}.
 
