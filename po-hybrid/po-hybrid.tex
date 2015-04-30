@@ -1,0 +1,163 @@
+\documentclass[a4paper]{llncs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{graphicx, epstopdf, color, setspace, algorithm, amsfonts, amsmath, mathtools, nicefrac}
+\usepackage[algo2e, noend, noline, linesnumbered]{algorithm2e}
+\SetKwIF{If}{ElseIf}{Else}{if}{then}{else if}{else}{endif}
+\RestyleAlgo{boxruled}
+\setlength{\textfloatsep}{.5cm}
+\newcommand{\func}[1]{{\sc #1}}
+\newcommand{\tuple}[1]{\ensuremath{\left \langle #1 \right \rangle }}
+\DontPrintSemicolon
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\newcommand{\eg}{{\it e.g.,}~}
+\newcommand{\ie}{{\it i.e.,}~}
+\newcommand{\bE}{\mathbb{E}}
+\newcommand{\cf}{{cf.}~}
+\newcommand{\TODO}[1]{\textbf{\color{red}#1}}
+\graphicspath{{img/}}
+\pagestyle{headings}
+\title{Sequential~Halving~for~Partially~Observable~Games}
+
+\author{Tom~Pepels\inst{1} \and Tristan~Cazenave\inst{2} \and Mark~H.M.~Winands\inst{1}}
+
+\institute{Department of Knowledge Engineering,  Maastricht University\\ \email{\{tom.pepels,m.winands\}@maastrichtuniversity.nl} \and LAMSADE - Université Paris-Dauphine \\ \email{cazenave@lamsade.dauphine.fr}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract} 
+
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+\section{Monte-Carlo Tree Search}
+\label{sec:mcts}
+
+Monte-Carlo Tree Search (MCTS) is a best-first search method based on random sampling by Monte-Carlo simulations of the state space of a domain~\cite{coulom2007efficient,kocsis2006bandit}. In game play, this means that decisions are made based on the results of randomly simulated play-outs. MCTS has been successfully applied to various turn-based games such as Go~\cite{lee2010current}, Lines of Action~\cite{Winands2010b}, and Hex~\cite{arneson2010monte}. Moreover, MCTS has been used for agents playing real-time games such as the Physical Traveling Salesman~\cite{powleytsp}, real-time strategy games~\cite{balla2009uct}, and Ms~Pac-Man~\cite{realtime2014}, but also in real-life domains such as optimization, scheduling, and security~\cite{browne2012survey}.
+
+In MCTS, a tree is built incrementally over time, which maintains statistics at each node corresponding to the rewards collected at those nodes and number of times they have been visited. The root of this tree corresponds to the current position. The basic version of MCTS consists of four steps, which are performed iteratively until a computational threshold is reached, \ie a set number of simulations, an upper limit on memory usage, or a time constraint. 
+
+Each MCTS simulation consist of two main steps, 1) the \emph{selection} step, where moves are selected and played inside the tree according to the selection policy until a leaf is \emph{expanded}, and 2) the \emph{play-out}, in which moves are played according to a simulation policy, outside the tree. At the end of each play-out a terminal state is reached and the result is \emph{back-propagated} along the selected path in the tree from the expanded leaf to the root.
+
+\subsection{UCT}
+\label{subsec:uct}
+During the selection step, a policy is required to explore the tree to decide on promising options. For this reason, the widely used Upper Confidence Bound applied to Trees (UCT)~\cite{kocsis2006bandit} was derived from the UCB1~\cite{auer2002using} policy. In UCT, each node is treated as a bandit problem whose arms are the moves that lead to different child nodes. UCT balances the exploitation of rewarding nodes whilst allowing exploration of lesser visited nodes. Consider a node $p$ with children $I(p)$, then the policy determining which child $i$ to select is defined as:
+
+\begin{equation}
+\label{eq:uct}
+i^* = argmax_{i \in I(p)}\left\{ v_i + C \sqrt{ \frac{\ln{n_p}}{n_i}}\right\},
+\end{equation}
+where $v_i$ is the score of the child $i$ based on the average result of simulations that visited it, $n_p$ and $n_i$ are the visit counts of the current node and its child, respectively. $C$ is the exploration constant to tune. UCT is applied when the visit count of $p$ is above a threshold $T$, otherwise a child is selected at random. UCB1 and consequently, UCT incorporate both exploitation and exploration.
+
+\section{MCTS in Partially Observable Games}
+\label{subsec:mcts-po-games}
+
+% IS-MCTS 
+\section{A Hybrid PO-MCTS}
+\label{sec:h-mcts}
+
+\subsection{Sequential Halving}
+\label{subsec:seq_halving}
+
+\IncMargin{1em}
+\begin{algorithm2e}[t]
+\setstretch{0.95}
+	\KwIn{total budget $T$, $K$ arms}
+	\KwOut{recommendation $J_T$}
+	\vspace{0.05cm}
+	$S_0 \gets \{1,\dots,K\}$,
+	$B \gets \ceil{\log_2{K}} - 1$														\;
+	\BlankLine
+	\For{k=0 \emph{\KwTo} $B$}{
+		sample each arm $i \in S_k$, 										
+		$n_k = \floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$
+		times 																				\;
+		\vspace{0.1cm}
+		update the average reward of each arm based on the rewards 		\;
+		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the best average			\;
+	}
+	\KwRet{the single element of $S_B$}
+  \caption[Sequential Halving]{Sequential Halving~\protect\cite{Karnin13SH}. \label{alg:seqhalv}}
+\end{algorithm2e}
+\DecMargin{1em}
+
+\subsection{MCTS and Sequential Halving for Partially Observable Games}
+\label{subsec:po-seq_halving}
+
+\IncMargin{1em}
+\begin{algorithm2e}
+\setstretch{1.1}
+	\KwIn{node $p$, allocated budget $budget$}
+	\KwOut{$t_p$: number of play-outs, $p1$ and $p2$ wins}
+	\vspace{0.1cm}
+	\func{h-mcts}(node $p$, $budget$):												\;
+	\Indp
+	\lIf{isLeaf($p$)}{$S\gets$ \func{expand}($p$)}					
+	$t_p \gets \tuple{0,0,0}$														\;		
+	\If{isTerminal($p$)}{															\label{h-mcts:terminal}
+		\func{update} $t_p$, with $budget$ wins for the appropriate player, and $budget$ visits							\;
+		 \KwRet{$t_p$}
+	}
+	$b \gets \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \; \label{h-mcts:budgetlimit}
+	\If{not isRoot($p$) \textbf{and} $b < B $}{
+		\For{i=0 \emph{\KwTo} budget}{
+			$\tuple{v, w_1, w_2}_i \gets$ \func{uct}($p$)							\;
+			\func{update} $p, t_p$ with $\tuple{v, w_1,w_2}_i$						\;
+		}
+		\KwRet{$t_p$}
+	}
+	$b_u, k \gets 0$\; $S_0 \gets S$\; $s \gets |S|$								\;
+	\Repeat{$b_u \geq budget$ \textbf{or} $s < 2$} {								\label{h-mcts:shot}
+		\For{i=1 \emph{\KwTo} s}{
+			$n_i \gets$ node $n$ at rank $i$ of $S_k$								\;			
+			\If{$b > n_i.visits$} {
+				$b_i \gets b - n_i.visits$											\;
+				\lIf{$i = 0$ \textbf{and} $s = 2$} { $b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$ }
+				$b_i \gets \min{(b_i, budget - b_u)}$								\;
+				$\tuple{v, w_1, w_2}_i \gets$ \func{h-mcts}($n_i$, $b_i$)			\;
+				\func{update} $p, b_u$, and $t_p$ with $\tuple{v, w_1, w_2}_i$		\;	\label{h-mcts:update}
+			}
+			break if $b_u \geq budget$												\;
+		}
+		$k \gets k + 1$																\;
+		$S_{k} \gets$ $S_{k-1}$, with the first $s$ elements sorted in descending order	\;	\label{h-mcts:sort}
+		$s \gets \ceil{\nicefrac{s}{2}}$										\;
+		$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$\;
+	}
+	\func{update} $p.budgetSpent$ with $b_u$										\;
+	\Indm
+	\KwRet{$t_p$}
+  \caption{Hybrid Monte-Carlo Tree Search (H-MCTS). \label{alg:h-mcts}}
+\end{algorithm2e}
+\DecMargin{1em}
+
+\section{Experiments and Results}
+\label{sec:exp_res}
+
+In this section we show the results of the experiments performed on four, partially observable two-player games. PO-H-MCTS and the games were implemented in two different engines. Go Fish, Lost Cities and Phantom Domineering are implemented in a Java based engine. Phantom Go is implemented in a \emph{C++} based engine.
+\begin{itemize}
+\item \emph{Go Fish} 
+\item \emph{Lost Cities}
+\item \emph{Phantom Domineering}
+\item \emph{Phantom Go} 
+\end{itemize}
+
+A uniform random selection policy is used during the play-outs, unless otherwise stated. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was tuned in each game and was not re-optimized for H-MCTS, both UCT and H-MCTS use the same $C$ constant in the experiments.
+
+\subsection{Results}
+\label{subsec:results}
+
+For each table, the results are shown with respect to the first algorithm mentioned in the captions, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of both 10,000 and 25,000 play-outs.
+
+\section{Conclusion and Future Research}
+\label{sec:concl}
+
+\bibliographystyle{splncs03}
+\bibliography{h-mcts}
+\end{document}
