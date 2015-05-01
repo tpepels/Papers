@@ -36,13 +36,13 @@
 \section{Introduction}
 \label{sec:intro}
 
-Partially observable games introduce the complexity of uncertainty in game-play. In partially observable games, some element of the game is not directly observable. Partial observability can be introduced in a game in two ways (1) by hiding certain parts of the  position to the player (e.g., hiding the rank of piece in Stratego) and (2) by introducing randomness (e.g., rolling a die in Backgammon). Other than in fully observable games, we cannot directly search for sequences of actions leading to promising moves using the partial state description.
+Partially observable games introduce the complexity of uncertainty in game-play. In partially observable games, some element of the game is not directly observable. Partial observability can be introduced by hiding certain parts of the  position to the player (e.g., hiding the rank of piece in Stratego), in game theory this is also called imperfect information. Other than in fully observable games, we cannot directly search for sequences of actions leading to promising moves using the partially visible state. In this paper we discuss four different partially observable games. Go Fish and Lost cities, which are stochastic games with imperfect information, and the deterministic imperfect information games Phantom Domineering and Phantom Go.
 
-Different approaches have been suggested for handling partial observability in Monte-Carlo Tree Search (MCTS) in such domains. Such as Determinized Monte-Carlo Search~\cite{ginsberg99} where a random game state is sampled before the search (\ie determinized), and multiple trees are maintained per determinization. The recently introduced Information Set MCTS~\cite{cowling2012} maintains information sets of states reachable in the current determinization in the tree, as such re-using statistics over multiple determinizations in a single tree.
+Different approaches have been suggested for handling partial observability in Monte-Carlo Tree Search (MCTS) in such domains. Such as Determinized Monte-Carlo Search~\cite{ginsberg99} where a random game state is sampled before the search (\ie determinized), and multiple trees are maintained per determinization. The recently introduced Information Set MCTS~\cite{cowling2012} maintains information sets of states reachable in the current determinization in the tree, as such re-using statistics over multiple determinizations in the tree.
 
 In this paper we investigate the effects of using Sequential Halving~\cite{Karnin13SH} as a selection policy for MCTS in partially observable games. This work is a continuation of the Hybrid MCTS~\cite{Pepels14hmcts} algorithm, which was introduced as a method of minimizing simple and cumulative regret simultaneously during search.
 
-The paper is structured as follows: first, in Section \ref{sec:mcts}, we give a broad overview of MCTS. Next, in Section \ref{sec:h-mcts} we discuss Sequential Halving, and how it may be applied to MCTS in partially observable games. After this we describe our experimental domains in Section \ref{sec:exp_dom}. Finally we show our experimental results in Section~\ref{sec:exp_res}, and conclusions in Section~\ref{sec:concl}.
+The paper is structured as follows: first, in Section \ref{sec:mcts}, we give a brief overview of MCTS. Next, in Section \ref{sec:h-mcts} we discuss Sequential Halving, and how it may be applied to MCTS in partially observable games. After this we describe our experimental domains in Section \ref{sec:exp_dom}. Finally we show our experimental results in Section~\ref{sec:exp_res}, and conclusions in Section~\ref{sec:concl}.
 
 \section{Monte-Carlo Tree Search}
 \label{sec:mcts}
@@ -66,11 +66,19 @@ where $v_i$ is the score of the child $i$ based on the average result of simulat
 \subsection{MCTS in Partially Observable Games}
 \label{subsec:mcts-po-games}
 
-\section{A Hybrid PO-MCTS}
+\section{Sequential Halving and MCTS in Partially Observable Games}
 \label{sec:h-mcts}
+
+In this section we describe our approach to applying Hybrid MCTS~\cite{Pepels14hmcts} to partially observable games. First we detail Sequential Halving in Subsection~\ref{subsec:seq_halving}, next in Subsection~\ref{subsec:h-mcts_po} we discuss how a hybrid search technique may be used in partially observable games.
 
 \subsection{Sequential Halving}
 \label{subsec:seq_halving}
+
+Non-exploiting selection policies have been proposed to decrease simple regret at high rates in multi-armed bandits. Given that UCB1~\cite{auer2002using} has an optimal rate of cumulative regret convergence, and the conflicting limits on the bounds on the regret types shown in~\cite{Bubeck11Pure}, policies that have a higher rate of exploration than UCB1 are expected to have better bounds on simple regret. Sequential Halving (SH)~\cite{Karnin13SH} is a novel, pure exploration technique developed for minimizing simple regret in the MAB problem.
+
+In many problems there are only one or two good decisions to be identified, this means that when using a pure exploration technique, a potentially large portion of the allocated budget is spent sampling suboptimal arms. Therefore, an efficient policy is required to ensure that inferior arms are not selected as often as arms with a high reward. Successive Rejects~\cite{audibert2010best} was the first algorithm to show a high rate of decrease in simple regret. It works by dividing the total computational budget into distinct rounds. After each round, the single worst arm is removed from selection, and the algorithm is continued on the reduced subset of arms. Sequential Halving (SH)~\cite{Karnin13SH}, was later introduced as an alternative to Successive Rejects, offering better performance in large-scale MAB problems.
+
+SH divides search time into distinct rounds, and during each round arms are sampled uniformly. After each such round, the empirically worst half of the remaining arms are removed until a single arm remains. The rounds are equally distributed such that each round is allocated approximately the same number of trials (budget), but with smaller subset of available arms to sample. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
 
 \IncMargin{1em}
 \begin{algorithm2e}[t]
@@ -94,8 +102,50 @@ where $v_i$ is the score of the child $i$ based on the average result of simulat
 \end{algorithm2e}
 \DecMargin{1em}
 
+\subsection{Hybrid MCTS for Partially Observable Games}
+\label{subsec:h-mcts_po}
+
+In~\cite{Pepels14hmcts} a Hybrid MCTS is proposed. This technique uses recursive Sequential Halving, or SHOT~\cite{Cazenave14SHOT} to minimize simple regret near the root. The hybrid technique was shown to improve performance in several domains, including Amazons, AtariGo and Pentalath. Hybrid MCTS is based on the notion that minimizing simple regret, \ie the regret of not \emph{recommending} the optimal move after $n$ simulations, than cumulative regret, \ie the regret over having \emph{selected} suboptimal moves during simulation. Previous work showed similar improvements in recommended moves in Markov Decision Processes~\cite{Feldman12BRUE,tolpin2012mcts}.
+
+In this paper we extend Hybrid MCTS to partially observable games. The problem with these domains is that when using multiple determinizations during search, revisiting nodes may result in different playable moves. This is not a problem when using selection methods such as UCT, which are greedy and select moves based on the current statistics. However, because Sequential Halving is a uniform exploration method, in order to guarantee its lower bound on simple regret must be able to revisit the same node multiple times. In other words, available moves may not change in between visits of the algorithm, or its specifically designed budget allocation is no longer valid.
+
+In all partially observable games that we are aware of, the current player always has knowledge over the current set of moves that he can play. Therefore, we can conclude that, at the root of the search tree, moves are consistent between visits.
+
+\IncMargin{1em}
+\begin{algorithm2e}[t]
+\setstretch{0.95}
+	\KwIn{total budget $T$, $K$ moves}
+	\KwOut{recommendation $J_T$}
+	\vspace{0.05cm}
+	$S_0 \gets \{1,\dots,K\}$,
+	$B \gets \ceil{\log_2{K}} - 1$														\;
+	\BlankLine
+	\For{k=0 \emph{\KwTo} $B$}{
+										\;
+		\For{each move $i \in S_k$} {									
+		  $n_k \gets \floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$ \;
+		  \For{n=0 \emph{\KwTo} $n_k$} {
+		  	select a new determinization $d$ at random 	\; \label{determinize}
+		 	sample move $i$ using IS-MCTS and determinization $d$ \;
+		  }
+		}																			\;
+		\vspace{0.1cm}
+		update the average reward of each arm based on the rewards 		\;
+		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the best average			\;
+	}
+	\KwRet{the single element of $S_B$}
+  \caption[Sequential Halving]{Sequential Halving and Information Set Monte-Carlo Tree Search~\protect\cite{Karnin13SH,cowling2012}. \label{alg:seqhalv-mcts}}
+\end{algorithm2e}
+\DecMargin{1em}
+
+
+
 \section{Experimental Domains}
 \label{sec:exp_dom}
+
+In this section we discuss the partially observable games which will be used in the experiments in Section \ref{sec:exp_res}. First we describe the stochastic domains Go Fish and Lost Cities. Next the deterministic games Phantom Domineering and Phantom Go.
+
+\subsection{Stochastic Games}
 
 {\sc Go Fish} is a card game which is generally played by multiple players. The goal is to collect as many `books' of 4 cards of equal rank. All players hide their cards from each other, and only finished books of four cards are placed face-up on the table. Each turn, a player may ask a single other player for a specific rank. If the questioned player has any cards of the requested rank in his hand, he gives them to the requesting player, which may consequently make a new request. If the questioned player does not posses a card of the requested rank, the questioning player must `go fish', drawing a card from the stack, and the turn moves to the next player. The game ends when there are no more cards on the stack, and the player with the most finished books wins the game.
 
@@ -103,11 +153,20 @@ In our implementation, the game was slightly modified to allow it to be played b
 
 {\sc Lost Cities} is a 60-card card game, designed in 1999 by Reiner Knizia. The goal of the game is to achieve the most profitable set of expeditions to one or more of five lost cities. Players start expeditions by placing numbered cards on them, each player can start up to five expeditions regardless of the opponents' expeditions. Each card in the game has a color and a number, the colors represent one of the five expeditions, the numbers representing the score gained. Next to these cards, colored investment cards cumulatively double the score awarded for an expedition. 
 
-Placing a card on an empty expedition `initializes' it with a cost of 20. Or, when an investment card is played, with a score of $20\times nInvest_c$, where $nInvest_c$ is the number of investment cards played on expedition $c$. These cards can only be played on an expedition when no other cards have been played on it. For example, playing the `red 5' card starts the red expedition with a cost of 20 and a score of 5 resulting in a -15 score for the player. With a single investment card on this expedition, the score will be 30. Playing more cards on the expedition leads to higher scores. However, only increasing cards may be placed on top of others. In our example, the card `red 3' can no longer be played, whereas the `red 8' card can.
+Placing a card on an empty expedition `initializes' it with a cost of 20. Or, when an investment card is played, with a score of $20\times I_c$, where $I_c$ is the number of investment cards played on expedition $c$. These cards can only be played on an expedition when no other cards have been played on it. For example, playing the `red 5' card starts the red expedition with a cost of 20 and a score of 5 resulting in a -15 score for the player. With a single investment card on this expedition, the score will be 30. Playing more cards on the expedition leads to higher scores. However, only increasing cards may be placed on top of others. In this example, the card `red 3' can no longer be played, whereas the `red 8' card can be played.
 
-Each turn, players may either play or discard a card, and draw a card from the draw pile or one of the discard piles. Discarding a card places it on top of one of the discard piles which are accessible by both players. The game ends when no card are left on the draw pile, the player with the highest score wins the game.
+Each turn, players may either play or discard a card, and draw a card from the draw pile or one of the discard piles. Discarding a card places it on top of one of the colored discard piles which are accessible to both players. The game ends when no cards are left on the draw pile, the player with the highest score wins the game.
 
-{\sc Phantom Domineering}
+In Lost Cities, interaction between players is limited. However, players have to carefully chose their expeditions partly based on their opponents choices. Moreover, players must be careful not to discard cards which may benefit their opponent, but at the same time take care that they can draw cards beneficial to their chosen expeditions.
+
+\subsection{Deterministic Games}
+
+We describe two so-called phantom games. Phantom games are modified versions of fully observable games, in which part of the game state is made invisible to the players. Consequently, whenever a player makes a move it may be rejected, the player may move again until his move is no longer rejected. Playing a move that is rejected is always beneficial, since it provides the player with new information of the actual game state.
+
+{\sc Phantom Domineering} is based on the combinatorial game Domineering, which is generally played on a square board with two players. Each turn players block two adjacent positions on the board, one player plays vertically, and the other horizontally. The game ends when one of the players cannot make move. As with most combinatorial games, the first player unable to make a move loses the game, and draws are not possible.
+
+In Phantom Domineering, players can only directly observe their own pieces on the board. For both players, their opponent's pieces are hidden, and can only be observed indirectly by performing rejected moves. A unique property in Phantom Domineering is that rejected moves do not provide immediate information about the opponent's moves. In games where moves consist of occupying single positions, a rejected move immediately reveals an opponent's move. In Phantom Domineering, however, a rejected move means that either one of the two positions is blocked, or both.
+
 {\sc Phantom Go} 
 
 
@@ -115,7 +174,10 @@ Each turn, players may either play or discard a card, and draw a card from the d
 \label{sec:exp_res}
 In this section we show the results of the experiments performed on four, partially observable two-player games. PO-H-MCTS and the games were implemented in two different engines. Go Fish, Lost Cities and Phantom Domineering are implemented in a Java based engine. Phantom Go is implemented in a \emph{C++} based engine.
 
-A uniform random selection policy is used during the play-outs, unless otherwise stated. The $C$ constant, used by UCT (Equation \ref{eq:uct}) was tuned in each game and was not re-optimized for H-MCTS, both UCT and H-MCTS use the same $C$ constant in the experiments.
+Lost Cities relies heavily on a heuristic play-out function which prevents obvious bad moves such as starting an expedition without a chance of making a profit. These heuristics improve play over a random play-out by up to $40\%$.
+In Phantom Domineering, an $\epsilon$-greedy play-out strategy selects moves based on the number of available moves for the opponent $n_o$ and the player to move $n_p$ and selects the move which maximizes $n_p - n_o$.
+Go Fish selects moves uniformly random during play-outs.
+For each game, the $C$ constant, used by UCT (Equation \ref{eq:uct}) was tuned and was not re-optimized for the Hybrid MCTS, both UCT and H-MCTS use the same $C$ constant in the experiments.
 
 \subsection{Results}
 \label{subsec:results}
