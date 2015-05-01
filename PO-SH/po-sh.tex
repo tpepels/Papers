@@ -1,0 +1,89 @@
+\documentclass[a4paper]{llncs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{graphicx, epstopdf, color, setspace, algorithm, amsfonts, amsmath, mathtools, nicefrac}
+\usepackage[algo2e, noend, noline, linesnumbered]{algorithm2e}
+\SetKwIF{If}{ElseIf}{Else}{if}{then}{else if}{else}{endif}
+\RestyleAlgo{boxruled}
+\setlength{\textfloatsep}{.5cm}
+\newcommand{\func}[1]{{\sc #1}}
+\newcommand{\tuple}[1]{\ensuremath{\left \langle #1 \right \rangle }}
+\DontPrintSemicolon
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\newcommand{\eg}{{\it e.g.,}~}
+\newcommand{\ie}{{\it i.e.,}~}
+\newcommand{\bE}{\mathbb{E}}
+\newcommand{\cf}{{cf.}~}
+\newcommand{\TODO}[1]{\textbf{\color{red}#1}}
+\graphicspath{{img/}}
+\pagestyle{headings}
+\title{Simple~Regret~Based~Monte-Carlo~in~Partially~Observable~Games}
+
+\author{Tom~Pepels\inst{1} \and Tristan~Cazenave\inst{2} \and Mark~H.M.~Winands\inst{1}}
+
+\institute{Department of Knowledge Engineering,  Maastricht University\\ \email{\{tom.pepels,m.winands,marc.lanctot\}@maastrichtuniversity.nl} \and LAMSADE - Université Paris-Dauphine \\ \email{cazenave@lamsade.dauphine.fr}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+\section{Partial Observability in Games}
+\label{sec:po-games}
+
+\section{Sequential Halving}
+\label{sec:seq_halving}
+
+% Straight from the Hybrid paper
+In many problems there are only one or two good decisions to be identified, this means that when using a pure exploration technique, a potentially large portion of the allocated budget is spent sampling suboptimal arms. Therefore, an efficient policy is required to ensure that inferior arms are not selected as often as arms with a high reward. Successive Rejects~\cite{audibert2010best} was the first algorithm to show a high rate of decrease in simple regret. It works by dividing the total computational budget into distinct rounds. After each round, the single worst arm is removed from selection, and the algorithm is continued on the reduced subset of arms. Sequential Halving (SH)~\cite{Karnin13SH}, was later introduced as an alternative to Successive Rejects, offering better performance in large-scale MAB problems.
+
+SH divides search time into distinct rounds, and during each round arms are sampled uniformly. After each such round, the empirically worst half of the remaining arms are removed until a single arm remains. The rounds are equally distributed such that each round is allocated approximately the same number of trials (budget), but with smaller subset of available arms to sample. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
+
+\IncMargin{1em}
+\begin{algorithm2e}[t]
+\setstretch{0.95}
+	\KwIn{total budget $T$, $K$ arms}
+	\KwOut{recommendation $J_T$}
+	\vspace{0.05cm}
+	$S_0 \gets \{1,\dots,K\}$,
+	$B \gets \ceil{\log_2{K}} - 1$														\;
+	\BlankLine
+	\For{k=0 \emph{\KwTo} $B$}{
+		sample each arm $i \in S_k$, 										
+		$n_k = \floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$
+		times 																				\;
+		\vspace{0.1cm}
+		update the average reward of each arm based on the rewards 		\;
+		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the best average			\;
+	}
+	\KwRet{the single element of $S_B$}
+  \caption[Sequential Halving]{Sequential Halving~\protect\cite{Karnin13SH}. \label{alg:seqhalv}}
+\end{algorithm2e}
+\DecMargin{1em}
+
+\section{Experiments and Results}
+\label{sec:experiments}
+
+\subsection{Experimental Domains}
+\label{subsec:domains}
+
+\subsection{Results}
+\label{subsec:results}
+
+\section{Conclusion and Future Research}
+\label{sec:concl}
+
+\subsection*{Acknowledgments} 
+This work is partially funded by the Netherlands Organisation for Scientific Research (NWO) in the framework of the project Go4Nature, grant number 612.000.938.
+
+\bibliographystyle{splncs03}
+\bibliography{h-mcts}
+\end{document}
