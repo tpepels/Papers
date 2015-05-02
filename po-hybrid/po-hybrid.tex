@@ -64,7 +64,31 @@ i^* = argmax_{i \in I(p)}\left\{ v_i + C \sqrt{ \frac{\ln{n_p}}{n_i}}\right\},
 where $v_i$ is the score of the child $i$ based on the average result of simulations that visited it, $n_p$ and $n_i$ are the visit counts of the current node and its child, respectively. $C$ is the exploration constant to tune. UCT is applied when the visit count of $p$ is above a threshold $T$, otherwise a child is selected at random. UCB1 and consequently, UCT incorporate both exploitation and exploration.
 
 \subsection{MCTS in Partially Observable Games}
+
 \label{subsec:mcts-po-games}
+\begin{figure}[t]
+\begin{center}
+\includegraphics[clip, width=\textwidth]{determinizationc.pdf}
+\caption{Example of a determinization with a single tree. In this example, \emph{D} = \{1,2,3\}
+and the selected determinization is 2.}
+\label{fig:det}
+\end{center}
+\end{figure}
+
+To deal with games having imperfect information, determinization can be applied in the MCTS engine. The principle behind determinization is that, at the start of each simulation at the root, the hidden information is filled in, while being consistent with the history of the game. 
+
+Determinization has been called ``averaging over clairvoyance'' \cite{russell10},
+where players never try to hide or gain information, because in each determinization,
+all information is already available. Despite these  shortcomings, it has
+produced strong results in the past, for instance in Monte-Carlo engines for the trick-based card game  Bridge \cite{ginsberg99}, the card game Skat \cite{conf/ijcai/BuroLFS09}, Scrabble \cite{sheppard02}, and Phantom Go \cite{cazenave06}. 
+
+Determinization in the MCTS framework has been applied in games such as Scotland Yard and Lord of the Rings: The Confrontation. It works as follows. For each MCTS simulation starting at the root the missing information  is filled in a  random manner. The determinization is used throughout the whole simulation. There are two approaches to build and traverse the search tree. 
+
+The first approach is by generating a separate tree for each determinization (also called determinized UCT \cite{cowling2012}). After selecting a determinization at the root node, the corresponding tree is traversed. Based on majority voting \cite{SoejimaKW10} the final move is selected. Each candidate move receives one vote from each tree where it is the move that was played most often. The candidate move with the highest number of votes is selected
+as the best move. If more moves are tied, the move with the highest number of visits
+over all trees is selected. The concept of separate-tree determinization is similar to root parallelization.
+
+The second approach is using single-tree determinization \cite{ciancarini10,cowling2012,nijssen12tciaig}. When generating the tree, all possible moves from all possible determinizations are generated. When traversing the tree, only the moves consistent with the current determinization are considered. An example is given in \figurename~\ref{fig:det}. The advantage of this technique is that information is shared between different determinizations, increasing the amount of usable information. This type of determinization is  also called Single-Observer Information Set Monte-Carlo Tree Search \cite{cowling2012}.
 
 \section{Sequential Halving and MCTS in Partially Observable Games}
 \label{sec:h-mcts}
@@ -74,14 +98,8 @@ In this section we describe our approach to applying Hybrid MCTS~\cite{Pepels14h
 \subsection{Sequential Halving}
 \label{subsec:seq_halving}
 
-Non-exploiting selection policies have been proposed to decrease simple regret at high rates in multi-armed bandits. Given that UCB1~\cite{auer2002using} has an optimal rate of cumulative regret convergence, and the conflicting limits on the bounds on the regret types shown in~\cite{Bubeck11Pure}, policies that have a higher rate of exploration than UCB1 are expected to have better bounds on simple regret. Sequential Halving (SH)~\cite{Karnin13SH} is a novel, pure exploration technique developed for minimizing simple regret in the MAB problem.
-
-In many problems there are only one or two good decisions to be identified, this means that when using a pure exploration technique, a potentially large portion of the allocated budget is spent sampling suboptimal arms. Therefore, an efficient policy is required to ensure that inferior arms are not selected as often as arms with a high reward. Successive Rejects~\cite{audibert2010best} was the first algorithm to show a high rate of decrease in simple regret. It works by dividing the total computational budget into distinct rounds. After each round, the single worst arm is removed from selection, and the algorithm is continued on the reduced subset of arms. Sequential Halving (SH)~\cite{Karnin13SH}, was later introduced as an alternative to Successive Rejects, offering better performance in large-scale MAB problems.
-
-SH divides search time into distinct rounds, and during each round arms are sampled uniformly. After each such round, the empirically worst half of the remaining arms are removed until a single arm remains. The rounds are equally distributed such that each round is allocated approximately the same number of trials (budget), but with smaller subset of available arms to sample. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
-
 \IncMargin{1em}
-\begin{algorithm2e}[t]
+\begin{algorithm2e}[b]
 \setstretch{0.95}
 	\KwIn{total budget $T$, $K$ arms}
 	\KwOut{recommendation $J_T$}
@@ -102,17 +120,30 @@ SH divides search time into distinct rounds, and during each round arms are samp
 \end{algorithm2e}
 \DecMargin{1em}
 
+Non-exploiting selection policies have been proposed to decrease simple regret at high rates in multi-armed bandits. Given that UCB1~\cite{auer2002using} has an optimal rate of cumulative regret convergence, and the conflicting limits on the bounds on the regret types shown in~\cite{Bubeck11Pure}, policies that have a higher rate of exploration than UCB1 are expected to have better bounds on simple regret. Sequential Halving (SH)~\cite{Karnin13SH} is a novel, pure exploration technique developed for minimizing simple regret in the MAB problem.
+
+In many problems there are only one or two good decisions to be identified, this means that when using a pure exploration technique, a potentially large portion of the allocated budget is spent sampling suboptimal arms. Therefore, an efficient policy is required to ensure that inferior arms are not selected as often as arms with a high reward. Successive Rejects~\cite{audibert2010best} was the first algorithm to show a high rate of decrease in simple regret. It works by dividing the total computational budget into distinct rounds. After each round, the single worst arm is removed from selection, and the algorithm is continued on the reduced subset of arms. Sequential Halving (SH)~\cite{Karnin13SH}, was later introduced as an alternative to Successive Rejects, offering better performance in large-scale MAB problems.
+
+SH divides search time into distinct rounds, and during each round arms are sampled uniformly. After each such round, the empirically worst half of the remaining arms are removed until a single arm remains. The rounds are equally distributed such that each round is allocated approximately the same number of trials (budget), but with smaller subset of available arms to sample. Sequential Halving is detailed in Algorithm~\ref{alg:seqhalv}.
+
 \subsection{Hybrid MCTS for Partially Observable Games}
 \label{subsec:h-mcts_po}
 
 In~\cite{Pepels14hmcts} a Hybrid MCTS is proposed. This technique uses recursive Sequential Halving, or SHOT~\cite{Cazenave14SHOT} to minimize simple regret near the root. The hybrid technique was shown to improve performance in several domains, including Amazons, AtariGo and Pentalath. Hybrid MCTS is based on the notion that minimizing simple regret, \ie the regret of not \emph{recommending} the optimal move after $n$ simulations, than cumulative regret, \ie the regret over having \emph{selected} suboptimal moves during simulation. Previous work showed similar improvements in recommended moves in Markov Decision Processes~\cite{Feldman12BRUE,tolpin2012mcts}.
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=.75\textwidth]{img/H-MCTS_Rounds.png}
+	\caption[Hybrid MCTS example rounds]{Example rounds of H-MCTS with a budget limit $B = 150$. Sequential Halving is applied only at the root. On all other plies, UCT in the form of IS-MCTS is applied.}
+	\label{fig:h-mcts_rounds}
+\end{figure}
+
 In this paper we extend Hybrid MCTS to partially observable games. The problem with these domains is that when using multiple determinizations during search, revisiting nodes may result in different playable moves. This is not a problem when using selection methods such as UCT, which are greedy and select moves based on the current statistics. However, because Sequential Halving is a uniform exploration method, in order to guarantee its lower bound on simple regret must be able to revisit the same node multiple times. In other words, available moves may not change in between visits of the algorithm, or its specifically designed budget allocation is no longer valid.
 
-In all partially observable games that we are aware of, the current player always has knowledge over the current set of moves that he can play. Therefore, we can conclude that, at the root of the search tree, moves are consistent between visits.
+In all partially observable games, the current player always has knowledge over the current set of moves that he can play. Therefore, we can conclude that, at the root of the search tree, moves are consistent between visits, and Sequential Halving can be used to uniformly explore moves.
 
 \IncMargin{1em}
-\begin{algorithm2e}[t]
+\begin{algorithm2e}[ht]
 \setstretch{0.95}
 	\KwIn{total budget $T$, $K$ moves}
 	\KwOut{recommendation $J_T$}
@@ -121,54 +152,56 @@ In all partially observable games that we are aware of, the current player alway
 	$B \gets \ceil{\log_2{K}} - 1$														\;
 	\BlankLine
 	\For{k=0 \emph{\KwTo} $B$}{
-										\;
 		\For{each move $i \in S_k$} {									
 		  $n_k \gets \floor[\bigg]{\frac{T}{|S_k|\ceil{\log_2{|S|}}}}$ \;
 		  \For{n=0 \emph{\KwTo} $n_k$} {
-		  	select a new determinization $d$ at random 	\; \label{determinize}
-		 	sample move $i$ using IS-MCTS and determinization $d$ \;
+		  	select a new determinization $d$ at random 							\; \label{determinize}
+		 	sample move $i$ using IS-MCTS and determinization $d$ 				\;
+		 	update the average reward the move based on the rewards 		\;
 		  }
-		}																			\;
+		}
 		\vspace{0.1cm}
-		update the average reward of each arm based on the rewards 		\;
 		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ arms from $S_k$ with the best average			\;
 	}
 	\KwRet{the single element of $S_B$}
-  \caption[Sequential Halving]{Sequential Halving and Information Set Monte-Carlo Tree Search~\protect\cite{Karnin13SH,cowling2012}. \label{alg:seqhalv-mcts}}
+  \caption[Sequential Halving]{Sequential Halving and Information Set MCTS~\protect\cite{Karnin13SH,cowling2012}. \label{alg:seqhalv-mcts}}
 \end{algorithm2e}
 \DecMargin{1em}
-
-
 
 \section{Experimental Domains}
 \label{sec:exp_dom}
 
-In this section we discuss the partially observable games which will be used in the experiments in Section \ref{sec:exp_res}. First we describe the stochastic domains Go Fish and Lost Cities. Next the deterministic games Phantom Domineering and Phantom Go.
+In this section we discuss the partially observable games which will be used in the experiments in Section \ref{sec:exp_res}. First we describe the two stochastic domains Go Fish and Lost Cities. Next the deterministic games Phantom Domineering and Phantom Go are explained.
 
 \subsection{Stochastic Games}
 
-{\sc Go Fish} is a card game which is generally played by multiple players. The goal is to collect as many `books' of 4 cards of equal rank. All players hide their cards from each other, and only finished books of four cards are placed face-up on the table. Each turn, a player may ask a single other player for a specific rank. If the questioned player has any cards of the requested rank in his hand, he gives them to the requesting player, which may consequently make a new request. If the questioned player does not posses a card of the requested rank, the questioning player must `go fish', drawing a card from the stack, and the turn moves to the next player. The game ends when there are no more cards on the stack, and the player with the most finished books wins the game.
+We describe two stochastic domains. In these games, moves available to the opponent are either partially or completely invisible. However, whenever a move is made, it becomes immediately known to both players. As these games progress, more information regarding the actual game state becomes available to both players.
 
-In our implementation, the game was slightly modified to allow it to be played by two players. Both players receive seven cards in hand at the start of the game. Moreover, the finished books are not similarly rewarded. Books of numbers give a score of 1, whereas books of face cards assign a score of two. As a result, when the game ends, the player with the highest score wins.
+{\sc \bf Go Fish} is a card game which is generally played by multiple players. The goal is to collect as many `books' of 4 cards of equal rank. All players hide their cards from each other, and only finished books of four cards are placed face-up on the table. Each turn, a player may ask a single other player for a specific rank. If the questioned player has any cards of the requested rank in his hand, he gives them to the requesting player, which may consequently make a new request. If the questioned player does not posses a card of the requested rank, the questioning player must `go fish', drawing a card from the stack, and the turn moves to the next player. The game ends when there are no more cards on the stack, and the player with the most finished books wins the game.
 
-{\sc Lost Cities} is a 60-card card game, designed in 1999 by Reiner Knizia. The goal of the game is to achieve the most profitable set of expeditions to one or more of five lost cities. Players start expeditions by placing numbered cards on them, each player can start up to five expeditions regardless of the opponents' expeditions. Each card in the game has a color and a number, the colors represent one of the five expeditions, the numbers representing the score gained. Next to these cards, colored investment cards cumulatively double the score awarded for an expedition. 
+In our implementation, the game was slightly modified to allow it to be played by two players. Both players receive seven cards in hand at the start of the game. Moreover, the finished books are not similarly rewarded. Books of numbered cards give a score of one, whereas books of face cards assign a score of two, a book of aces gives a score of three. As a result, when the game ends, the player with the highest score wins.
+
+The game state is determinized by removing the from the non-visible player's all card drawn from the deck, shuffling the deck and re-drawing the non-visible player's hand. This means that whenever a card was obtained from the opponent it is no longer treated as invisible, because it cannot be anywhere else than in the opponent's hand or visible on the table in a finished book.
+
+{\sc \bf Lost Cities} is a card game, designed in 1999 by Reiner Knizia. The goal of the game is to achieve the most profitable set of expeditions to one or more of five lost cities. Players start expeditions by placing numbered cards on them, each player can start up to five expeditions regardless of the opponents' expeditions. Each card in the game has a color and a number, the colors represent one of the five expeditions, the numbers representing the score gained. Next to these cards, colored investment cards cumulatively double the score awarded for an expedition. The deck consists of 60 cards, nine numbered cards per color, and three investment cards per color.
 
 Placing a card on an empty expedition `initializes' it with a cost of 20. Or, when an investment card is played, with a score of $20\times I_c$, where $I_c$ is the number of investment cards played on expedition $c$. These cards can only be played on an expedition when no other cards have been played on it. For example, playing the `red 5' card starts the red expedition with a cost of 20 and a score of 5 resulting in a -15 score for the player. With a single investment card on this expedition, the score will be 30. Playing more cards on the expedition leads to higher scores. However, only increasing cards may be placed on top of others. In this example, the card `red 3' can no longer be played, whereas the `red 8' card can be played.
 
 Each turn, players may either play or discard a card, and draw a card from the draw pile or one of the discard piles. Discarding a card places it on top of one of the colored discard piles which are accessible to both players. The game ends when no cards are left on the draw pile, the player with the highest score wins the game.
 
-In Lost Cities, interaction between players is limited. However, players have to carefully chose their expeditions partly based on their opponents choices. Moreover, players must be careful not to discard cards which may benefit their opponent, but at the same time take care that they can draw cards beneficial to their chosen expeditions.
+In Lost Cities, interaction between players is limited. However, players have to carefully chose their expeditions partly based on their opponents choices. Moreover, players must be careful not to discard cards which may benefit their opponent, but at the same time take care that they can draw cards beneficial to their chosen expeditions. 
+
+As in Go Fish, the game state is determinized by removing the non-visible player's hand, shuffling the deck and re-drawing the non-visible player's hand.
 
 \subsection{Deterministic Games}
 
 We describe two so-called phantom games. Phantom games are modified versions of fully observable games, in which part of the game state is made invisible to the players. Consequently, whenever a player makes a move it may be rejected, the player may move again until his move is no longer rejected. Playing a move that is rejected is always beneficial, since it provides the player with new information of the actual game state.
 
-{\sc Phantom Domineering} is based on the combinatorial game Domineering, which is generally played on a square board with two players. Each turn players block two adjacent positions on the board, one player plays vertically, and the other horizontally. The game ends when one of the players cannot make move. As with most combinatorial games, the first player unable to make a move loses the game, and draws are not possible.
+{\sc \bf Phantom Domineering} is based on the combinatorial game Domineering, which is generally played on a square board with two players. Each turn players block two adjacent positions on the board, one player plays vertically, and the other horizontally. The game ends when one of the players cannot make move. As with most combinatorial games, the first player unable to make a move loses the game, and draws are not possible.
 
-In Phantom Domineering, players can only directly observe their own pieces on the board. For both players, their opponent's pieces are hidden, and can only be observed indirectly by performing rejected moves. A unique property in Phantom Domineering is that rejected moves do not provide immediate information about the opponent's moves. In games where moves consist of occupying single positions, a rejected move immediately reveals an opponent's move. In Phantom Domineering, however, a rejected move means that either one of the two positions is blocked, or both.
+In Phantom Domineering, players can only directly observe their own pieces on the board. For both players, their opponent's pieces are hidden, and can only be observed indirectly by performing rejected moves. A unique property in Phantom Domineering is that rejected moves do not provide immediate information about the opponent's moves. In games where moves consist of occupying single positions, a rejected move can immediately reveal an opponent's move. In Phantom Domineering, however, a rejected move means that either one of the two positions is blocked, or both. Therefore, when determinizing, all opponent's stones are first replaced such that they match the rejected moves, after this, all remaining stones are placed randomly on the board.
 
-{\sc Phantom Go} 
-
+{\sc \bf Phantom Go} is version of Go played in which the opponent's are not revealed. When a move is illegal it is usually because there is an opponent's stone on the chosen intersection. In this case a referee publicly announces that the player made an illegal move and the same player may move again. The Chinese rule is used for scoring games. During the determinization opponent stones are placed on previous illegal moves. The remaining opponent stones are place randomly on the determinized board. The principle of our program is to perform one play-out per determinization. For each possible move, a great number of determinization followed by a play-out are performed. The move with the highest mean is then chosen. Our Phantom Go program using this approach won the gold medal in 5 of the 6 Phantom Go tournaments held during the last Computer Olympiads. Phantom Go is played by humans at Go congresses and is enjoyed by spectators who can see both players' boards as well as the complete referee board.
 
 \section{Experiments and Results}
 \label{sec:exp_res}
@@ -182,7 +215,7 @@ For each game, the $C$ constant, used by UCT (Equation \ref{eq:uct}) was tuned a
 \subsection{Results}
 \label{subsec:results}
 
-For each table, the results are shown with respect to the first algorithm mentioned in the captions, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of both 10,000 and 25,000 play-outs.
+For each table, the results are shown with respect to the first algorithm mentioned in the captions, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of both 10,000 play-outs.
 
 \section{Conclusion and Future Research}
 \label{sec:concl}
