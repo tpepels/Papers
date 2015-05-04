@@ -39,7 +39,7 @@
 
 Partially observable games introduce the complexity of uncertainty in game-play. In partially observable games, some element of the game is not directly observable. Partial observability can be introduced by hiding certain parts of the  position to the player (e.g., hiding the rank of piece in Stratego), in game theory this is also called imperfect information. Other than in fully observable games, we cannot directly search for sequences of actions leading to promising moves using the partially visible state. In this paper we discuss four different partially observable games. Go Fish and Lost cities, which are stochastic games with imperfect information, and the deterministic imperfect information games Phantom Domineering and Phantom Go.
 
-Different approaches have been suggested for handling partial observability in Monte-Carlo Tree Search (MCTS) in such domains. Such as Determinized UCT~\cite{ginsberg99} where a random game state is sampled before the search (\ie determinized), and multiple trees are maintained per determinization. The recently introduced Information Set MCTS~\cite{cowling2012} maintains information sets of states reachable in the current determinization in the tree, as such re-using statistics over multiple determinizations in the tree.
+Different approaches have been suggested for handling partial observability in Monte-Carlo Tree Search (MCTS) in such domains. Such as Determinized UCT~\cite{cowling2012} where a random game state is sampled before the search (\ie determinized), and multiple trees are maintained per determinization. The recently introduced Information Set MCTS~\cite{cowling2012} maintains information sets of states reachable in the current determinization in the tree, as such re-using statistics over multiple determinizations in the tree.
 
 In this paper we investigate the effects of using Sequential Halving~\cite{Karnin13SH} as a selection policy for MCTS in partially observable games. This work is a continuation of the Hybrid MCTS~\cite{Pepels14hmcts} algorithm, which was introduced as a method of minimizing simple and cumulative regret simultaneously during search.
 
@@ -94,7 +94,7 @@ The second approach is using single-tree determinization \cite{ciancarini10,cowl
 \section{Sequential Halving and MCTS in Partially Observable Games}
 \label{sec:h-mcts}
 
-In this section we describe our approach to applying Hybrid MCTS~\cite{Pepels14hmcts} to partially observable games. Hybrid MCTS is based on the concept of minimizing \emph{simple regret} near the root, and \emph{cumulative regret} in the rest of the tree. Simple regret is defined as the regret of not \emph{recommending} the optimal move. Whereas cumulative regret is the regret over having \emph{selected} suboptimal moves during simulation.
+In this section we describe our approach to applying Hybrid MCTS~\cite{Pepels14hmcts} to partially observable games. Hybrid MCTS is based on the concept of minimizing \emph{simple regret} near the root, and \emph{cumulative regret} in the rest of the tree. Simple regret is defined as the regret of not \emph{recommending} the optimal move. Whereas cumulative regret is the regret over having \emph{selected} suboptimal moves during sampling.
 
 In their analysis of the links between simple and cumulative regret in Multi-Armed Bandits, Bubeck \emph{et al.}~\cite{Bubeck11Pure} found that upper bounds on cumulative regret lead to lower bounds on simple regret, and that the smaller the upper bound on the cumulative regret, the higher the lower bound on simple regret, regardless of the recommendation policy, \ie the smaller the cumulative regret, the larger the simple regret. As such, no policy can give an optimal guarantee on both simple and cumulative regret at the same time. Since UCB gives an optimal upper bound on cumulative regret, it cannot also provide optimal lower bounds on simple regret. Therefore, a combination of different regret minimizing selection methods in the same tree is used in Hybrid MCTS.
 
@@ -147,7 +147,7 @@ In this paper we extend Hybrid MCTS to partially observable games. The problem w
 
 In all partially observable games, the current player always has knowledge over the current set of moves that he can play. Therefore, at the root of the search tree, moves are consistent between visits. As such, SH can be used to uniformly explore moves at the root without problems. 
 
-The approach is detailed in Algorithm~\ref{alg:seqhalv-mcts}. At the root, budget is allocated according to SH. For each sample, the appropriate IS-MCTS implementation can be used~\cite{cowling2012}.
+The approach is detailed in Algorithm~\ref{alg:seqhalv-mcts}. At the root, budget is allocated according to SH. For each sample, the appropriate IS-MCTS implementation can be used~\cite{cowling2012}. For this paper, based on our experimental domains (Section~\ref{sec:exp_dom}, we use single observer IS-MCTS.
 
 \IncMargin{1em}
 \begin{algorithm2e}[ht]
@@ -171,7 +171,7 @@ The approach is detailed in Algorithm~\ref{alg:seqhalv-mcts}. At the root, budge
 		$S_{k+1} \gets$ the $\ceil{|S_k|/2}$ moves from $S_k$ with the best average			\;
 	}
 	\KwRet{the single element of $S_B$}
-  \caption[Sequential Halving]{Sequential Halving and Information Set MCTS~\protect\cite{Karnin13SH,cowling2012}. \label{alg:seqhalv-mcts}}
+  \caption[Sequential Halving]{Sequential Halving and Information Set MCTS~\protect. \label{alg:seqhalv-mcts}}
 \end{algorithm2e}
 \DecMargin{1em}
 
@@ -212,49 +212,79 @@ In Phantom Domineering, players can only directly observe their own pieces on th
 
 \section{Experiments and Results}
 \label{sec:exp_res}
-In this section we show the results of the experiments performed on four, partially observable two-player games. PO-H-MCTS and the games were implemented in two different engines. Go Fish, Lost Cities and Phantom Domineering are implemented in a Java based engine. Phantom Go is implemented in the \emph{C++} based engine {\sc GoLois}.
+In this section we show the results of the experiments performed on four, partially observable two-player games. H-MCTS and the games were implemented in two different engines. Go Fish, Lost Cities and Phantom Domineering are implemented in a Java based engine. Phantom Go is implemented in the \emph{C++} based engine {\sc GoLois}.
 
-Lost Cities relies heavily on a heuristic play-out function which prevents obvious bad moves such as starting an expedition without a chance of making a profit. These heuristics improve play over a random play-out by up to $40\%$.
-In Phantom Domineering, an $\epsilon$-greedy play-out strategy selects moves based on the number of available moves for the opponent $n_o$ and the player to move $n_p$ and selects the move which maximizes $n_p - n_o$.
-Go Fish selects moves uniformly random during play-outs.
-For each game, the $C$ constant, used by UCT (Equation \ref{eq:uct}) was tuned and was not re-optimized for the Hybrid MCTS, both UCT and H-MCTS use the same $C$ constant in the experiments.
+Lost Cities relies heavily on a heuristic play-out function which prevents obvious bad moves such as starting an expedition without a chance of making a profit. These heuristics improve play over a random play-out by up to $40\%$. In Phantom Domineering, an $\epsilon$-greedy play-out strategy selects moves based on the number of available moves for the opponent $n_o$ and the player to move $n_p$ and selects the move which maximizes $n_p - n_o$. For both Go Fish and Phantom Go, moves are selected uniformly random during play-outs.
+
+In the next subsection, we will run experiments on our experimental domains using a set of different algorithms:
+\begin{itemize}
+\item \textbf{H-MCTS} selects moves according to Sequential Halving at the root and UCT in all other parts of the tree, according to Algorithm~\ref{alg:seqhalv-mcts}. In all domains, single observer IS-MCTS~\cite{cowling2012} is used.
+\item \textbf{SH} selects among available moves according to Sequential Halving (Algorithm~\ref{alg:seqhalv}), and samples the moves by play-out immediately. As such, no recursive search is performed.
+\item \textbf{MCTS} selects moves using UCT from root to leaf. As in {\sc H-MCTS}, single observer IS-MCTS is used.
+\item \textbf{UCB} selects among available moves according to the UCT selection method (Equation~\ref{eq:uct}) and samples the move immediately by play-out. As such, no recursive search is performed. The method is similar to using the UCB1 algorithm for MABs.
+\end{itemize}
+In all experiments, and for all algorithms, a new determinization is uniformly selected for each simulation. For each individual game, the $C$ constant, used by UCT (Equation \ref{eq:uct}) was tuned. MCTS, UCB and H-MCTS use the same value for the $C$ constant in all experiments.
 
 \subsection{Results}
 \label{subsec:results}
 
-For each table, the results are shown with respect to the first algorithm mentioned in the captions, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of both 10,000 play-outs.
+For each table, the results are shown with respect to the row algorithm, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of either 10,000, or 25,000 play-outs.
 
 \begin{table}[ht]
 \centering
 \setlength{\tabcolsep}{10pt}
-\begin{tabular}{@{}lrrr@{}}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-                & \multicolumn{3}{c}{\textbf{Go Fish}}                                                                   \\
-                & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\[1mm] \cmidrule(l){2-4} 
-\textbf{H-MCTS} & \textbf{60.9\%}$\pm$2.9         & \textbf{53.9\%}$\pm$3.0           &                 				  \\ [.5mm] 
-\textbf{SH}     & \textbf{}                       & 44.0\%$\pm$3.0                    & 50.6\%$\pm$3.1                    \\ [.5mm] 
-\textbf{MCTS}   & \textbf{}                       & \textbf{}                         & \textbf{55.0\%}$\pm$3.1           \\ [.5mm] 
+& \multicolumn{4}{c}{\textbf{Go Fish}} \\
+& \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\[1mm] \cmidrule(l){2-5} 
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}	& \textbf{60.9\%}$\pm$2.9 & \textbf{53.9\%}$\pm$3.0 &  \\ [.5mm] 
+\textbf{SH}     & 	& \multicolumn{1}{c}{-} & 44.0\%$\pm$3.0 & 50.6\%$\pm$3.1 \\ [.5mm] 
+\textbf{MCTS}   & 	&  & \multicolumn{1}{c}{-} & \textbf{55.0\%}$\pm$3.1 \\ [.5mm]
+\textbf{UCB}	& 	&  & & \multicolumn{1}{c}{-} \\[.5mm] 
 \end{tabular}
-\begin{tabular}{@{}lrrr@{}}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-                & \multicolumn{3}{c}{\textbf{Lost Cities}}                                                                   \\
-                & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-4} 
-\textbf{H-MCTS} & \textbf{46.1\%}$\pm$3.1         & \textbf{54.1\%}$\pm$3.1           & 		                        \\[.5mm] 
-\textbf{SH}     & \textbf{}                       & 52.8\%$\pm$3.1                    & 52.0\%$\pm$3.1                   \\[.5mm] 
-\textbf{MCTS}   & \textbf{}                       & \textbf{}                         & \textbf{45.3\%}$\pm$3.1          \\[.5mm] 
+& \multicolumn{4}{c}{\textbf{Lost Cities}} \\
+& \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-5} 
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}	& \textbf{46.1\%}$\pm$3.1  & \textbf{54.1\%}$\pm$3.1  &  \\[.5mm] 
+\textbf{SH}     &	& \multicolumn{1}{c}{-} & 52.8\%$\pm$3.1  & 52.0\%$\pm$3.1  \\[.5mm] 
+\textbf{MCTS}   &	&  & \multicolumn{1}{c}{-} & \textbf{45.3\%}$\pm$3.1  \\[.5mm]
+\textbf{UCB}	&	&  &  & \multicolumn{1}{c}{-} \\[.5mm]
 \end{tabular}
 
-\begin{tabular}{@{}lrrr@{}}
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-                & \multicolumn{3}{c}{\textbf{8$\times$8 Phantom Domineering}}                                                                   \\
-                & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-4} 
-\textbf{H-MCTS} & \textbf{45.1\%}$\pm$3.1         & \textbf{59.9\%}$\pm$3.0           &                        			\\[.5mm] 
-\textbf{SH}     & \textbf{}                       & \textbf{55.1\%}$\pm$3.1           & \textbf{58.6\%}$\pm$3.1 		\\[.5mm] 
-\textbf{MCTS}   & \textbf{}                       & \textbf{}                         & 49.4\%$\pm$3.1          		\\[.5mm] \bottomrule
+& \multicolumn{4}{c}{\textbf{8$\times$8 Phantom Domineering}}       \\
+& \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-5} 
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}	& \textbf{45.1\%}$\pm$3.1 & \textbf{59.9\%}$\pm$3.0 &  	\\[.5mm] 
+\textbf{SH}     &	&  \multicolumn{1}{c}{-} & \textbf{55.1\%}$\pm$3.1   & \textbf{58.6\%}$\pm$3.1 		\\[.5mm] 
+\textbf{MCTS}   &	&  & \multicolumn{1}{c}{-} & 49.4\%$\pm$3.1  \\[.5mm] 
+\textbf{UCB}	&	&  & & \multicolumn{1}{c}{-} \\[.5mm] \bottomrule
 \end{tabular}
 
 \vspace{2mm}
 {\caption{Win rates with respect to the row player, 10,000 simulations per move.} \label{tab:results}}
+\end{table}
+
+Table~\ref{tab:results} shows the results for search performed with 10,000 simulations per move. Only in Go Fish did performing recursive search improve performance over flat Monte-Carlo sampling, in both Lost Cities and Phantom Domineering performing search did not improve performance. This coincides with previous results for Phantom Go, for which it was determined that search could did not perform better than UCB sampling. In all games, using H-MCTS improves performance over MCTS. Moreover, for the games where performing search does not improve performance over simple sampling, SH is either on par, or outperforms UCB, for Lost Cities and Phantom Domineering respectively.
+
+In all cases in both experimental setups, H-MCTS outperforms MCTS significantly. Moreover, in Phantom Domineering, sampling using SH halving improved performance over UCB sampling by and 8.6\%. A significant improvement, considering that no new knowledge or heuristics were introduced in the search. Moreover, we were able to improve the performance of the award-winning engine {\sc GoLois} by up to 7.1\% over UCB, as shown in Table~\ref{tab:ph_go}.
+
+It is likely that
+
+\begin{table}[ht]
+\centering
+\setlength{\tabcolsep}{10pt}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+& \multicolumn{2}{c}{\textbf{Phantom Go}} \\
+& \multicolumn{1}{c}{10,000} & \multicolumn{1}{c}{25,000} \\
+& \multicolumn{1}{c}{Simulations} & \multicolumn{1}{c}{Simulations} \\ [1mm] \cmidrule(l){1-3}
+\textbf{SH} vs. \textbf{UCB} &	\textbf{57.1\%}$\pm$3.1	&	\\ [.5mm]
+\bottomrule
+\end{tabular}
+\vspace{2mm}
+{\caption{Experimental results for Phantom Go. SH vs. UCB. Win rates with respect to the row player.} \label{tab:ph_go}}
 \end{table}
 
 \section{Conclusions}
