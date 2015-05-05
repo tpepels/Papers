@@ -228,49 +228,89 @@ In all experiments, and for all algorithms, a new determinization is uniformly s
 \subsection{Results}
 \label{subsec:results}
 
-For each table, the results are shown with respect to the row algorithm, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of either 10,000, or 25,000 play-outs.
+For each table, the results are shown with respect to the row algorithm, along with a 95\% confidence interval. For each experiment, the players' seats were swapped such that 50\% of the games are played as the first player, and 50\% as the second, to ensure no first-player or second-player bias. Because H-MCTS cannot be terminated any-time we present only results for a fixed number of simulations. In each experiment, both players are allocated a budget of either 10,000, or 25,000 play-outs. In all tables, significantly positive results are bold-faced.
 
 \begin{table}[ht]
 \centering
 \setlength{\tabcolsep}{10pt}
+
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 & \multicolumn{4}{c}{\textbf{Go Fish}} \\
 & \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\[1mm] \cmidrule(l){2-5} 
-\textbf{H-MCTS} & \multicolumn{1}{c}{-}	& \textbf{60.9\%}$\pm$2.9 & \textbf{53.9\%}$\pm$3.0 &  \\ [.5mm] 
-\textbf{SH}     & 	& \multicolumn{1}{c}{-} & 44.0\%$\pm$3.0 & 50.6\%$\pm$3.1 \\ [.5mm] 
-\textbf{MCTS}   & 	&  & \multicolumn{1}{c}{-} & \textbf{55.0\%}$\pm$3.1 \\ [.5mm]
-\textbf{UCB}	& 	&  & & \multicolumn{1}{c}{-} \\[.5mm] 
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}		& \textbf{60.9\%}$\pm$2.9 	& \textbf{53.9\%}$\pm$3.0 	& \textbf{62.3\%}$\pm$2.9 	\\[.5mm] 
+\textbf{SH}     & 39.1\%$\pm$2.9 			& \multicolumn{1}{c}{-} 	& 44.0\%$\pm$3.0 			& 50.6\%$\pm$3.1 			\\[.5mm] 
+\textbf{MCTS}   & 46.1\%$\pm$3.0 			& \textbf{56.0\%}$\pm$3.0 	& \multicolumn{1}{c}{-} 	& \textbf{55.0\%}$\pm$3.1 	\\[.5mm]
+\textbf{UCB}	& 37.7\%$\pm$2.9			& 49.4\%$\pm$3.0 			& 45.0\%$\pm$3.1 			& \multicolumn{1}{c}{-} 	\\[.5mm] 
 \end{tabular}
+
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 & \multicolumn{4}{c}{\textbf{Lost Cities}} \\
 & \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-5} 
-\textbf{H-MCTS} & \multicolumn{1}{c}{-}	& \textbf{46.1\%}$\pm$3.1  & \textbf{54.1\%}$\pm$3.1  &  \\[.5mm] 
-\textbf{SH}     &	& \multicolumn{1}{c}{-} & 52.8\%$\pm$3.1  & 52.0\%$\pm$3.1  \\[.5mm] 
-\textbf{MCTS}   &	&  & \multicolumn{1}{c}{-} & \textbf{45.3\%}$\pm$3.1  \\[.5mm]
-\textbf{UCB}	&	&  &  & \multicolumn{1}{c}{-} \\[.5mm]
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}		& 46.1\%$\pm$3.1 			& \textbf{54.1\%}$\pm$3.1  	& 47.1\%$\pm$3.1 			\\[.5mm] 
+\textbf{SH}     & \textbf{53.9\%}$\pm$3.1 	& \multicolumn{1}{c}{-} 	& 52.8\%$\pm$3.1  			& 52.0\%$\pm$3.1  			\\[.5mm] 
+\textbf{MCTS}   & 45.9\%$\pm$3.1		 	& 47.2\%$\pm$3.1  			& \multicolumn{1}{c}{-} 	& 45.3\%$\pm$3.1  			\\[.5mm]
+\textbf{UCB}	& 52.9\%$\pm$3.1			& 48.0\%$\pm$3.1  			& \textbf{54.7\%}$\pm$3.1 	& \multicolumn{1}{c}{-} 	\\[.5mm]
 \end{tabular}
 
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
 & \multicolumn{4}{c}{\textbf{8$\times$8 Phantom Domineering}}       \\
 & \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-5} 
-\textbf{H-MCTS} & \multicolumn{1}{c}{-}	& \textbf{45.1\%}$\pm$3.1 & \textbf{59.9\%}$\pm$3.0 &  	\\[.5mm] 
-\textbf{SH}     &	&  \multicolumn{1}{c}{-} & \textbf{55.1\%}$\pm$3.1   & \textbf{58.6\%}$\pm$3.1 		\\[.5mm] 
-\textbf{MCTS}   &	&  & \multicolumn{1}{c}{-} & 49.4\%$\pm$3.1  \\[.5mm] 
-\textbf{UCB}	&	&  & & \multicolumn{1}{c}{-} \\[.5mm] \bottomrule
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}		& 45.1\%$\pm$3.1			& \textbf{59.9\%}$\pm$3.0 	& \textbf{59.5\%}$\pm$3.0 		\\[.5mm] 
+\textbf{SH}     & \textbf{54.9\%}$\pm$3.1	& \multicolumn{1}{c}{-}		& \textbf{55.1\%}$\pm$3.1	& \textbf{58.6\%}$\pm$3.1 		\\[.5mm] 
+\textbf{MCTS}   & 41.1\%$\pm$3.0			& 44.9\%$\pm$3.1			& \multicolumn{1}{c}{-} 	& 49.4\%$\pm$3.1  				\\[.5mm] 
+\textbf{UCB}	& 40.5\%$\pm$3.0			& 41.4\%$\pm$3.1			& 51.6\%$\pm$3.1			& \multicolumn{1}{c}{-} 		\\[.5mm] \bottomrule
 \end{tabular}
 
 \vspace{2mm}
-{\caption{Win rates with respect to the row player, 10,000 simulations per move.} \label{tab:results}}
+{\caption{Win rates with respect to the row player. 1,000 Games per experiment, 10,000 simulations per move.} \label{tab:results_10k}}
 \end{table}
 
-Table~\ref{tab:results} shows the results for search performed with 10,000 simulations per move. Only in Go Fish did performing recursive search improve performance over flat Monte-Carlo sampling, in both Lost Cities and Phantom Domineering performing search did not improve performance. This coincides with previous results for Phantom Go, for which it was determined that search could did not perform better than UCB sampling. In all games, using H-MCTS improves performance over MCTS. Moreover, for the games where performing search does not improve performance over simple sampling, SH is either on par, or outperforms UCB, for Lost Cities and Phantom Domineering respectively.
+\begin{table}[ht]
+\centering
+\setlength{\tabcolsep}{10pt}
 
-In all cases in both experimental setups, H-MCTS outperforms MCTS significantly. Moreover, in Phantom Domineering, sampling using SH halving improved performance over UCB sampling by and 8.6\%. A significant improvement, considering that no new knowledge or heuristics were introduced in the search. Moreover, we were able to improve the performance of the award-winning engine {\sc GoLois} by up to 7.1\% over UCB, as shown in Table~\ref{tab:ph_go}.
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+& \multicolumn{4}{c}{\textbf{Go Fish}} \\
+& \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\[1mm] \cmidrule(l){2-5} 
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}		& \textbf{62.2\%}$\pm$2.9 	& \textbf{55.2\%}$\pm$3.0 	& \textbf{61.8\%}$\pm$2.9 	\\[.5mm] 
+\textbf{SH}     & 42.2\%$\pm$3.0 			& \multicolumn{1}{c}{-} 	& 42.2\%$\pm$3.0 			& 51.7\%$\pm$3.1 			\\[.5mm] 
+\textbf{MCTS}   & 44.9\%$\pm$3.0			& \textbf{57.9\%}$\pm$3.0 	& \multicolumn{1}{c}{-} 	& \textbf{59.0\%}$\pm$3.0 	\\[.5mm]
+\textbf{UCB}	& 38.2\%$\pm$2.9			& 48.3\%$\pm$3.1			& 41.0\%$\pm$3.1 			& \multicolumn{1}{c}{-} 	\\[.5mm] 
+\end{tabular}
 
-It is likely that
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+& \multicolumn{4}{c}{\textbf{Lost Cities}} \\
+& \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-5} 
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}		& 47.4\%$\pm$3.1 			& 51.1\%$\pm$3.1		  	& 44.9\%$\pm$3.0 			\\[.5mm] 
+\textbf{SH}     & 52.7\%$\pm$3.1 			& \multicolumn{1}{c}{-} 	& \textbf{57.6\%}$\pm$3.1  	& 52.8\%$\pm$3.1  			\\[.5mm] 
+\textbf{MCTS}   & 48.9\%$\pm$3.1		 	& 42.4\%$\pm$3.0  			& \multicolumn{1}{c}{-} 	& 46.9\%$\pm$3.1  			\\[.5mm]
+\textbf{UCB}	& \textbf{55.1\%}$\pm$3.1	& 47.3\%$\pm$3.1  			& \textbf{53.1\%}$\pm$3.1 	& \multicolumn{1}{c}{-} 	\\[.5mm]
+\end{tabular}
+
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+& \multicolumn{4}{c}{\textbf{8$\times$8 Phantom Domineering}}       \\
+& \multicolumn{1}{c}{\textbf{H-MCTS}} & \multicolumn{1}{c}{\textbf{SH}} & \multicolumn{1}{c}{\textbf{MCTS}} & \multicolumn{1}{c}{\textbf{UCB}} \\ [1mm] \cmidrule(l){2-5} 
+\textbf{H-MCTS} & \multicolumn{1}{c}{-}		& 48.9\%$\pm$3.1			& 53.0\%$\pm$3.1 			& \textbf{54.5\%}$\pm$3.1 		\\[.5mm] 
+\textbf{SH}     & 51.1\%$\pm$3.1			& \multicolumn{1}{c}{-}		& \textbf{56.1\%}$\pm$3.1	& 51.8\%$\pm$3.1		 		\\[.5mm] 
+\textbf{MCTS}   & 47.0\%$\pm$3.1			& 43.9\%$\pm$3.1			& \multicolumn{1}{c}{-} 	& 51.3\%$\pm$3.1  				\\[.5mm] 
+\textbf{UCB}	& 45.6\%$\pm$3.1			& 48.7\%$\pm$3.1			& 51.3\%$\pm$3.1			& \multicolumn{1}{c}{-} 		\\[.5mm] \bottomrule
+\end{tabular}
+
+\vspace{2mm}
+{\caption{Win rates with respect to the row player. 1,000 Games per experiment, 25,000 simulations per move.} \label{tab:results_25k}}
+\end{table}
+
+Tables~\ref{tab:results_10k} and~\ref{tab:results_25k} show the comparative results for search performed with 10,000 and 25,000 simulations per move, respectively. First, results show that only in Go Fish did performing recursive search improve performance over flat Monte-Carlo sampling, in both Lost Cities and Phantom Domineering performing search did not improve performance. This coincides with previous results for Phantom Go, for which it was determined that search could did not perform better than UCB sampling. 
+
+In all games, using H-MCTS improves performance over MCTS when sampling 10,000 simulations per move. In the 25,000 case, MCTS and UCB's performances recover in Lost Cities and Phantom Go. In Go Fish, performance is stable with respect to the number of simulations. For the games where performing search does not improve performance over single-ply sampling, SH is either on par or outperforms UCB.
+
+In all cases, in both experimental setups, SH or H-MCTS either outperforms MCTS and UCB significantly, or does not negatively impact performance. In Phantom Domineering, sampling using SH improves performance over UCB by up to 8.6\%. A significant improvement when considering that no knowledge or heuristics were introduced in the search. Moreover, SH improves the performance of the award-winning engine {\sc GoLois} by up to 7.1\% over UCB, as shown in Table~\ref{tab:ph_go}.
 
 \begin{table}[ht]
 \centering
