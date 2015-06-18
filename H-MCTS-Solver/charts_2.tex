@@ -1,0 +1,116 @@
+\begin{figure}[ht]
+\centering
+\captionsetup{justification=centering,margin=1cm}
+\begin{tikzpicture}
+\begin{groupplot}
+    [
+        group style=
+            {
+            columns=2,
+            rows=2,
+            xlabels at=edge bottom,
+            ylabels at=edge left,
+            vertical sep= 1.5cm,
+            },
+        legend columns=2,
+       	width  = 0.47*\textwidth,
+        major x tick style = transparent,
+        %ybar= 2 * \pgflinewidth,
+        % bar width = 10pt,
+        ymajorgrids = true,
+        ylabel = {Win \%},
+        xlabel= {Budget limit $B$},
+        symbolic x coords={10,30,50,70,90,110},
+        xtick = data,
+        ytick={0,20,40,50,60,70,80},
+        scaled y ticks = false,
+        enlarge x limits = 0.1,
+        ymin=20,
+        ymax=80,
+    ]
+% Amazons ----------------------------------------
+\nextgroupplot[title=Amazons, ymin=55, ymax=75, ytick={55,60,62.5,65,67.5,70,75}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(10,64) +- (0,3) 
+	(30,63.1) +- (0,3)
+	(50,64.7) +- (0,3)
+	(70,63.9) +- (0,3)
+	(90,68.2) +- (0,3)
+	(110,63) +- (0,3)};
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(10,60.3) +- (0,3)
+	(30,63.9) +- (0,3)
+	(50,62.5) +- (0,3)
+	(70,62.4) +- (0,3)
+	(90,60.7) +- (0,3)
+	(110,61.4)+- (0,3)};
+% Breakthrough -------------------------------------
+\nextgroupplot[title=Breakthrough, ymin=20, ymax=60, ytick={20,40,45,50,55,60}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(10,40.9) +- (0,3.1) 
+	(30,52.1) +- (0,3.1)
+	(50,54.1) +- (0,3.1)
+	(70,51.1) +- (0,3.1)
+	(90,51.9) +- (0,3.1)
+	(110,53.2) +- (0,3.1)};
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(10,25.45) +- (0,2.7)
+	(30,42.1) +- (0,3.1)
+	(50,46.8) +- (0,3.1)
+	(70,49) +- (0,3.1)
+	(90,49.8) +- (0,3.1)
+	(110,50.1)+- (0,3.1)};
+% NoGo --------------------------------------------
+\nextgroupplot[title=NoGo 9$\times$9, ymin=40, ymax=60, ytick={20,40,45,50,52.5,55,60}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(10,49.2) +- (0,3.1) 
+	(30,49.8) +- (0,3.1)
+	(50,50.7) +- (0,3.1)
+	(70,52.3) +- (0,3.1)
+	(90,47.2) +- (0,3.1)
+	(110,52.2) +- (0,3.1)};
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(10,45.6) +- (0,3.1)
+	(30,48.6) +- (0,3.1)
+	(50,48.3) +- (0,3.1)
+	(70,48.6) +- (0,3.1)
+	(90,49) +- (0,3.1)
+	(110,52)+- (0,3.1)};
+
+% Pentalath --------------------------------------------
+\nextgroupplot[title=Penalath, legend to name=grouplegend2, ymin=45, ymax=60, ytick={20,40,45,50,52.5,55,60}]
+\addplot[blue!60!white, mark=o]
+	coordinates {
+	(10,50.35) +- (0,3.1) 
+	(30,53.05) +- (0,3.1)
+	(50,50.85) +- (0,3.1)
+	(70,50.8) +- (0,3.1)
+	(90,53.61) +- (0,3.1)
+	(110,51.1) +- (0,3.1)};
+	\addlegendentry{10,000 play-outs}
+\addplot[red!60!white, mark=x]
+	coordinates {
+	(10,49.6) +- (0,3.1)
+	(30,53.21) +- (0,3.1)
+	(50,54.05) +- (0,3.1)
+	(70,54.05) +- (0,3.1)
+	(90,55.56) +- (0,3.1)
+	(110,55.16)+- (0,3.1)};
+	\addlegendentry{25,000 play-outs}
+\end{groupplot}
+
+    \node (legend) at ($(group c1r2.south)!0.5!(group c2r2.south)$)
+      [below, yshift=-2\pgfkeysvalueof{/pgfplots/every axis title shift}]
+      {\ref{grouplegend2}};
+
+\end{tikzpicture}
+     \caption[H-MCTS Solver $B$ values]{H-MCTS Solver vs. MCTS-Solver, random play-outs. \\ Win percentages with respect to H-MCTS. 1,000 games per data point.}
+     \label{fig:h-mcts-s_v_mcts-s}
+\end{figure}
+
