@@ -210,7 +210,7 @@ During determinization opponent stones are placed on illegal moves. The remainin
 \label{sec:exp_res}
 In this section we show the results of the experiments performed on four, partially observable two-player games. H-MCTS and the games were implemented in two different engines. Go Fish, Lost Cities and Phantom Domineering are implemented in a Java based engine. Phantom Go is implemented in the \emph{C++} based engine {\sc GoLois}.
 
-Lost Cities relies heavily on a heuristic play-out strategy which prevents obvious bad moves such as starting an expedition without a chance of making a profit. These heuristics improve play over a random play-out by up to $40\%$. In Phantom Domineering, an $\epsilon$-greedy play-out strategy selects moves based on the number of available moves for the opponent $n_o$ and the player to move $n_p$ and selects the move which maximizes $n_p - n_o$. For both Go Fish and Phantom Go, moves are selected uniformly random during play-outs.
+Lost Cities relies heavily on a heuristic play-out strategy which prevents obvious bad moves such as starting an expedition without a chance of making a profit. These heuristics improve play over a random play-out by up to $40\%$. In Phantom Domineering, an $\epsilon$-greedy play-out strategy selects moves based on the number of available moves for the opponent and the player to move and selects the move that maximizes their difference. For both Go Fish and Phantom Go, moves are selected uniformly random during play-outs.
 
 In the next subsection, we run experiments on our experimental domains using a set of different algorithms:
 \begin{itemize}
