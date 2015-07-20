@@ -125,10 +125,10 @@ A disadvantage of SHOT is that it cannot be terminated any time, and requires a-
 
 This leads to another concern when using any pure exploration policy recursively. As discussed in Chapter \ref{chap:mab}, UCT has the advantage of almost exclusively selecting the best node over time, giving the formal guarantee that suboptimal nodes are selected at most $O(\ln{n})$ times. This ensures that over time, values accumulated at nodes approximate the value of the best-reply to the node's move. With a policy such as Sequential Halving this guarantee is related to the available budget and the branching factor. In fact, the two empirically best nodes are sampled equally, however different their reward may be. Moreover, for a node with a set of children $S$, the worst $\frac{|S|}{2}$ of these are sampled at least at total of $\floor{\frac{T}{\ceil{log_2{|S|}}}}$ times. In many games there are only a handful of good moves given a position, and to evaluate a node the value of its move's best-reply must be found. By using Sequential Halving throughout the tree, values back-propagated do not converge in the same manner as UCT, as such, values of internal nodes are constituted of more overall averages over their children.
 
-\section{Hybrid MCTS Solver}
-\label{sec:hybmctssolver}
+\section{A Solver for SHOT}
+\label{sec:shotsolver}
 
-In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven wins or losses in the simple regret tree. Although we can employ the MCTS-Solver proposed by~\citeaby{Winands2008} in the UCT tree, the technique requires adaptation to Sequential Halving to be able to solve nodes in the simple regret tree. The main issue here is that when a solved child is encountered, the current round is interrupted to determine whether the node itself is solved as well. This leads to three different possible cases, in which this interruption can be encountered, and properly handled. Note that it is assumed that values are according to negamax, such that at each node, children's rewards are stored with respect to the player to move.
+In the form presented in Algorithm~\ref{alg:shot}, SHOT cannot solve proven wins or losses in the simple regret tree. A solver for UCT was previously proposed by Winands et al.~\citeaby{Winands2008}, named MCTS-Solver. However, this technique requires adaptation for Sequential Halving to be able to solve nodes in SHOT. The main issue here is that when a solved child is encountered, the current round is interrupted to determine whether the node itself is solved as well. This leads to the following three different possible cases in which this interruption can be encountered. In each case, it is assumed that values are represented according to negamax, such that at each node, children's rewards are stored with respect to the player to move.
 \begin{enumerate}
 \item A solved win is encountered, in this case, we immediately want to remember this node and back-propagate to the parent. Any residual budget remains unspent in the current round.
 \item A solved loss is encountered, but not all siblings lead to a loss. According to~\citeaby{Winands2008} it is appropriate in this case to count the visit as a loss. However, since there still exist nodes that do not lead to a loss, we have to ensure the solved node is not reselected. If it is reselected, a potentially high budget may be spent on the node, which results in an underestimation of the parent.
@@ -137,72 +137,82 @@ In the form presented in Algorithm~\ref{alg:h-mcts}, H-MCTS cannot solve proven 
 \begin{figure}[hb]
 	\centering
 	\includegraphics[width=.6\textwidth]{img/solver.png}
-	\caption[H-MCTS Solver example]{H-MCTS Solver removing a proven loss from selection. In the second round, node B is determined to be a proven loss, node C is returned to selection to fill the opened position.}
-	\label{fig:h-mcts_solver}
+	\caption[SHOT Solver example]{SHOT Solver removing a proven loss from selection. In the second round, node B is determined to be a proven loss, node C is returned to selection to fill the empty position.}
+	\label{fig:shot_solver}
 \end{figure}
 
-When running Sequential Halving, the first and last cases can be handled similar to the MCTS-Solver. The second case potentially leaves the assigned budget partially unspent. Because some children have been identified as a loss, while other unsolved options still remain, the proven losses should be removed from selection. Moreover, any budget left unspent due to this should be ``brought over'' to the next round, which starts with a reduced set of nodes. When a proven loss is discarded from selection, all children following this node move one position left, possibly returning an unsolved node to the current selection, as depicted in Figure~\ref{fig:h-mcts_solver}. If there is no unsolved node to return, the set of remaining arms is reduced after the round if it is smaller than $\ceil{\nicefrac{s}{2}}$, which means that more than half the nodes currently in $S_k$ were solved.
+When running Sequential Halving, the first and last cases can be handled similar to the MCTS-Solver. The second case potentially leaves the assigned budget partially unspent. Because some children have been identified as a loss, while other unsolved options still remain, the proven losses should be removed from selection. Moreover, any budget left unspent due to this should be ``brought over'' to the next round, which starts with a reduced set of nodes. When a proven loss is discarded from selection, all children following this node move one position left, possibly returning an unsolved node to the current selection, as depicted in Figure~\ref{fig:shot_solver}. If there is no unsolved node to return, then the set of remaining arms is reduced after the round if it is smaller than $\ceil{\nicefrac{s}{2}}$, which means that more than half the nodes currently in $S_k$ were solved.
 
 \IncMargin{1em}
-\begin{algorithm2e}
-\setstretch{1.0}
+\RestyleAlgo{boxruled}
+\begin{algorithm2e}[ht]
+\setstretch{1.1}
 	\KwIn{node $p$, allocated budget $budget$}
-	\KwOut{$t_p$: number of play-outs, $p1$ and $p2$ wins, solved player}
-	\vspace{0.1cm}
-	\func{h-mcts-solver}(node $p$, $budget$):										\;
+	\KwOut{tuple containing the number of visits, $p1$ and $p2$ wins, budget used}
+	\func{shot}(node $p$, $budget$):													\;
 	\Indp
-	\lIf{isLeaf($p$)}{$I, S\gets$ \func{expand}($p$)}								\label{hs:children}
-	$t_p \gets \tuple{0,0,0,0}$														\;		
-	$b \gets \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \; 
-	\If{$p$ is not root \textbf{and} $b < B $}{
-		\For{i=0 \emph{\KwTo} budget}{
-			$\tuple{v, w_1, w_2, s}_i \gets$ \func{uct-solver}($p$)						\;
-			\func{update} $p, t_p$ with $\tuple{v, w_1,w_2, s}_i$							\;
-		}
-		\KwRet{$t_p$}
+		\lIf{isLeaf($p$)}{$I, S\gets$ \func{expand}($p$)}								\label{ss:children}		
+	$t_p \gets \tuple{0,0,0,0}$															\;
+	\If{isTerminal($p$)}{																	
+		\func{update} $t_p$, with $budget$ wins for the appropriate player and $budget$ visits 					\;
+		\KwRet{$t_p$}																	\;
 	}
-	$b_u, k \gets 0$, $S_0 \gets S$, $s \gets |S_0|$\;
-	\Repeat{$b_u \geq budget$ \textbf{or} $s < 2$} {														\label{hs:shot}
-		$b_r \gets 0$																\; \label{hs:resid}
-		\For{i=1 \emph{\KwTo} $s$}{
-			$n_i \gets$ node $n$ at rank $i$ of $S_k$								\;
-			\If{$n_i$ is not solved} {			
-				\If{$b > n_i.visits$} {
-					$b_i \gets b - n_i.visits$											\;
-					\lIf{$i = 0$ \textbf{and} $s = 2$} { $b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$ }
-					$b_i \gets \min{(b_i, budget - b_u)}$								\;
-					$\tuple{v, w_1, w_2, s}_i \gets$ \func{h-mcts-solver}($n_i$, $b_i$)	\;
-					\func{update} $p, b_u$, and $t_p$ with $\tuple{v, w_1, w_2, s}_i$		\;
+	\If{budget = 1} {																		
+		$r \gets$ \func{playout}($p$)													\;
+		\func{update} $t_p$, with 1 budget used, 1 win for the appropriate player, and 1 visits					\;
+		\KwRet{$t_p$}																	\;
+	}
+	\If{$|S|$ = 1} {
+		$n_0 \gets$ the single element in $S$											\;
+		$t_p \gets $ \func{shot}($n_0$, $budget$)											\;
+		\func{update} $p$ with $t_p$													\;
+		\KwRet{$t_p$}																	\;	
+	}
+	$s \gets |S|$, $S_0 \gets S$, $b_u, b, k \gets 0$									\;
+	\While{$s >$ 1 \textbf{and} $b_u < budget$} {										
+	$b \gets b + \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
+	$b_r \gets 0$ \; \label{ss:resid}
+		\For{i=1 \emph{\KwTo} s}{
+			$n_i \gets$ node $n$ at rank $i$ of $S_k$									\;
+			\If{$n_i$ is not solved} {
+				$b_i \gets b - n_i.visits$													\;  
+				\If{$b_i > 0$} {
+					\If{$p$ is root \textbf{and} $i = 0$ \textbf{and} $s = 2$} {
+						\tcp{Spend any left-over budget on the empirically best node}
+						$b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$				\;
+					}
+					$b_i \gets \min{(b_i, budget - b_u)}$										\;
+					$\tuple{v, w_1, w_2, b_{u, n_i}}_i \gets$ \func{shot}($n_i$, $b_i$)			\;
+					\func{update} $p, b_u,$ and $t_p$ with $\tuple{v, w_1, w_2, b_{u, n_i}}_i$	\;
 				}
 			}
 			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in S: (n$ is a loss$))$}{
-				set the solved player in $t_p$									\; \label{hs:solved}
+				set the solved player in $t_p$									\; \label{ss:solved}
 				\func{update} $p.budgetSpent$ with $b_u$						\;
 				\KwRet{$t_p$}													\;
 			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in S: (n$ is not a loss$))$}{
-				$b_r \gets b_i - v$												\; \label{hs:update_resid}				
+				$b_r \gets b_i - v$												\; \label{ss:update_resid}				
 			}
-			break if $b_u \geq budget$											\;
+			break if $b_u \geq budget$													\;
 		}
-		remove all solved nodes from $S$ and $S_k$								\;  \label{hs:remove}
-		$k \gets k + 1$						\;
-		$S_{k} \gets$ $S_{k-1}$, with the first $\max{(2, s)}$ elements sorted in descending order \; \label{hs:sort}
-		$s \gets \ceil{\nicefrac{s}{2}}$										\;
-		$s \gets \min{(s, |S|)}$												\; \label{hs:size_min}	
+		remove all solved nodes from $S$ and $S_k$								\;  \label{ss:remove}
+		$k \gets k + 1$																		\;
+		$S_{k} \gets$ $S_{k-1}$, with the first $\max{(2, s)}$ elements sorted in descending order \; \label{ss:sort}
+		$s \gets \ceil{\nicefrac{s}{2}}$													\;
+		$s \gets \min{(s, |S|)}$												\; \label{ss:size_min}	
 		\lIf{$s = 1$} {$b \gets b + (budget - b_u)$}
 		\Else {	
 			$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
-			$b \gets b + \ceil{\nicefrac{b_r}{s}}$														\; \label{hs:incr_budget_resid}
-		}
+			$b \gets b + \ceil{\nicefrac{b_r}{s}}$														\; \label{ss:incr_budget_resid}
 	}
-	\func{update} $p.budgetSpent$ with $b_u$										\;
+	\func{update} $p.budgetSpent$ with $b_u$												\;
 	\Indm
 	\KwRet{$t_p$}
-  \caption{Hybrid Monte-Carlo Tree Search Solver (H-MCTS Solver). \label{alg:h-mcts-solver}}
+  \caption[SHOT Solver]{SHOT Solver. \label{alg:shot-solver}}
 \end{algorithm2e}
 \DecMargin{1em}
 
-H-MCTS Solver is outlined in Algorithm~\ref{alg:h-mcts-solver}. The general procedure when a solved node is encountered is straightforward in the case of a solved win, and when all children are solved losses. The $budgetSpent$ is updated and the function immediately returns. The tuple $t_p$ now also contains a `solved' field, which holds the index of the player for which the node is solved. In this case the \func{update} function updates the node accordingly by setting the $isSolved$ flag. When an isolated proven loss is encountered, \ie not all siblings are losses, then we should not sample that node again, since it would under-evaluate the parent. This possibly leaves a residual budget $b_r$ declared on line~\ref{hs:resid}, which is maintained per round. When an isolated proven loss is found, the residual budget is updated on line~\ref{hs:update_resid} such that it can be spent in the next round with a reduced set of nodes, on line~\ref{hs:incr_budget_resid}. Moreover, since the isolated losses are removed from $S$ on line~\ref{hs:remove}, it is possible that $s > |S|$, which is restored on line~\ref{hs:size_min} after halving $s$. This ensures that previously removed nodes that were not proven losses can be returned to selection in case more than half of the nodes were solved in this round. On line~\ref{hs:sort} the set of children from the previous round $S_{k-1}$ is sorted, as such $|S_k| = |S|$ for each round. Therefore, when a solved loss is removed from selection, another child can take its place. Note also that on line~\ref{hs:children}, a second set $I$ contains all children. Because it is possible to remove all nodes from $S$ in case of a proven loss, $I$ is never altered and can be used to give a recommendation at the root.
+SHOT Solver is outlined in Algorithm~\ref{alg:shot-solver}. The general procedure when a solved node is encountered is straightforward in the case of a solved win, and when all children are solved losses. The $budgetSpent$ is updated and the function immediately returns. The tuple $t_p$ now also contains a `solved' field, which holds the index of the player for which the node is solved. In this case the \func{update} function updates the node accordingly by setting the $isSolved$ flag. When an isolated proven loss is encountered, \ie not all siblings are losses, then we should not sample that node again, since it would under-evaluate the parent. This possibly leaves a residual budget $b_r$ declared on line~\ref{ss:resid}, which is maintained per round. When an isolated proven loss is found, the residual budget is updated on line~\ref{ss:update_resid} such that it can be spent in the next round with a reduced set of nodes, on line~\ref{ss:incr_budget_resid}. Moreover, since the isolated losses are removed from $S$ on line~\ref{ss:remove}, it is possible that $s > |S|$, which is restored on line~\ref{ss:size_min} after halving $s$. This ensures that previously removed nodes that were not proven losses can be returned to selection in case more than half of the nodes were solved in this round. On line~\ref{ss:sort} the set of children from the previous round $S_{k-1}$ is sorted, as such $|S_k| = |S|$ for each round. Therefore, when a solved loss is removed from selection, another child can take its place. Note also that on line~\ref{ss:children}, a second set $I$ contains all children. Because it is possible to remove all nodes from $S$ in case of a proven loss, $I$ is never altered and can be used to give a recommendation at the root.
 
 \section{Experiments and Results}
 \label{sec:experiments}
