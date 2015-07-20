@@ -1,5 +1,5 @@
 \documentclass{icga}
-\usepackage{graphicx, epstopdf, amsmath, mathtools, amssymb, color, subcaption, comment, booktabs, mathabx,  varwidth, setspace, algorithm, fixltx2e, nicefrac, pgfplots, tikz, etoolbox, etex}
+\usepackage{graphicx, epstopdf, amsmath, mathtools, amssymb, color, comment, mathabx, setspace, algorithm, fixltx2e, nicefrac, pgfplots, tikz, etoolbox, etex}
 \usetikzlibrary{pgfplots.groupplots}
 \pgfplotsset{compat=1.10}
 \usepackage[algo2e, longend, noline, linesnumbered]{algorithm2e}
@@ -30,19 +30,15 @@
 \title{A Solver for Sequential Halving Applied to Trees}
 \runningtitle{A Solver for Sequential Halving Applied to Trees}
 
-\author{Tom~Pepels\inst{1} \and Tristan~Cazenave\inst{2} \and
-Mark~H.M.~Winands\inst{1} \and Marc~Lanctot\inst{1}}
+\author{Tom~Pepels \and Mark~H.M.~Winands}
 
-\institute{Department of Knowledge Engineering,  Maastricht University\\ \email{\{tom.pepels,m.winands,marc.lanctot\}@maastrichtuniversity.nl} \and LAMSADE - Université Paris-Dauphine \\ \email{cazenave@lamsade.dauphine.fr}}
-
-\author{Tom Pepels\thanks{email:tom.pepels@maastrichtuniversity.nl} \and M.H.M. Winands\thanks{email:m.winands@maastrichtuniversity.nl}}
-\affiliation{Maastricht University, Maastricht, The
-Netherlands} \issue{?, ?}
+\author{Tom Pepels\thanks{e-mail:tom.pepels@maastrichtuniversity.nl} \and M.H.M. Winands\thanks{e-mail:m.winands@maastrichtuniversity.nl}}
+\affiliation{Maastricht University, Maastricht, The Netherlands} \issue{?, ?}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-In this paper, a solver is introduced for SHOT and H-MCTS, allowing wins and losses to be proven in the tree. The solver is designed such that it does not disrupt the budget allocations of Sequential Halving, budget that is unspent when a proven node is encountered is spent during later rounds. Finally, an enhancement is introduced for SHOT, which excludes known bad moves from selection. This enhancement ensures that the majority of the allocated budget is spent on promising moves. The performance of the proposed enhancement is assessed in six distinct two-player games: Amazons, AtariGo, Ataxx, Breakthrough, NoGo, and Pentalath.
+In this paper, a solver is introduced for SHOT and Hybrid MCTS, allowing wins and losses to be proven in the tree. The solver is designed such that it does not disrupt the budget allocations of Sequential Halving. As such budget that is unspent when a proven node is encountered is spent during later rounds. The performance of the proposed enhancement is assessed in $n$ different two-player games: 
 \end{abstract}
 
 \section{Introduction}
@@ -50,26 +46,26 @@ In this paper, a solver is introduced for SHOT and H-MCTS, allowing wins and los
 \section{Sequential Halving Applied to Trees}
 \label{sec:SHOT}
 
-A recent addition to simple regret techniques in MCTS is Sequential Halving applied to Trees (SHOT) \citebay{Cazenave14SHOT}. The algorithm is presented as a ``faster'' version of MCTS. Instead of using UCT and backing up values after each simulation from leaf to root, SHOT uses Sequential Halving throughout the tree. This essentially turns MCTS into an iterative deepening, depth first search. The main benefit the author points out is that SHOT spends much less time in the tree, updating and back-propagating values. Consequently, an optimized engine with fast play-outs can perform more simulated games per turn using SHOT than it could with UCT. In practice it means that for the same number of play-outs SHOT is approximately twice as fast as UCT. SHOT allocates a
+A recent addition to simple regret techniques in MCTS is Sequential Halving applied to Trees (SHOT)~\cite{Cazenave14SHOT}. The algorithm is presented as a ``faster'' version of MCTS. Instead of using UCT and backing up values after each simulation from leaf to root, SHOT uses Sequential Halving throughout the tree. This essentially turns MCTS into an iterative deepening, depth first search. The main benefit the author points out is that SHOT spends much less time in the tree, updating and back-propagating values. Consequently, an optimized engine with fast play-outs can perform more simulated games per turn using SHOT than it could with UCT. In practice it means that for the same number of play-outs SHOT is approximately twice as fast as UCT. SHOT allocates a
 possibly large number of play-outs to the possible moves. This makes it quite easy to parallelize without loss of information and without changing the behaviour of the algorithm.
 
 In the MAB context, Sequential Halving is run once, but in MCTS, nodes can be revisited, and therefore Sequential Halving is ``restarted'' upon revisiting a node. Define a \emph{cycle} as one full iteration of Sequential Halving which starts on line~\ref{shot:cycle}, and a \emph{round} as a sub-iteration over a given subset of $S$ which starts on line~\ref{shot:round}, in Algorithm~\ref{alg:shot}. Because any number of cycles may be started on a given node, care must be taken that budget is divided such that after any cycle the visit counts of all nodes are as if only one cycle was run. Therefore, when dividing the budget on line \ref{shot:budgeting} the current budget spent is added to the allocated budget, essentially overestimating the total budget available. Next, on line \ref{shot:topoff} only the budget that exceeds the current child's visits is allocated. This is illustrated in Figure \ref{fig:shot-topoffs}, where a node that was previously visited 64 times starts a new cycle with a budget of 128. The new budget per arm is: $\floor[\big]{\frac{64 + 128}{4\times\ceil{log_2{4}}}} = 24$. However, since the second and fourth child have previously been assigned a total budget of 24, only the first and third node are assigned $24-8=16$ budget.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=.3\textwidth]{img/shot_topoffs.png}
-	\caption[SHOT budget division example]{Division of 128 play-outs. The current node was previously visited 64 times \\ \protect\citebay{Cazenave14SHOT}.}
+	\caption{Division of 128 play-outs. The current node was previously visited 64 times~\cite{Cazenave14SHOT}.}
 	\label{fig:shot-topoffs}
 \end{figure}
 
-SHOT was demonstrated to outperform UCT in NoGo, both on $9\times9$, and $19\times19$ boards, with win-rates between $75\%$ and $100\%$~\citebay{Cazenave14SHOT}. However, based on the results in the article and Chapter \ref{chap:experiments}, these results were due to SHOT being significantly faster than UCT, when both algorithms are given the same budget of play-outs, different results are achieved.
+SHOT was demonstrated to outperform UCT in NoGo, both on $9\times9$, and $19\times19$ boards, with win-rates between $75\%$ and $100\%$~\cite{Cazenave14SHOT}. However, based on the results in the article and Chapter \ref{chap:experiments}, these results were due to SHOT being significantly faster than UCT, when both algorithms are given the same budget of play-outs, different results are achieved.
 
 Although in the original article SHOT is presented with the use of a transposition table instead of a tree, in Algorithm \ref{alg:shot} a version of SHOT using a tree of game states is presented.
 
-\IncMargin{1em}
+\IncMargin{2em}
 \RestyleAlgo{boxruled}
 \begin{algorithm2e}[ht]
-\setstretch{1.1}
+\setstretch{0.95}
 	\KwIn{node $p$, allocated budget $budget$}
 	\KwOut{tuple containing the number of visits, $p1$ and $p2$ wins, budget used}
 	\func{shot}(node $p$, $budget$):													\;
@@ -99,7 +95,6 @@ Although in the original article SHOT is presented with the use of a transpositi
 			$b_i \gets b - n_i.visits$													\;  \label{shot:topoff}
 			\If{$b_i > 0$} {
 				\If{$p$ is root \textbf{and} $i = 0$ \textbf{and} $s = 2$} {
-					\tcp{Spend any left-over budget on the empirically best node}
 					$b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$				\;
 				}
 				$b_i \gets \min{(b_i, budget - b_u)}$										\;
@@ -115,9 +110,9 @@ Although in the original article SHOT is presented with the use of a transpositi
 	\func{update} $p.budgetSpent$ with $b_u$												\; \label{shot:budg_spent}
 	\Indm
 	\KwRet{$t_p$}
-  \caption[Sequential Halving applied to Trees (SHOT)]{Sequential Halving applied to Trees (SHOT)~\protect\citebay{Cazenave14SHOT}. \label{alg:shot}}
+  \caption{Sequential Halving applied to Trees (SHOT)~\cite{Cazenave14SHOT}. \label{alg:shot}}
 \end{algorithm2e}
-\DecMargin{1em}
+\DecMargin{2em}
 
 SHOT recursively performs Sequential Halving until either a terminal state is encountered (line \ref{shot:terminal}), or the available budget for the current node is 1 (line \ref{shot:playout}). Because multiple play-outs can be performed from a single recursive call, a tuple $t_p$ is maintained containing: 1) the budget used $b_u$, 2) the number of wins per player $w_1$ and $w_2$, and 3) the number of visits $v$. $v$ differs from $b_u$, because visiting a terminal node spends no budget, but performing a play-out does, and in both cases the visit count of the node should be increased. On line~\ref{shot:tp_update}, $p$ is updated with the results returned from the recursion, $b_u$ is updated with the total budget used by play-outs, and $t_p$ is updated with all returned values. On line~\ref{shot:budg_spent} the total budget spent at the current node is incremented. This value is used to determine the budget of the next round of SHOT.
 
@@ -134,7 +129,7 @@ In the form presented in Algorithm~\ref{alg:shot}, SHOT cannot solve proven wins
 \item A solved loss is encountered, but not all siblings lead to a loss. According to~\citeaby{Winands2008} it is appropriate in this case to count the visit as a loss. However, since there still exist nodes that do not lead to a loss, we have to ensure the solved node is not reselected. If it is reselected, a potentially high budget may be spent on the node, which results in an underestimation of the parent.
 \item A solved loss is encountered, and all siblings lead to a loss. In this case the parent is a win and we should back-propagate immediately. Any residual budget remains unspent in the current round.
 \end{enumerate}
-\begin{figure}[hb]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=.6\textwidth]{img/solver.png}
 	\caption[SHOT Solver example]{SHOT Solver removing a proven loss from selection. In the second round, node B is determined to be a proven loss, node C is returned to selection to fill the empty position.}
@@ -143,15 +138,15 @@ In the form presented in Algorithm~\ref{alg:shot}, SHOT cannot solve proven wins
 
 When running Sequential Halving, the first and last cases can be handled similar to the MCTS-Solver. The second case potentially leaves the assigned budget partially unspent. Because some children have been identified as a loss, while other unsolved options still remain, the proven losses should be removed from selection. Moreover, any budget left unspent due to this should be ``brought over'' to the next round, which starts with a reduced set of nodes. When a proven loss is discarded from selection, all children following this node move one position left, possibly returning an unsolved node to the current selection, as depicted in Figure~\ref{fig:shot_solver}. If there is no unsolved node to return, then the set of remaining arms is reduced after the round if it is smaller than $\ceil{\nicefrac{s}{2}}$, which means that more than half the nodes currently in $S_k$ were solved.
 
-\IncMargin{1em}
+\IncMargin{2em}
 \RestyleAlgo{boxruled}
 \begin{algorithm2e}[ht]
-\setstretch{1.1}
+\setstretch{0.95}
 	\KwIn{node $p$, allocated budget $budget$}
 	\KwOut{tuple containing the number of visits, $p1$ and $p2$ wins, budget used}
 	\func{shot}(node $p$, $budget$):													\;
 	\Indp
-		\lIf{isLeaf($p$)}{$I, S\gets$ \func{expand}($p$)}								\label{ss:children}		
+	\lIf{isLeaf($p$)}{$I, S\gets$ \func{expand}($p$)}								\label{ss:children}		
 	$t_p \gets \tuple{0,0,0,0}$															\;
 	\If{isTerminal($p$)}{																	
 		\func{update} $t_p$, with $budget$ wins for the appropriate player and $budget$ visits 					\;
@@ -168,17 +163,16 @@ When running Sequential Halving, the first and last cases can be handled similar
 		\func{update} $p$ with $t_p$													\;
 		\KwRet{$t_p$}																	\;	
 	}
-	$s \gets |S|$, $S_0 \gets S$, $b_u, b, k \gets 0$									\;
-	\While{$s >$ 1 \textbf{and} $b_u < budget$} {										
+	$s \gets |S|$, $S_0 \gets S$, $b_u, k \gets 0$									\;
 	$b \gets b + \displaystyle\max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
-	$b_r \gets 0$ \; \label{ss:resid}
+	\While{$s >$ 1 \textbf{and} $b_u < budget$} {										
+	$b_r \gets 0$ 																		\; \label{ss:resid}
 		\For{i=1 \emph{\KwTo} s}{
 			$n_i \gets$ node $n$ at rank $i$ of $S_k$									\;
 			\If{$n_i$ is not solved} {
 				$b_i \gets b - n_i.visits$													\;  
 				\If{$b_i > 0$} {
 					\If{$p$ is root \textbf{and} $i = 0$ \textbf{and} $s = 2$} {
-						\tcp{Spend any left-over budget on the empirically best node}
 						$b_i \gets \max{(b_i, budget - b_u - (b - n_1.visits))}$				\;
 					}
 					$b_i \gets \min{(b_i, budget - b_u)}$										\;
@@ -187,36 +181,35 @@ When running Sequential Halving, the first and last cases can be handled similar
 				}
 			}
 			\uIf{$n_i$ is a win \textbf{or} $(n_i$ is a loss \textbf{and} $\forall n \in S: (n$ is a loss$))$}{
-				set the solved player in $t_p$									\; \label{ss:solved}
-				\func{update} $p.budgetSpent$ with $b_u$						\;
-				\KwRet{$t_p$}													\;
-			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in S: (n$ is not a loss$))$}{
-				$b_r \gets b_i - v$												\; \label{ss:update_resid}				
+				set the solved player in $t_p$												\; \label{ss:solved}
+				\func{update} $p.budgetSpent$ with $b_u$									\;
+				\KwRet{$t_p$}																\;
+			} \ElseIf{$(n_i$ is a loss \textbf{and} $\exists n \in S: (n$ is not a loss$))$} {
+				$b_r \gets b_i - v$															\; \label{ss:update_resid}				
 			}
-			break if $b_u \geq budget$													\;
+			break if $b_u \geq budget$														\;
 		}
-		remove all solved nodes from $S$ and $S_k$								\;  \label{ss:remove}
+		remove all solved nodes from $S$ and $S_k$											\;  \label{ss:remove}
 		$k \gets k + 1$																		\;
 		$S_{k} \gets$ $S_{k-1}$, with the first $\max{(2, s)}$ elements sorted in descending order \; \label{ss:sort}
-		$s \gets \ceil{\nicefrac{s}{2}}$													\;
-		$s \gets \min{(s, |S|)}$												\; \label{ss:size_min}	
+		$s \gets \min{(\ceil{\nicefrac{s}{2}}, |S|)}$										\; \label{ss:size_min}	
 		\lIf{$s = 1$} {$b \gets b + (budget - b_u)$}
 		\Else {	
-			$b \gets b + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \;
-			$b \gets b + \ceil{\nicefrac{b_r}{s}}$														\; \label{ss:incr_budget_resid}
+			$b \gets b + \ceil{\nicefrac{b_r}{s}} + \max{\left(1, \floor[\bigg]{\frac{p.budgetSpent + budget}{s\times\ceil{log_2{|S|}}}}\right)}$ \; \label{ss:incr_budget_resid}
+		}
 	}
 	\func{update} $p.budgetSpent$ with $b_u$												\;
 	\Indm
 	\KwRet{$t_p$}
-  \caption[SHOT Solver]{SHOT Solver. \label{alg:shot-solver}}
+  \caption{SHOT Solver. \label{alg:shot-solver}}
 \end{algorithm2e}
-\DecMargin{1em}
+\DecMargin{2em}
 
 SHOT Solver is outlined in Algorithm~\ref{alg:shot-solver}. The general procedure when a solved node is encountered is straightforward in the case of a solved win, and when all children are solved losses. The $budgetSpent$ is updated and the function immediately returns. The tuple $t_p$ now also contains a `solved' field, which holds the index of the player for which the node is solved. In this case the \func{update} function updates the node accordingly by setting the $isSolved$ flag. When an isolated proven loss is encountered, \ie not all siblings are losses, then we should not sample that node again, since it would under-evaluate the parent. This possibly leaves a residual budget $b_r$ declared on line~\ref{ss:resid}, which is maintained per round. When an isolated proven loss is found, the residual budget is updated on line~\ref{ss:update_resid} such that it can be spent in the next round with a reduced set of nodes, on line~\ref{ss:incr_budget_resid}. Moreover, since the isolated losses are removed from $S$ on line~\ref{ss:remove}, it is possible that $s > |S|$, which is restored on line~\ref{ss:size_min} after halving $s$. This ensures that previously removed nodes that were not proven losses can be returned to selection in case more than half of the nodes were solved in this round. On line~\ref{ss:sort} the set of children from the previous round $S_{k-1}$ is sorted, as such $|S_k| = |S|$ for each round. Therefore, when a solved loss is removed from selection, another child can take its place. Note also that on line~\ref{ss:children}, a second set $I$ contains all children. Because it is possible to remove all nodes from $S$ in case of a proven loss, $I$ is never altered and can be used to give a recommendation at the root.
 
 \section{Experiments and Results}
 \label{sec:experiments}
-In this section, the influence of the solver enhancement in H-MCTS and SHOT is investigated. Experiments are performed to show the performance of the solver per technique individually, and for H-MCTS against UCT.
+In this section, the influence of the solver enhancement in H-MCTS and SHOT is investigated. Experiments are performed to show the performance of the solver per technique individually, and for H-MCTS and SHOT against UCT.
 
 \subsection{Experimental Setup}
 \label{subsec:ex_setup}
@@ -244,7 +237,6 @@ In Figure~\ref{fig:h-mcts-s_v_mcts-s} results are shown for different $B$ values
 
 \begin{table}[ht]
 \centering
-\captionsetup{justification=centering,margin=1cm}
 \tabcolsep=0.3cm
 \scalebox{0.95}{
 \begin{tabular}{rlcc}
@@ -291,9 +283,8 @@ The use of a solver has the most influence in Pentalath and Breakthrough. In Ama
 
 Notably, the SHOT solver achieves a significantly high performance increase in both experimental cases in Pentalath. In Pentalath, all unoccupied positions can be played at any time, meaning that at each ply, excluding rarely occurring suicide moves, $o_p-1$ positions can be played where $o_p$ is the number of unoccupied positions at the parent. This also means that if any position results in a direct win for a player, it does so via multiple paths in the tree, which consequently results in almost all children of the root achieving a high value. Because of this, the algorithm does not recommend moves that will let it win fast, but possibly postpones its victory allowing its opponent to strengthen his position. In this case, the solver makes sure that when a solved node is found, it is excluded from normal search and immediately back-propagated, \ie when a solved position is found it is immediately played, instead of continuously searching for similarly good options.
 
-\begin{table}[t]
+\begin{table}[ht]
 \centering
-\captionsetup{justification=centering,margin=1cm}
 \tabcolsep=0.3cm
 \scalebox{1.0}{
 \begin{tabular}{rlll}
@@ -315,9 +306,8 @@ Pentalath &\multicolumn{1}{l|}{90} 		  			& 50.8 $\pm$ 2.2					& {\bf{53.5}} $\p
 
 Table~\ref{tab:uct-s_hmcts-s} shows the results for games played with the solver enabled in both H-MCTS and UCT. Unlike Table~\ref{tab:uct_hmcts} there is a significant performance increase in four cases when the solver is enabled. It is likely that the increased exploration performed by SHOT is responsible for finding solved nodes faster, or in parts of the tree that UCT is less likely to visit. Similar to the results for H-MCTS against UCT in Table~\ref{tab:uct_hmcts}, the results give evidence that a higher number of play-outs give increasingly better results in Pentalath. To validate this conjecture an additional experiment was run with a budget of 50,000 play-outs, which resulted in a win-rate for H-MCTS of {\bf{55.7}}\%$\pm$3.1, another significant increase in performance over UCT.
 
-\begin{table}[t]
+\begin{table}[ht]
 \centering
-\captionsetup{justification=centering,margin=1cm}
 \tabcolsep=0.3cm
 \scalebox{1.0}{
 \begin{tabular}{rlcc}
@@ -341,9 +331,9 @@ Breakthrough 8$\times$8 &\multicolumn{1}{l|}{70}	& {\bf{56.7}} $\pm$ 3.1		& {\bf
 {\caption[H-MCTS vs. UCT, heuristic play-outs and solver.]{H-MCTS vs. UCT, heuristic play-outs, with/without solver.\\ Win percentages with respect to H-MCTS, 1,000 games} \label{tab:uct_hmcts-s-h}}
 \end{table}
 
-A heuristic play-out policy was developed for Breakthrough, it selects moves during play-out over a non-uniform distribution based on the properties of the moves. A capture move is four times more likely to be selected than a non-capture one, and a defensive capture (near the winning line) is five times more likely to be selected. Moreover, (anti-)decisive~\citebay{teytaud2010huge} moves are always played when available. UCT with this play-out policy enabled wins approximately 78\% of the games played against UCT with random play-outs. 
+A heuristic play-out policy was developed for Breakthrough, it selects moves during play-out over a non-uniform distribution based on the properties of the moves. A capture move is four times more likely to be selected than a non-capture one, and a defensive capture (near the winning line) is five times more likely to be selected. Moreover, (anti-)decisive~\cite{teytaud2010huge} moves are always played when available. UCT with this play-out policy enabled wins approximately 78\% of the games played against UCT with random play-outs. 
 
-For the results in Table~\ref{tab:uct_hmcts-s-h}, the informed play-out policy is used to select moves for Breakthrough. H-MCTS benefits more from the informed play-outs than UCT in Breakthrough, both when the solver is disabled, and even more so when it is enabled. This may be due to Breakthrough's nature of leading the search into traps~\citebay{Ramanujan2010a}. Although these traps may remain undetected when random play-outs are used, they become more apparent with an informed policy. In this case SHOT has the advantage of spreading budget more evenly over different options, whereas UCT may have insufficient budget remaining to search for, and evaluate alternatives.
+For the results in Table~\ref{tab:uct_hmcts-s-h}, the informed play-out policy is used to select moves for Breakthrough. H-MCTS benefits more from the informed play-outs than UCT in Breakthrough, both when the solver is disabled, and even more so when it is enabled. This may be due to Breakthrough's nature of leading the search into traps~\cite{Ramanujan2010a}. Although these traps may remain undetected when random play-outs are used, they become more apparent with an informed policy. In this case SHOT has the advantage of spreading budget more evenly over different options, whereas UCT may have insufficient budget remaining to search for, and evaluate alternatives.
 
 \bibliography{bibliography}
 
